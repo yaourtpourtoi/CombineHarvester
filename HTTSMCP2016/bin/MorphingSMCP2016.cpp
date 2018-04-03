@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
     bool ttbar_fit = false;
     bool do_jetfakes = false;
     bool dijet_2d = false;
+    bool mldijet_2d = false;
     bool real_data = false;
     bool no_shape_systs = false;
     bool no_jec_split = false;    
@@ -92,6 +93,7 @@ int main(int argc, char** argv) {
     ("output_folder", po::value<string>(&output_folder)->default_value("sm_run2"))
     ("control_region", po::value<int>(&control_region)->default_value(0))
     ("dijet_2d", po::value<bool>(&dijet_2d)->default_value(dijet_2d))
+    ("mldijet_2d", po::value<bool>(&mldijet_2d)->default_value(mldijet_2d))
     ("no_shape_systs", po::value<bool>(&no_shape_systs)->default_value(no_shape_systs))
     ("mm_fit", po::value<bool>(&mm_fit)->default_value(true))
     ("no_jec_split", po::value<bool>(&no_jec_split)->default_value(true))    
@@ -197,6 +199,82 @@ int main(int argc, char** argv) {
           {5, "tt_dijet_highM"},
           {6, "tt_dijet_boosted"}
       };
+    } else if(mldijet_2d) {
+      cats_cp["em"] = {
+          {1, "em_JHU_ggh"},
+          {2, "em_JHU_misc"}
+          {3, "em_JHU_qcd"},
+          {4, "em_JHU_qqh"},
+          {5, "em_JHU_tt"},
+          {6, "em_JHU_w"}
+          {7, "em_JHU_zll"}
+          {8, "em_JHU_ztt"}
+          {9,  "em_powheg_ggh"},
+          {10, "em_powheg_misc"}
+          {11, "em_powheg_qcd"},
+          {12, "em_powheg_qqh"},
+          {13, "em_powheg_tt"},
+          {14, "em_powheg_w"}
+          {15, "em_powheg_zll"}
+          {16, "em_powheg_ztt"}
+      };
+      
+      cats_cp["et"] = {
+          {1, "et_JHU_ggh"},
+          {2, "et_JHU_misc"}
+          {3, "et_JHU_qcd"},
+          {4, "et_JHU_qqh"},
+          {5, "et_JHU_tt"},
+          {6, "et_JHU_w"}
+          {7, "et_JHU_zll"}
+          {8, "et_JHU_ztt"}
+          {9,  "et_powheg_ggh"},
+          {10, "et_powheg_misc"}
+          {11, "et_powheg_qcd"},
+          {12, "et_powheg_qqh"},
+          {13, "et_powheg_tt"},
+          {14, "et_powheg_w"}
+          {15, "et_powheg_zll"}
+          {16, "et_powheg_ztt"}
+      };
+      
+      cats_cp["mt"] = {
+          {1, "mt_JHU_ggh"},
+          {2, "mt_JHU_misc"}
+          {3, "mt_JHU_qcd"},
+          {4, "mt_JHU_qqh"},
+          {5, "mt_JHU_tt"},
+          {6, "mt_JHU_w"}
+          {7, "mt_JHU_zll"}
+          {8, "mt_JHU_ztt"}
+          {9,  "mt_powheg_ggh"},
+          {10, "mt_powheg_misc"}
+          {11, "mt_powheg_qcd"},
+          {12, "mt_powheg_qqh"},
+          {13, "mt_powheg_tt"},
+          {14, "mt_powheg_w"}
+          {15, "mt_powheg_zll"}
+          {16, "mt_powheg_ztt"}
+      };    
+      
+      cats_cp["tt"] = {
+          {1, "tt_JHU_ggh"},
+          {2, "tt_JHU_misc"}
+          {3, "tt_JHU_qcd"},
+          {4, "tt_JHU_qqh"},
+          {5, "tt_JHU_tt"},
+          {6, "tt_JHU_w"}
+          {7, "tt_JHU_zll"}
+          {8, "tt_JHU_ztt"}
+          {9,  "tt_powheg_ggh"},
+          {10, "tt_powheg_misc"}
+          {11, "tt_powheg_qcd"},
+          {12, "tt_powheg_qqh"},
+          {13, "tt_powheg_tt"},
+          {14, "tt_powheg_w"}
+          {15, "tt_powheg_zll"}
+          {16, "tt_powheg_ztt"}
+      };    
     } else {
       cats_cp["em"] = {
           {3, "em_dijet_lowboost"},
@@ -255,6 +333,9 @@ int main(int argc, char** argv) {
                   queue.push_back(make_pair(binid+3,chn+"_dijet_lowM_qcd_cr"));
                   queue.push_back(make_pair(binid+4,chn+"_dijet_highM_qcd_cr"));
                   queue.push_back(make_pair(binid+5,chn+"_dijet_boosted_qcd_cr"));
+                } else if(mldijet_2d) {
+                  queue.push_back(make_pair(binid+2,chn+"_dijet_lowboost_qcd_cr"));
+                  queue.push_back(make_pair(binid+3,chn+"_dijet_boosted_qcd_cr"));    
                 } else {
                   queue.push_back(make_pair(binid+2,chn+"_dijet_lowboost_qcd_cr"));
                   queue.push_back(make_pair(binid+3,chn+"_dijet_boosted_qcd_cr"));    
@@ -325,6 +406,13 @@ int main(int argc, char** argv) {
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowMjj"},{4, "mt_dijet_lowM"},{5, "mt_dijet_highM"}, {6, "mt_dijet_boosted"},
                                       {10, "mt_wjets_0jet_cr"},{11, "mt_wjets_boosted_cr"},
                                       {13, "mt_antiiso_0jet_cr"},{14, "mt_antiiso_boosted_cr"}}, false);
+      } else if(mldijet_2d) {   
+        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowboost"}, {4, "et_dijet_boosted"},
+                                      {10, "et_wjets_0jet_cr"},{11, "et_wjets_boosted_cr"},
+                                      {13, "et_antiiso_0jet_cr"},{14, "et_antiiso_boosted_cr"}}, false);
+        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowboost"},{4, "mt_dijet_boosted"},
+                                      {10, "mt_wjets_0jet_cr"},{11, "mt_wjets_boosted_cr"},
+                                      {13, "mt_antiiso_0jet_cr"},{14, "mt_antiiso_boosted_cr"}}, false);
       } else {   
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowboost"}, {4, "et_dijet_boosted"},
                                       {10, "et_wjets_0jet_cr"},{11, "et_wjets_boosted_cr"},
@@ -337,6 +425,9 @@ int main(int argc, char** argv) {
       if(!dijet_2d){  
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowMjj"},{4, "et_dijet_lowM"},{5, "et_dijet_highM"}, {6, "et_dijet_boosted"}}, false);
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowMjj"},{4, "mt_dijet_lowM"},{5, "mt_dijet_highM"}, {6, "mt_dijet_boosted"}}, false);
+      } else if(mldijet_2d){
+        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowboost"}, {4, "et_dijet_boosted"}}, false);
+        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowboost"}, {4, "mt_dijet_boosted"}}, false);  
       } else {
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowboost"}, {4, "et_dijet_boosted"}}, false);
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowboost"}, {4, "mt_dijet_boosted"}}, false);  
@@ -367,7 +458,11 @@ int main(int argc, char** argv) {
     }
     
     
-    ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, dijet_2d, no_jec_split);
+    if (mldijet_2d)
+        ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, mldijet_2d, no_jec_split);
+    else
+        ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, dijet_2d, no_jec_split);
+
     
     if(no_shape_systs){
       cb.FilterSysts([&](ch::Systematic *s){

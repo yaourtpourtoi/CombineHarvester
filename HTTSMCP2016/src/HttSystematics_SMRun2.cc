@@ -138,12 +138,12 @@ namespace ch {
         
         //######################## Tau Id shape uncertainty (added March 08)
         
-        cb.cp().process({"ZTT"}).channel({"et","mt"}).bin_id({1}).AddSyst(cb,
+        /* cb.cp().process({"ZTT"}).channel({"et","mt"}).bin_id({1}).AddSyst(cb,
                                                             "CMS_tauDMReco_1prong_$ERA", "shape", SystMap<>::init(1.00));
         cb.cp().process({"ZTT"}).channel({"et","mt"}).bin_id({1}).AddSyst(cb,
                                                                           "CMS_tauDMReco_1prong1pizero_$ERA", "shape", SystMap<>::init(1.00));
         cb.cp().process({"ZTT"}).channel({"et","mt"}).bin_id({1}).AddSyst(cb,
-                                                                          "CMS_tauDMReco_3prong_$ERA", "shape", SystMap<>::init(1.00));
+                                                                          "CMS_tauDMReco_3prong_$ERA", "shape", SystMap<>::init(1.00)); */
         
         
         
