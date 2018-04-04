@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
     
     map<string,Categories> cats_cp;
     
-    if(!dijet_2d) {
+    if(!dijet_2d && !mldijet_2d) {
       cats_cp["et"] = {
           {3, "et_dijet_lowMjj"},
           {4, "et_dijet_lowM"},
@@ -200,81 +200,81 @@ int main(int argc, char** argv) {
           {6, "tt_dijet_boosted"}
       };
     } else if(mldijet_2d) {
-      cats_cp["em"] = {
-          {1, "em_JHU_ggh"},
-          {2, "em_JHU_misc"}
-          {3, "em_JHU_qcd"},
-          {4, "em_JHU_qqh"},
-          {5, "em_JHU_tt"},
-          {6, "em_JHU_w"}
-          {7, "em_JHU_zll"}
-          {8, "em_JHU_ztt"}
-          {9,  "em_powheg_ggh"},
-          {10, "em_powheg_misc"}
-          {11, "em_powheg_qcd"},
-          {12, "em_powheg_qqh"},
-          {13, "em_powheg_tt"},
-          {14, "em_powheg_w"}
-          {15, "em_powheg_zll"}
-          {16, "em_powheg_ztt"}
-      };
+        cats_cp["em"] = {
+            {1,  "em_powheg_ggh"},
+            {2, "em_powheg_misc"},
+            {3, "em_powheg_qcd"},
+            {4, "em_powheg_qqh"},
+            {5, "em_powheg_tt"},
+            {6, "em_powheg_w"},
+            {7, "em_powheg_zll"},
+            {8, "em_powheg_ztt"},
+            {9, "em_JHU_ggh"},
+            {10, "em_JHU_misc"},
+            {11, "em_JHU_qcd"},
+            {12, "em_JHU_qqh"},
+            {13, "em_JHU_tt"},
+            {14, "em_JHU_w"},
+            {15, "em_JHU_zll"},
+            {16, "em_JHU_ztt"}
+        };
       
-      cats_cp["et"] = {
-          {1, "et_JHU_ggh"},
-          {2, "et_JHU_misc"}
-          {3, "et_JHU_qcd"},
-          {4, "et_JHU_qqh"},
-          {5, "et_JHU_tt"},
-          {6, "et_JHU_w"}
-          {7, "et_JHU_zll"}
-          {8, "et_JHU_ztt"}
-          {9,  "et_powheg_ggh"},
-          {10, "et_powheg_misc"}
-          {11, "et_powheg_qcd"},
-          {12, "et_powheg_qqh"},
-          {13, "et_powheg_tt"},
-          {14, "et_powheg_w"}
-          {15, "et_powheg_zll"}
-          {16, "et_powheg_ztt"}
-      };
+        cats_cp["et"] = {
+            {1,  "et_powheg_ggh"},
+            {2, "et_powheg_misc"},
+            {3, "et_powheg_qcd"},
+            {4, "et_powheg_qqh"},
+            {5, "et_powheg_tt"},
+            {6, "et_powheg_w"},
+            {7, "et_powheg_zll"},
+            {8, "et_powheg_ztt"},
+            {9, "et_JHU_ggh"},
+            {10, "et_JHU_misc"},
+            {11, "et_JHU_qcd"},
+            {12, "et_JHU_qqh"},
+            {13, "et_JHU_tt"},
+            {14, "et_JHU_w"},
+            {15, "et_JHU_zll"},
+            {16, "et_JHU_ztt"}
+        };
       
-      cats_cp["mt"] = {
-          {1, "mt_JHU_ggh"},
-          {2, "mt_JHU_misc"}
-          {3, "mt_JHU_qcd"},
-          {4, "mt_JHU_qqh"},
-          {5, "mt_JHU_tt"},
-          {6, "mt_JHU_w"}
-          {7, "mt_JHU_zll"}
-          {8, "mt_JHU_ztt"}
-          {9,  "mt_powheg_ggh"},
-          {10, "mt_powheg_misc"}
-          {11, "mt_powheg_qcd"},
-          {12, "mt_powheg_qqh"},
-          {13, "mt_powheg_tt"},
-          {14, "mt_powheg_w"}
-          {15, "mt_powheg_zll"}
-          {16, "mt_powheg_ztt"}
-      };    
+        cats_cp["mt"] = {
+            {1,  "mt_powheg_ggh"},
+            {2, "mt_powheg_misc"},
+            {3, "mt_powheg_qcd"},
+            {4, "mt_powheg_qqh"},
+            {5, "mt_powheg_tt"},
+            {6, "mt_powheg_w"},
+            {7, "mt_powheg_zll"},
+            {8, "mt_powheg_ztt"},
+            {9, "mt_JHU_ggh"},
+            {10, "mt_JHU_misc"},
+            {11, "mt_JHU_qcd"},
+            {12, "mt_JHU_qqh"},
+            {13, "mt_JHU_tt"},
+            {14, "mt_JHU_w"},
+            {15, "mt_JHU_zll"},
+            {16, "mt_JHU_ztt"}
+        };    
       
-      cats_cp["tt"] = {
-          {1, "tt_JHU_ggh"},
-          {2, "tt_JHU_misc"}
-          {3, "tt_JHU_qcd"},
-          {4, "tt_JHU_qqh"},
-          {5, "tt_JHU_tt"},
-          {6, "tt_JHU_w"}
-          {7, "tt_JHU_zll"}
-          {8, "tt_JHU_ztt"}
-          {9,  "tt_powheg_ggh"},
-          {10, "tt_powheg_misc"}
-          {11, "tt_powheg_qcd"},
-          {12, "tt_powheg_qqh"},
-          {13, "tt_powheg_tt"},
-          {14, "tt_powheg_w"}
-          {15, "tt_powheg_zll"}
-          {16, "tt_powheg_ztt"}
-      };    
+        cats_cp["tt"] = {
+            {1,  "tt_powheg_ggh"},
+            {2, "tt_powheg_misc"},
+            {3, "tt_powheg_qcd"},
+            {4, "tt_powheg_qqh"},
+            {5, "tt_powheg_tt"},
+            {6, "tt_powheg_w"},
+            {7, "tt_powheg_zll"},
+            {8, "tt_powheg_ztt"},
+            {9, "tt_JHU_ggh"},
+            {10, "tt_JHU_misc"},
+            {11, "tt_JHU_qcd"},
+            {12, "tt_JHU_qqh"},
+            {13, "tt_JHU_tt"},
+            {14, "tt_JHU_w"},
+            {15, "tt_JHU_zll"},
+            {16, "tt_JHU_ztt"}
+        };    
     } else {
       cats_cp["em"] = {
           {3, "em_dijet_lowboost"},
@@ -328,7 +328,7 @@ int main(int argc, char** argv) {
                 
                 queue.push_back(make_pair(binid,chn+"_0jet_qcd_cr"));
                 queue.push_back(make_pair(binid+1,chn+"_boosted_qcd_cr"));
-                if(!dijet_2d){
+                if(!dijet_2d && !mldijet_2d){
                   queue.push_back(make_pair(binid+2,chn+"_dijet_lowMjj_qcd_cr"));
                   queue.push_back(make_pair(binid+3,chn+"_dijet_lowM_qcd_cr"));
                   queue.push_back(make_pair(binid+4,chn+"_dijet_highM_qcd_cr"));
@@ -399,7 +399,7 @@ int main(int argc, char** argv) {
 //    cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"EWKZ"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_vbf"}}, false);
 
     if (control_region > 0){
-      if(!dijet_2d){  
+      if(!dijet_2d && !mldijet_2d){  
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowMjj"},{4, "et_dijet_lowM"},{5, "et_dijet_highM"}, {6, "et_dijet_boosted"},
                                       {10, "et_wjets_0jet_cr"},{11, "et_wjets_boosted_cr"},
                                       {13, "et_antiiso_0jet_cr"},{14, "et_antiiso_boosted_cr"}}, false);
@@ -422,7 +422,7 @@ int main(int argc, char** argv) {
                                       {13, "mt_antiiso_0jet_cr"},{14, "mt_antiiso_boosted_cr"}}, false);
       }
     }else if (!do_jetfakes){
-      if(!dijet_2d){  
+      if(!dijet_2d && !mldijet_2d){  
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowMjj"},{4, "et_dijet_lowM"},{5, "et_dijet_highM"}, {6, "et_dijet_boosted"}}, false);
         cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowMjj"},{4, "mt_dijet_lowM"},{5, "mt_dijet_highM"}, {6, "mt_dijet_boosted"}}, false);
       } else if(mldijet_2d){
@@ -458,10 +458,7 @@ int main(int argc, char** argv) {
     }
     
     
-    if (mldijet_2d)
-        ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, mldijet_2d, no_jec_split);
-    else
-        ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, dijet_2d, no_jec_split);
+    ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, dijet_2d, mldijet_2d, no_jec_split);
 
     
     if(no_shape_systs){
