@@ -59,10 +59,10 @@ bool BinIsNotControlRegion(ch::Object const* obj)
 int main(int argc, char** argv) {
 
     string output_folder = "sm_run2";
-    string input_folder_em="Imperial/CP/";
-    string input_folder_et="Imperial/CP/";
-    string input_folder_mt="Imperial/CP/";
-    string input_folder_tt="Imperial/CP/";
+    string input_folder_em="Imperial/CP";
+    string input_folder_et="Imperial/CP";
+    string input_folder_mt="Imperial/CP";
+    string input_folder_tt="Imperial/CP";
     string input_folder_mm="USCMS/";
     string input_folder_ttbar="USCMS/";
     string only_init="";
@@ -75,14 +75,15 @@ int main(int argc, char** argv) {
     bool no_shape_systs = false;
     bool do_embedding = false;
     bool auto_rebin = false;
+    bool mldijet_2d = false;    
     bool no_jec_split = false;    
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_KIT"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_KIT"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_KIT"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_KIT"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("input_folder_ttbar", po::value<string>(&input_folder_ttbar)->default_value("USCMS"))
     ("only_init", po::value<string>(&only_init)->default_value(""))
@@ -95,6 +96,7 @@ int main(int argc, char** argv) {
     ("mm_fit", po::value<bool>(&mm_fit)->default_value(true))
     ("do_embedding", po::value<bool>(&do_embedding)->default_value(false))
     ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
+    ("mldijet_2d", po::value<bool>(&mldijet_2d)->default_value(true))    
     ("no_jec_split", po::value<bool>(&no_jec_split)->default_value(true))    
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true));
 
@@ -117,7 +119,8 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"mt","et","tt","em"};
+    /* VString chns = {"mt","et","tt","em"}; */
+    VString chns = {"mt"};
     if (mm_fit) chns.push_back("mm");
     if (ttbar_fit) chns.push_back("ttbar");
     
@@ -139,24 +142,67 @@ int main(int argc, char** argv) {
     ch::CombineHarvester cb;
     
     map<string,Categories> cats;
-    cats["et"] = {
-        {1, "et_0jet"},
-        {2, "et_boosted"}
-    };
-    
-    cats["mt"] = {
-        {1, "mt_0jet"},
-        {2, "mt_boosted"}
-    }; 
-    cats["em"] = {
-        {1, "em_0jet"},
-        {2, "em_boosted"}
-    };
-    
-    cats["tt"] = {
-        {1, "tt_0jet"},
-        {2, "tt_boosted"}
-    };
+
+    if (!mldijet_2d) {
+        cats["et"] = {
+            {1, "et_0jet"},
+            {2, "et_boosted"}
+        };
+        
+        cats["mt"] = {
+            {1, "mt_0jet"},
+            {2, "mt_boosted"}
+        }; 
+        cats["em"] = {
+            {1, "em_0jet"},
+            {2, "em_boosted"}
+        };
+        
+        cats["tt"] = {
+            {1, "tt_0jet"},
+            {2, "tt_boosted"}
+        };
+    }
+    else {
+        cats["et"] = {
+            {1, "et_ggh"},
+            {2, "et_qqh"},
+            {3, "et_ztt"},
+            {4, "et_zll"},
+            {5, "et_w"},
+            {6, "et_qcd"},
+            {7, "et_misc"}
+        };
+        
+        cats["mt"] = {
+            {1, "mt_ggh"},
+            {2, "mt_qqh"},
+            {3, "mt_ztt"},
+            {4, "mt_zll"},
+            {5, "mt_w"},
+            {6, "mt_qcd"},
+            {7, "mt_misc"}
+        }; 
+        cats["em"] = {
+            {1, "em_ggh"},
+            {2, "em_qqh"},
+            {3, "em_ztt"},
+            {4, "em_zll"},
+            {5, "em_w"},
+            {6, "em_qcd"},
+            {7, "em_misc"}
+        };
+        
+        cats["tt"] = {
+            {1, "tt_ggh"},
+            {2, "tt_qqh"},
+            {3, "tt_ztt"},
+            {4, "tt_zll"},
+            {5, "tt_w"},
+            {6, "tt_qcd"},
+            {7, "tt_misc"}
+        };
+    }
     
     cats["mm"] = {
         {1, "mm_0jet"},
@@ -169,25 +215,45 @@ int main(int argc, char** argv) {
     
     map<string,Categories> cats_cp;
     
-    cats_cp["em"] = {
-        {3, "em_dijet_lowboost"},
-        {4, "em_dijet_boosted"} 
-    };
-    
-    cats_cp["et"] = {
-        {3, "et_dijet_lowboost"},
-        {4, "et_dijet_boosted"}       
-    };
-    
-    cats_cp["mt"] = {
-        {3, "mt_dijet_lowboost"},
-        {4, "mt_dijet_boosted"}
-    };    
-    
-    cats_cp["tt"] = {
-        {3, "tt_dijet_lowboost"},
-        {4, "tt_dijet_boosted"}
-    };    
+    if (!mldijet_2d) {
+        cats_cp["em"] = {
+            {3, "em_dijet_lowboost"},
+            {4, "em_dijet_boosted"} 
+        };
+        
+        cats_cp["et"] = {
+            {3, "et_dijet_lowboost"},
+            {4, "et_dijet_boosted"}       
+        };
+        
+        cats_cp["mt"] = {
+            {3, "mt_dijet_lowboost"},
+            {4, "mt_dijet_boosted"}
+        };    
+        
+        cats_cp["tt"] = {
+            {3, "tt_dijet_lowboost"},
+            {4, "tt_dijet_boosted"}
+        };    
+    }
+    else {
+        cats_cp["em"] = {
+            {3, "em_qqh_dijet"},
+        };
+        
+        cats_cp["et"] = {
+            {3, "et_qqh_dijet"},
+        };
+        
+        cats_cp["mt"] = {
+            {3, "mt_qqh_dijet"},
+        };    
+        
+        cats_cp["tt"] = {
+            {3, "tt_qqh_dijet"},
+        };    
+    }
+
     
     if (control_region > 0){
         // for each channel use the categories >= 10 for the control regions
@@ -286,10 +352,15 @@ int main(int argc, char** argv) {
       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowboost"},{4, "mt_dijet_boosted"},
                                     {10, "mt_wjets_0jet_cr"},{11, "mt_wjets_boosted_cr"},
                                     {13, "mt_antiiso_0jet_cr"},{14, "mt_antiiso_boosted_cr"}}, false);
-    }else {
+    }else if (!mldijet_2d) {
        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowMjj"},{4, "et_dijet_lowM"},{5, "et_dijet_highM"}, {6, "et_dijet_boosted"}}, false);
        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowMjj"},{4, "mt_dijet_lowM"},{5, "mt_dijet_highM"}, {6, "mt_dijet_boosted"}}, false);
-    }
+        }
+        else {
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_ggh"},{2, "et_qqh"},{3, "et_ztt"},{4, "et_zll"},{5, "et_w"}, {6, "et_qcd"}, {7, "et_misc"}, {8, "et_qqh_dijet"}}, false);
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_ggh"},{2, "mt_qqh"},{3, "mt_ztt"},{4, "mt_zll"},{5, "mt_w"}, {6, "mt_qcd"}, {7, "mt_misc"}, {8, "mt_qqh_dijet"}}, false);
+        }
+    
     
     //! [part4]
     
