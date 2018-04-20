@@ -374,7 +374,7 @@ int main(int argc, char** argv) {
     }
     
     
-    ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, no_jec_split);
+    ch::AddSMRun2Systematics(cb, control_region, mm_fit, ttbar_fit, mldijet_2d, no_jec_split);
     
     if(no_shape_systs){
       cb.FilterSysts([&](ch::Systematic *s){
