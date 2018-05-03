@@ -80,10 +80,10 @@ int main(int argc, char** argv) {
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_KIT"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_KIT"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_KIT"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_KIT"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_dijet"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_dijet"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_dijet"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_dijet"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("input_folder_ttbar", po::value<string>(&input_folder_ttbar)->default_value("USCMS"))
     ("only_init", po::value<string>(&only_init)->default_value(""))
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
     ("no_shape_systs", po::value<bool>(&no_shape_systs)->default_value(no_shape_systs))
     ("mm_fit", po::value<bool>(&mm_fit)->default_value(true))
     ("do_embedding", po::value<bool>(&do_embedding)->default_value(false))
-    ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
+    ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(true))
     ("mldijet_2d", po::value<bool>(&mldijet_2d)->default_value(true))    
     ("no_jec_split", po::value<bool>(&no_jec_split)->default_value(true))    
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true));
@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
     
     
     /* VString chns = {"mt","et","tt","em"}; */
-    VString chns = {"mt"};
+    VString chns = {"mt","et","tt"};
     if (mm_fit) chns.push_back("mm");
     if (ttbar_fit) chns.push_back("ttbar");
     
@@ -153,37 +153,38 @@ int main(int argc, char** argv) {
             {1, "mt_0jet"},
             {2, "mt_boosted"}
         }; 
-        cats["em"] = {
+        /* cats["em"] = {
             {1, "em_0jet"},
             {2, "em_boosted"}
-        };
+        }; */
         
         cats["tt"] = {
             {1, "tt_0jet"},
             {2, "tt_boosted"}
-        };
+        }; 
     }
     else {
         cats["et"] = {
-            {1, "et_ggh"},
-            {2, "et_qqh"},
             {3, "et_ztt"},
             {4, "et_zll"},
-            {5, "et_w"},
-            {6, "et_qcd"},
-            {7, "et_misc"}
+            {5, "et_qcd"},
+            {6, "et_tt"},
+            {7, "et_w"},
+            {8, "et_misc"} 
         };
         
         cats["mt"] = {
-            {1, "mt_ggh"},
-            {2, "mt_qqh"},
+            /* {1, "mt_ggh"}, */
+            /* {2, "mt_qqh"}, */
             {3, "mt_ztt"},
             {4, "mt_zll"},
-            {5, "mt_w"},
-            {6, "mt_qcd"},
-            {7, "mt_misc"}
-        }; 
-        cats["em"] = {
+            {5, "mt_qcd"},
+            {6, "mt_tt"},
+            {7, "mt_w"},
+            {8, "mt_misc"} 
+        };
+
+        /*cats["em"] = {
             {1, "em_ggh"},
             {2, "em_qqh"},
             {3, "em_ztt"},
@@ -191,16 +192,12 @@ int main(int argc, char** argv) {
             {5, "em_w"},
             {6, "em_qcd"},
             {7, "em_misc"}
-        };
+        };*/
         
         cats["tt"] = {
-            {1, "tt_ggh"},
-            {2, "tt_qqh"},
             {3, "tt_ztt"},
-            {4, "tt_zll"},
-            {5, "tt_w"},
-            {6, "tt_qcd"},
-            {7, "tt_misc"}
+            {4, "tt_qcd"},
+            {5, "tt_misc"}
         };
     }
     
@@ -216,10 +213,10 @@ int main(int argc, char** argv) {
     map<string,Categories> cats_cp;
     
     if (!mldijet_2d) {
-        cats_cp["em"] = {
+        /* cats_cp["em"] = {
             {3, "em_dijet_lowboost"},
             {4, "em_dijet_boosted"} 
-        };
+        }; */
         
         cats_cp["et"] = {
             {3, "et_dijet_lowboost"},
@@ -229,29 +226,32 @@ int main(int argc, char** argv) {
         cats_cp["mt"] = {
             {3, "mt_dijet_lowboost"},
             {4, "mt_dijet_boosted"}
-        };    
+        };
         
         cats_cp["tt"] = {
             {3, "tt_dijet_lowboost"},
             {4, "tt_dijet_boosted"}
-        };    
+        }; 
     }
     else {
-        cats_cp["em"] = {
-            {3, "em_qqh_dijet"},
-        };
+        /*cats_cp["em"] = {
+            {8, "em_qqh_dijet"},
+        }; */
         
         cats_cp["et"] = {
-            {3, "et_qqh_dijet"},
+            {1, "et_ggh"},
+            {2, "et_qqh"},
         };
         
         cats_cp["mt"] = {
-            {3, "mt_qqh_dijet"},
+            {1, "mt_ggh"},
+            {2, "mt_qqh"},
         };    
         
         cats_cp["tt"] = {
-            {3, "tt_qqh_dijet"},
-        };    
+            {1, "tt_ggh"},
+            {2, "tt_qqh"},
+        };
     }
 
     
@@ -353,12 +353,12 @@ int main(int argc, char** argv) {
                                     {10, "mt_wjets_0jet_cr"},{11, "mt_wjets_boosted_cr"},
                                     {13, "mt_antiiso_0jet_cr"},{14, "mt_antiiso_boosted_cr"}}, false);
     }else if (!mldijet_2d) {
-       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowMjj"},{4, "et_dijet_lowM"},{5, "et_dijet_highM"}, {6, "et_dijet_boosted"}}, false);
-       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowMjj"},{4, "mt_dijet_lowM"},{5, "mt_dijet_highM"}, {6, "mt_dijet_boosted"}}, false);
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_0jet"},{2, "et_boosted"},{3, "et_dijet_lowboost"},{4, "et_dijet_boosted"}}, false);
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowboost"},{4, "mt_dijet_boosted"}}, false);
         }
         else {
-       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_ggh"},{2, "et_qqh"},{3, "et_ztt"},{4, "et_zll"},{5, "et_w"}, {6, "et_qcd"}, {7, "et_misc"}, {8, "et_qqh_dijet"}}, false);
-       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_ggh"},{2, "mt_qqh"},{3, "mt_ztt"},{4, "mt_zll"},{5, "mt_w"}, {6, "mt_qcd"}, {7, "mt_misc"}, {8, "mt_qqh_dijet"}}, false);
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_ggh"},{2, "et_qqh"},{3, "et_ztt"},{4, "et_zll"},{5, "et_qcd"}, {6, "et_tt"}, {7, "et_w"}, {8, "et_misc"}}, false);
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_ggh"},{2, "mt_qqh"},{3, "mt_ztt"},{4, "mt_zll"},{5, "mt_qcd"}, {6, "mt_tt"}, {7, "mt_w"}, {8, "mt_misc"}}, false);
         }
     
     
@@ -623,6 +623,11 @@ int main(int argc, char** argv) {
         writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
         writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
         writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
+        writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({4}));
+        writer.WriteCards("htt_"+chn+"_5_13TeV", cb.cp().channel({chn}).bin_id({5}));
+        writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
+        writer.WriteCards("htt_"+chn+"_7_13TeV", cb.cp().channel({chn}).bin_id({7}));
+        writer.WriteCards("htt_"+chn+"_8_13TeV", cb.cp().channel({chn}).bin_id({8}));
         
         
         for (auto mmm : {"125"}){
@@ -683,6 +688,11 @@ int main(int argc, char** argv) {
     //    writer.WriteCards("htt_cmb_4_13TeV", cb.cp().bin_id({4,11,14}));
     //    writer.WriteCards("htt_cmb_5_13TeV", cb.cp().bin_id({5,12,15}));
     //    writer.WriteCards("htt_cmb_6_13TeV", cb.cp().bin_id({6,12,15}));
+    //
+
+    // to look at dijet cutbased category vs MVA
+    // writer.WriteCards("htt_cmb_dijet_13TeV", cb.cp().bin_id({3,4}));
+    writer.WriteCards("htt_cmb_ggh_qqh_dijet_13TeV", cb.cp().bin_id({1,2}));
     
     //
     //

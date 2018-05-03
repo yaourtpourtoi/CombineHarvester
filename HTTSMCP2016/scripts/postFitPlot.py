@@ -59,7 +59,7 @@ def createAxisHists(n,src,xmin=0,xmax=499):
     res.SetStats(0)
     result.append(res)
   return result
-  
+
 
 plot.ModTDRStyle(r=0.04, l=0.14)
 
@@ -162,7 +162,7 @@ if args.postfitshapes and not args.dir:
 if manual_blind and auto_blind :
     print 'Pick only one option for blinding strategy out of --manual_blind and --auto_blind'
 #For now, force that one type of blinding is always included! When unblinding the below line will need to be removed
-if not manual_blind and not auto_blind: manual_blind=True    
+if not manual_blind and not auto_blind: manual_blind=True
 
 if (args.auto_blind or args.auto_blind_check_only) and args.model_dep:
   print 'Automated blinding only supported for model independent plots, please use manual blinding'
@@ -178,23 +178,23 @@ if args.postfitshapes:
   print "Internally calling PostFitShapesFromWorkspace on directory ", args.dir
   for root,dirnames,filenames in os.walk(args.dir):
     for filename in fnmatch.filter(filenames, '*.txt.cmb'):
-      datacard_file = os.path.join(root,filename) 
+      datacard_file = os.path.join(root,filename)
     for filename in fnmatch.filter(filenames, '*%(workspace)s.root'%vars()):
       workspace_file = os.path.join(root,filename)
       if model_dep :
           shape_file=workspace_file.replace('.root','_shapes_mA%(mA)s_tb%(tb)s.root'%vars())
           shape_file_name=filename.replace ('.root','_shapes_mA%(mA)s_tb%(tb)s.root'%vars())
-      else : 
+      else :
           shape_file=workspace_file.replace('.root','_shapes_mPhi%(mPhi)s_r_ggH%(r_ggH)s_r_bbH%(r_bbH)s.root'%vars())
-          shape_file_name=filename.replace ('.root','_shapes_mPhi%(mPhi)s_r_ggH%(r_ggH)s_r_bbH%(r_bbH)s.root'%vars()) 
-  
+          shape_file_name=filename.replace ('.root','_shapes_mPhi%(mPhi)s_r_ggH%(r_ggH)s_r_bbH%(r_bbH)s.root'%vars())
+
   if model_dep is True :
     print "using mA and tanb"
-    freeze = 'mA='+mA+',tanb='+tb 
-  else: 
+    freeze = 'mA='+mA+',tanb='+tb
+  else:
     print "using MH="+mPhi+", r_ggH="+r_ggH+" and r_bbH="+r_bbH
-    freeze = 'MH='+mPhi+',r_ggH='+r_ggH+',r_bbH='+r_bbH 
-  if mode=="postfit": postfit_string = '--fitresult '+fitresult+':fit_s --postfit' 
+    freeze = 'MH='+mPhi+',r_ggH='+r_ggH+',r_bbH='+r_bbH
+  if mode=="postfit": postfit_string = '--fitresult '+fitresult+':fit_s --postfit'
   else: postfit_string = ''
   print 'PostFitShapesFromWorkspace -d %(datacard_file)s -w %(workspace_file)s -o %(shape_file)s %(postfit_string)s --print --freeze %(freeze)s'%vars()
   os.system('PostFitShapesFromWorkspace -d %(datacard_file)s -w %(workspace_file)s -o %(shape_file)s %(postfit_string)s --print --freeze %(freeze)s'%vars())
@@ -205,7 +205,7 @@ if not args.postfitshapes:
   if args.dir:
     for root,dirnames,filenames in os.walk(args.dir):
       if model_dep: filestring = '*_shapes_%(mA)s_%(tb)s.root'%vars()
-      else: filestring = '*_shapes_mPhi%(mPhi)s_r_ggH%(r_ggH)s_r_bbH%(r_bbH)s.root'%vars()  
+      else: filestring = '*_shapes_mPhi%(mPhi)s_r_ggH%(r_ggH)s_r_bbH%(r_bbH)s.root'%vars()
       for filename in fnmatch.filter(filenames, '*_shapes_%(mA)s_%(tb)s.root'%vars()):
         shape_file = os.path.join(root,filename)
   elif args.file:
@@ -215,8 +215,9 @@ if not args.postfitshapes:
 
 histo_file = ROOT.TFile(shape_file)
 
-#Store plotting information for different backgrounds 
-background_schemes = {'mt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#mu#mu",["ZL","ZJ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
+
+#Store plotting information for different backgrounds
+background_schemes = {'mt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VV","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#mu#mu",["ZL","ZJ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
 'et':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrowee",["ZL","ZJ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
 'tt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W","ZL","ZJ"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
 'em':[backgroundComp("t#bar{t}",["TT"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VV","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrowll",["ZLL"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
@@ -228,7 +229,10 @@ if args.tauidplot:
 
 #Extract relevent histograms from shape file
 [sighist,binname] = getHistogram(histo_file,'TotalSig', file_dir, mode, args.no_signal, log_x)
-if not model_dep: sighist_ggH = getHistogram(histo_file,'ggH',file_dir, mode, args.no_signal, log_x)[0]
+if not model_dep: sighist_ggH = getHistogram(histo_file,'ggH_htt',file_dir, mode, args.no_signal, log_x)[0]
+if not model_dep: sighist_ggHsm = getHistogram(histo_file,'ggHsm_htt',file_dir, mode, args.no_signal, log_x)[0]
+if not model_dep: sighist_qqH = getHistogram(histo_file,'qqh_htt',file_dir, mode, args.no_signal, log_x)[0]
+if not model_dep: sighist_VH = getHistogram(histo_file,["WminusH_htt","WplusH_htt","ZH_htt"],file_dir, mode, args.no_signal, log_x)[0]
 if not model_dep: sighist_bbH = getHistogram(histo_file,'bbH',file_dir, mode, args.no_signal, log_x)[0]
 for i in range(0,sighist.GetNbinsX()):
   if sighist.GetBinContent(i) < y_axis_min: sighist.SetBinContent(i,y_axis_min)
@@ -242,27 +246,44 @@ total_datahist.SetMarkerStyle(20)
 blind_datahist.SetMarkerStyle(20)
 blind_datahist.SetLineColor(1)
 
-#If using in test automated blinding mode, build the s/root b histogram for the ratio 
+#If using in test automated blinding mode, build the s/root b histogram for the ratio
 if model_dep :
     sighist_forratio = sighist.Clone()
     sighist_forratio.SetName("sighist_forratio")
 else:
     sighist_ggH_forratio = sighist_ggH.Clone()
-    sighist_ggH_forratio.SetName("sighist_ggH_forratio")
-    sighist_bbH_forratio = sighist_bbH.Clone()
-    sighist_bbH_forratio.SetName("sighist_bbH_forratio")
+    sighist_ggH_forratio.SetName("sighist_ggHsm_forratio")
+    sighist_ggHsm_forratio = sighist_ggHsm.Clone()
+    sighist_ggHsm_forratio.SetName("sighist_ggHsm_forratio")
+    sighist_qqH_forratio = sighist_qqH.Clone()
+    sighist_qqH_forratio.SetName("sighist_qqH_forratio")
+    sighist_VH_forratio = sighist_VH.Clone()
+    sighist_VH_forratio.SetName("sighist_VH_forratio")
+    # sighist_bbH_forratio = sighist_bbH.Clone()
+    # sighist_bbH_forratio.SetName("sighist_bbH_forratio")
 if soverb_plot:
     for j in range(1,bkghist.GetNbinsX()+1):
         if model_dep:
             soverb = sighist.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
             sighist_forratio.SetBinContent(j,soverb)
             sighist_forratio.SetBinError(j,0)
-        else: 
+        else:
             soverb_ggH = sighist_ggH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+            soverb_ggHsm = sighist_ggHsm.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+            soverb_qqH = sighist_qqH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+            soverb_VH = sighist_VH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
             soverb_bbH = sighist_bbH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+
             sighist_ggH_forratio.SetBinContent(j,soverb_ggH)
-            sighist_ggH_forratio.SetBinError(j,0)
+            sighist_ggHsm_forratio.SetBinContent(j,soverb_ggHsm)
+            sighist_qqH_forratio.SetBinContent(j,soverb_qqH)
+            sighist_VH_forratio.SetBinContent(j,soverb_VH)
             sighist_bbH_forratio.SetBinContent(j,soverb_bbH)
+
+            sighist_ggH_forratio.SetBinError(j,0)
+            sighist_ggHsm_forratio.SetBinError(j,0)
+            sighist_qqH_forratio.SetBinError(j,0)
+            sighist_WH_forratio.SetBinError(j,0)
             sighist_bbH_forratio.SetBinError(j,0)
 
 
@@ -278,13 +299,13 @@ if manual_blind or auto_blind_check_only:
 #Automated blinding based on s/root b on bin by bin basis - use with caution!! Run with "check_only" mode first
 if auto_blind or auto_blind_check_only:
     #Points for testing added by hand and chosen cross-sections are the exclusion from HIG-14-029 scaled by parton lumi. Values above 1 TeV are
-    #crudely extrapolated using the 1 TeV limit and a higher parton lumi factor. 
+    #crudely extrapolated using the 1 TeV limit and a higher parton lumi factor.
     points=[200,300,400,500,600,700,900,1100,1500,2000,2500,3200]
     ggH_sigmas=[0.69,0.27,0.25,0.12,0.081,0.067,0.044,0.06,0.08,0.1,0.2,0.3]
     bbH_sigmas=[0.54,0.23,0.21,0.12,0.097,0.088,0.059,0.08,0.08,0.1,0.2,0.3]
     for root,dirnames,filenames in os.walk(args.dir):
       for filename in fnmatch.filter(filenames, '*.txt.cmb'):
-        datacard_file = os.path.join(root,filename) 
+        datacard_file = os.path.join(root,filename)
       for filename in fnmatch.filter(filenames, '*%(workspace)s.root'%vars()):
         workspace_file = os.path.join(root,filename)
         unblind_binlow_set=[]
@@ -294,26 +315,32 @@ if auto_blind or auto_blind_check_only:
           freeze = 'MH='+str(p)+',r_ggH='+str(ggH_sigmas[i])+',r_bbH='+str(bbH_sigmas[i])
           print 'PostFitShapesFromWorkspace -d %(datacard_file)s -w %(workspace_file)s -o %(shape_file)s --freeze %(freeze)s'%vars()
           os.system('PostFitShapesFromWorkspace -d %(datacard_file)s -w %(workspace_file)s -o %(shape_file)s --freeze %(freeze)s'%vars())
-    
+
           testhisto_file = ROOT.TFile(shape_file)
           testsighist_ggH = getHistogram(testhisto_file,'ggH', file_dir,mode,logx=log_x)[0]
+          testsighist_ggHsm = getHistogram(testhisto_file,'ggHsm', file_dir,mode,logx=log_x)[0]
+          testsighist_qqH = getHistogram(testhisto_file,'qqH', file_dir,mode,logx=log_x)[0]
+          testsighist_VH = getHistogram(testhisto_file,'VH', file_dir,mode,logx=log_x)[0]
           testsighist_bbH = getHistogram(testhisto_file,'bbH', file_dir,mode,logx=log_x)[0]
           for j in range(1,bkghist.GetNbinsX()):
               soverb_ggH = testsighist_ggH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+              soverb_ggHsm = testsighist_ggHsm.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+              soverb_qqH = testsighist_qqH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
+              soverb_VH = testsighist_VH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
               soverb_bbH = testsighist_bbH.GetBinContent(j)/math.sqrt(bkghist.GetBinContent(j))
-              if auto_blind_check_only: 
+              if auto_blind_check_only:
                   print "mPhi=",str(p)," r_ggPhi=",str(ggH_sigmas[i])," r_bbPhi=",str(bbH_sigmas[i]), "BinLowEdge=", bkghist.GetBinLowEdge(j), "BinHighEdge=", bkghist.GetBinLowEdge(j+1), "ggH s/b:", soverb_ggH, "bbH s/b:", soverb_bbH
               if soverb_ggH > 0.5 or soverb_bbH > 0.5:
                   if not auto_blind_check_only: blind_datahist.SetBinContent(j,0)
                   if not auto_blind_check_only: blind_datahist.SetBinError(j,0)
-                  unblind_binlow_set.append(blind_datahist.GetBinLowEdge(j))    
-                  unblind_binhigh_set.append(blind_datahist.GetBinLowEdge(j+1))    
+                  unblind_binlow_set.append(blind_datahist.GetBinLowEdge(j))
+                  unblind_binhigh_set.append(blind_datahist.GetBinLowEdge(j+1))
         if auto_blind_check_only:
             binlow_list = sorted(set(unblind_binlow_set))
             binhigh_list = sorted(set(unblind_binhigh_set))
             print "Auto blinding algorithm would blind the following bins: "
             for h in range(0,len(binlow_list)):
-                print binlow_list[h], "-", binhigh_list[h]            
+                print binlow_list[h], "-", binhigh_list[h]
             print "For this pass, applying manual blinding. Disable option --auto_blind_check_only to apply this automatic blinding"
 
 #Set bin errors for empty bins if required:
@@ -329,6 +356,9 @@ if not soverb_plot and not fractions:
     total_datahist.Scale(1.0,"width")
     sighist.Scale(1.0,"width")
     if not model_dep: sighist_ggH.Scale(1.0,"width")
+    if not model_dep: sighist_ggHsm.Scale(1.0,"width")
+    if not model_dep: sighist_qqH.Scale(1.0,"width")
+    if not model_dep: sighist_VH.Scale(1.0,"width")
     if not model_dep: sighist_bbH.Scale(1.0,"width")
     bkghist.Scale(1.0,"width")
 
@@ -408,7 +438,7 @@ elif soverb_plot: axish[0].GetYaxis().SetTitle("Events")
 elif fractions: axish[0].GetYaxis().SetTitle("Fraction of total bkg")
 axish[0].GetXaxis().SetTitle(args.x_title)
 if not custom_y_range: axish[0].SetMaximum(extra_pad*bkghist.GetMaximum())
-if not custom_y_range: 
+if not custom_y_range:
   if(log_y): axish[0].SetMinimum(0.0009)
   else: axish[0].SetMinimum(0)
 axish[0].Draw()
@@ -425,16 +455,30 @@ if not fractions:
   bkghist.Draw("e2same")
   #Add signal, either model dependent or independent
   if not args.no_signal:
-    if model_dep is True: 
+    if model_dep is True:
       sighist.SetLineColor(ROOT.kGreen+3)
       sighist.SetLineWidth(3)
       sighist.Draw("histsame")
-    else: 
-      sighist_ggH.SetLineColor(ROOT.kBlue)
+    else:
+      sighist_ggH.SetLineColor(ROOT.kGreen+2)
+      sighist_ggHsm.SetLineColor(ROOT.kGreen+2)
+      sighist_qqH.SetLineColor(ROOT.kBlue)
+      sighist_VH.SetLineColor(ROOT.kRed)
       sighist_bbH.SetLineColor(ROOT.kBlue + 3)
+
       sighist_ggH.SetLineWidth(3)
+      sighist_ggHsm.SetLineWidth(3)
+      sighist_qqH.SetLineWidth(3)
+      sighist_VH.SetLineWidth(3)
       sighist_bbH.SetLineWidth(3)
-      sighist_ggH.Draw("histsame")
+
+      if ggH_scheme == 'powheg':
+        sighist_ggH.Draw("histsame")
+      elif ggH_scheme == 'JHU':
+        sighist_ggHsm.Draw("histsame")
+
+      sighist_qqH.Draw("histsame")
+      sighist_VH.Draw("histsame")
       sighist_bbH.Draw("histsame")
 if not soverb_plot and not fractions: blind_datahist.DrawCopy("e0psame")
 axish[0].Draw("axissame")
@@ -453,20 +497,26 @@ for legi,hists in enumerate(bkg_histos):
 legend.AddEntry(bkghist,"Background uncertainty","f")
 if not fractions:
   if not args.no_signal:
-    if model_dep is True: 
+    if model_dep is True:
         legend.AddEntry(sighist,"h,H,A#rightarrow#tau#tau"%vars(),"l")
-    else: 
-        legend.AddEntry(sighist_ggH,"gg#phi("+mPhi+")#rightarrow#tau#tau"%vars(),"l")
-        legend.AddEntry(sighist_bbH,"bb#phi("+mPhi+")#rightarrow#tau#tau"%vars(),"l")
+    else:
+        if ggH_scheme == 'powheg':
+          legend.AddEntry(sighist_ggH,"ggH#rightarrow#tau#tau","l")
+        elif ggH_scheme == 'JHU':
+          legend.AddEntry(sighist_ggHsm,"ggH#rightarrow#tau#tau","l")
+        legend.AddEntry(sighist_qqH,"qqH#rightarrow#tau#tau","l")
+        legend.AddEntry(sighist_VH,"VH#rightarrow#tau#tau","l")
+        # legend.AddEntry(sighist_ggH,"gg#phi("+mPhi+")#rightarrow#tau#tau"%vars(),"l")
+        # legend.AddEntry(sighist_bbH,"bb#phi("+mPhi+")#rightarrow#tau#tau"%vars(),"l")
   latex = ROOT.TLatex()
   latex.SetNDC()
   latex.SetTextAngle(0)
   latex.SetTextColor(ROOT.kBlack)
   latex.SetTextSize(0.026)
   if not args.no_signal:
-    if model_dep is True: 
+    if model_dep is True:
         latex.DrawLatex(0.70,0.56,"#splitline{m_{h}^{mod+}, }{m_{A}=%(mA)s GeV, tan#beta=%(tb)s}"%vars())
-    else: 
+    else:
         latex.DrawLatex(0.65,0.56,"#sigma(gg#phi)=%(r_ggH)s pb,"%vars())
         latex.DrawLatex(0.65,0.52,"#sigma(bb#phi)=%(r_bbH)s pb"%vars())
 if not args.bkg_fractions: legend.Draw("same")
