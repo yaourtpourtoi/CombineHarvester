@@ -159,9 +159,9 @@ namespace ch {
         else { 
             // taking the largest one
             cb.cp().AddSyst(cb, "CMS_htt_eff_b_$ERA", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"em","et","mt"}, {1,2,3,4,5,6,7,8}, {"TTJ","TTT","TT"}, 1.05));
+                            ({"em","et","mt"}, {1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}, {"TTJ","TTT","TT"}, 1.05));
             cb.cp().AddSyst(cb, "CMS_htt_eff_b_$ERA", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"em","et","mt"}, {1,2,3,4,5,6,7,8}, {"VV","VVT","VVJ"}, 1.015)); // Mainly SingleTop
+                            ({"em","et","mt"}, {1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}, {"VV","VVT","VVJ"}, 1.015)); // Mainly SingleTop
     
         }
         
@@ -209,14 +209,14 @@ namespace ch {
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"W"}).channel({"et"}).bin_id({1,2,3,5,6,7,8}).AddSyst(cb,
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt","tt","em"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt","tt","em"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
 
             cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"et"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"W"}).channel({"et"}).bin_id({2,3,5,6,7,8}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt","em","tt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt","em","tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
         }
         //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt"}).bin_id({1,2,}).AddSyst(cb,
@@ -261,18 +261,18 @@ namespace ch {
             }; // end uncertNames
         } else { uncertNames = { "" }; }
         
-        for (string uncert:uncertNames){
+        for (string uncert:uncertNames){ // changed these to 20+
             
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"et"}).bin_id({10,11,14}).AddSyst(cb,
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"et"}).bin_id({20,21,24}).AddSyst(cb,
                                                                                                 "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
         
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_TTJ})).channel({"et"}).bin_id({13}).AddSyst(cb,
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_TTJ})).channel({"et"}).bin_id({23}).AddSyst(cb,
                                                                                                 "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
             
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt"}).bin_id({10,11,13,14}).AddSyst(cb,
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt"}).bin_id({20,21,23,24}).AddSyst(cb,
                                                                                                 "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
             
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt"}).bin_id({10,11,12}).AddSyst(cb,
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt"}).bin_id({20,21,22}).AddSyst(cb,
                                                                                                 "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
         
             if (!mldijet_2d) {
@@ -283,9 +283,9 @@ namespace ch {
             }
             else {
 
-                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
-                cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,3,5,7,8}).AddSyst(cb, //took bin id 4,6 out
+                cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,3,5,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, //took bin id 4,6 out
                                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
 
                 cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"et"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
@@ -296,7 +296,7 @@ namespace ch {
                 cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
                                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
 
-                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, {"QCD"}})).bin_id({1,2,3,4,5,6,7,8}).channel({"em"}).AddSyst(cb,
+                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, {"QCD"}})).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).channel({"em"}).AddSyst(cb,
                                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
             }
         }
@@ -316,7 +316,7 @@ namespace ch {
         else {
             cb.cp().AddSyst(cb,
                             "CMS_htt_scale_met_$ERA", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"ttbar"}, {1,2,3,4,5,6,7,8}, {all_mc_bkgs}, 1.01));
+                            ({"ttbar"}, {1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}, {all_mc_bkgs}, 1.01));
         }
         
         if (control_region > 0) {
@@ -395,21 +395,38 @@ namespace ch {
         }
         else {
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({1}).AddSyst(cb,
-                                                 "CMS_htt_QCD_ggh_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_ggh_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({2}).AddSyst(cb,
-                                                 "CMS_htt_QCD_qqh_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_qqh_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({3}).AddSyst(cb,
-                                                 "CMS_htt_QCD_ztt_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_ztt_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({4}).AddSyst(cb,
-                                                 "CMS_htt_QCD_zll_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_zll_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({5}).AddSyst(cb,
-                                                 "CMS_htt_QCD_w_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_w_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({6}).AddSyst(cb,
-                                                 "CMS_htt_QCD_qcd_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_qcd_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({7}).AddSyst(cb,
-                                                 "CMS_htt_QCD_misc_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+                                                 "CMS_htt_QCD_misc_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
             cb.cp().process({"QCD"}).channel({"tt"}).bin_id({8}).AddSyst(cb,
-                                                 "CMS_htt_QCD_tt_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.15));
+                                                 "CMS_htt_QCD_tt_lowMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.15));
+
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({11}).AddSyst(cb,
+                                                 "CMS_htt_QCD_ggh_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({12}).AddSyst(cb,
+                                                 "CMS_htt_QCD_qqh_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({13}).AddSyst(cb,
+                                                 "CMS_htt_QCD_ztt_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({14}).AddSyst(cb,
+                                                 "CMS_htt_QCD_zll_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({15}).AddSyst(cb,
+                                                 "CMS_htt_QCD_w_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({16}).AddSyst(cb,
+                                                 "CMS_htt_QCD_qcd_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({17}).AddSyst(cb,
+                                                 "CMS_htt_QCD_misc_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.027));
+            cb.cp().process({"QCD"}).channel({"tt"}).bin_id({18}).AddSyst(cb,
+                                                 "CMS_htt_QCD_tt_highMjj_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.15));
         }
         
         
@@ -421,9 +438,9 @@ namespace ch {
                                                  "QCD_Extrap_Iso_nonIso_$CHANNEL_$ERA", "lnN", SystMap<>::init(1.20));
         }
         else {
-            cb.cp().process({"QCD"}).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+            cb.cp().process({"QCD"}).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                  "QCD_Extrap_Iso_nonIso_$CHANNEL_$ERA", "lnN", SystMap<>::init(1.20));
-            cb.cp().process({"QCD"}).channel({"et"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+            cb.cp().process({"QCD"}).channel({"et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                  "QCD_Extrap_Iso_nonIso_$CHANNEL_$ERA", "lnN", SystMap<>::init(1.20));
         }
         
@@ -441,21 +458,38 @@ namespace ch {
         }
         else {
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({1}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_ggh_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_ggh_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({2}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_qqh_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_qqh_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({3}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_ztt_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_ztt_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({4}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_zll_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_zll_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({5}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_qcd_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_qcd_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({6}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_tt_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_tt_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({7}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_w_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_w_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({8}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_misc_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_misc_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
+
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({11}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_ggh_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({12}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_qqh_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({13}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_ztt_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({14}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_zll_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({15}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_qcd_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({16}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_tt_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({17}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_w_highMjj_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({18}).AddSyst(cb,
+                                                 "WSFUncert_$CHANNEL_misc_highMjj_$ERA", "shape", SystMap<>::init(1.00));
         }
         
         // based on the Ersatz study in Run1
@@ -469,21 +503,38 @@ namespace ch {
         }
         else {
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({1}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_ggh_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_ggh_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({2}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_qqh_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_qqh_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({3}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_ztt_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_ztt_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({4}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_zll_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_zll_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({5}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_qcd_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_qcd_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({6}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_tt_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_tt_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({7}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_w_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_w_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({8}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_misc_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_misc_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
+
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({11}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_ggh_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({12}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_qqh_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({13}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_ztt_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({14}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_zll_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({15}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_qcd_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({16}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_tt_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({17}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_w_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({18}).AddSyst(cb,
+                                                 "WHighMTtoLowmt_misc_highMjj_$ERA", "lnN", SystMap<>::init(1.10));
         }
         
 
@@ -539,7 +590,7 @@ namespace ch {
                                                                     "CMS_htt_jetToTauFake_$ERA", "shape", SystMap<>::init(1.00));
         }
         else {
-            cb.cp().process( {"W"}).channel({"tt","mt","et"}).bin_id({1,2,3,4,5,6,7,8,13,14,15}).AddSyst(cb,
+            cb.cp().process( {"W"}).channel({"tt","mt","et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                                     "CMS_htt_jetToTauFake_$ERA", "shape", SystMap<>::init(1.00));
         }
         
@@ -676,10 +727,15 @@ namespace ch {
             }
             else { 
                 cb.cp().AddSyst(cb, "CMS_qqH_QCDUnc", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"em"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.005)
-                            ({"et"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.005)
-                            ({"mt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.003)
+                            ({"em"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.004)
+                            ({"et"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.004)
+                            ({"mt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.002)
                             ({"tt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.003)
+
+                            ({"em"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.005)
+                            ({"et"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.005)
+                            ({"mt"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.002)
+                            ({"tt"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.003)
 
                             /* ({"em"},{1},qqH_sig_procs, 0.997) */
                             /* ({"et"},{1},qqH_sig_procs, 1.003) */
@@ -707,6 +763,11 @@ namespace ch {
                                 ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.007)
                                 ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.009)
 
+                                ({"em"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.007)
+                                ({"et"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.007)
+                                ({"mt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.007)
+                                ({"tt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.009)
+
 /*                                 ({"em"},{1},ggH_sig_procs, 1.007) */
 /*                                 ({"et"},{1},ggH_sig_procs, 1.007) */
 /*                                 ({"mt"},{1},ggH_sig_procs, 1.007) */
@@ -728,9 +789,14 @@ namespace ch {
                 
                 cb.cp().AddSyst(cb, "CMS_qqH_PDF", "lnN", SystMap<channel, bin_id, process>::init
                                 ({"em"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.005)
-                                ({"et"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.005)
-                                ({"mt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.005)
-                                ({"tt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.005)
+                                ({"et"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.002)
+                                ({"mt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.002)
+                                ({"tt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.003)
+
+                                ({"em"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.005)
+                                ({"et"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.005)
+                                ({"mt"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.005)
+                                ({"tt"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.005)
 
                                 /* ({"em"},{1},qqH_sig_procs, 1.011) */
                                 /* ({"et"},{1},qqH_sig_procs, 1.005) */
@@ -753,10 +819,15 @@ namespace ch {
                 
                 
                 cb.cp().AddSyst(cb, "CMS_ggH_UEPS", "lnN", SystMap<channel, bin_id, process>::init
-                                ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.03)
-                                ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.03)
-                                ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.03)
-                                ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.03)
+                                ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.945)
+                                ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.945)
+                                ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.945)
+                                ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.945)
+
+                                ({"em"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.03)
+                                ({"et"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.03)
+                                ({"mt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.03)
+                                ({"tt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.03)
 
                                 /* ({"em"},{1},ggH_sig_procs, 1.015) */
                                 /* ({"et"},{1},ggH_sig_procs, 1.015) */
@@ -777,10 +848,15 @@ namespace ch {
                 
                 
                 cb.cp().AddSyst(cb, "CMS_qqH_UEPS", "lnN", SystMap<channel, bin_id, process>::init
-                                ({"em"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.03)
-                                ({"et"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.03)
-                                ({"mt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.03)
-                                ({"tt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 1.03)
+                                ({"em"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 0.945)
+                                ({"et"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 0.945)
+                                ({"mt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 0.945)
+                                ({"tt"},{1,2,3,4,5,6,7,8},qqH_sig_procs, 0.945)
+
+                                ({"em"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.03)
+                                ({"et"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.03)
+                                ({"mt"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.03)
+                                ({"tt"},{11,12,13,14,15,16,17,18},qqH_sig_procs, 1.03)
 
                                 /* ({"em"},{1},qqH_sig_procs, 1.015) */
                                 /* ({"et"},{1},qqH_sig_procs, 1.015) */
@@ -925,10 +1001,15 @@ namespace ch {
         }
         else {
             cb.cp().AddSyst(cb, "CMS_ggH_STXSmig01", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.039)
-                            ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.039)
-                            ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.039)
-                            ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.039)
+                            ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.079)
+                            ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.079)
+                            ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.079)
+                            ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.079)
+
+                            ({"em"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.039)
+                            ({"et"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.039)
+                            ({"mt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.039)
+                            ({"tt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.039)
 
                             /* ({"em"},{1},ggH_sig_procs, 0.959) */
                             /* ({"et"},{1},ggH_sig_procs, 0.959) */
@@ -948,10 +1029,15 @@ namespace ch {
             
             
             cb.cp().AddSyst(cb, "CMS_ggH_STXSmig12", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.161)
-                            ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.161)
-                            ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.161)
-                            ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.161)
+                            ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.932)
+                            ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.932)
+                            ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.932)
+                            ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 0.932)
+
+                            ({"em"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.161)
+                            ({"et"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.161)
+                            ({"mt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.161)
+                            ({"tt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.161)
 
                             /* ({"em"},{1},ggH_sig_procs, 1.000) */
                             /* ({"et"},{1},ggH_sig_procs, 1.000) */
@@ -970,10 +1056,15 @@ namespace ch {
                             );
             
             cb.cp().AddSyst(cb, "CMS_ggH_STXSVBF2j", "lnN", SystMap<channel, bin_id, process>::init
-                            ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.200)
-                            ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.200)
-                            ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.200)
-                            ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.200)
+                            ({"em"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.000)
+                            ({"et"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.000)
+                            ({"mt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.000)
+                            ({"tt"},{1,2,3,4,5,6,7,8},ggH_sig_procs, 1.000)
+
+                            ({"em"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.200)
+                            ({"et"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.200)
+                            ({"mt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.200)
+                            ({"tt"},{11,12,13,14,15,16,17,18},ggH_sig_procs, 1.200)
 
                             /* ({"em"},{1},ggH_sig_procs, 1.000) */
                             /* ({"et"},{1},ggH_sig_procs, 1.000) */
@@ -1076,14 +1167,21 @@ namespace ch {
                 /* cb.cp().process({"ZTT", "ZL", "ZJ", "EWKZ"}).AddSyst(cb, */
                 /*                                  "CMS_htt_zmm_norm_extrap_lt_$ERA", "lnN", */
                 /*                                  SystMap<channel, bin_id>::init({"et","mt"},{1,3,4,5,6,7,8}, 1.07)); */
+
+                cb.cp().process({"ZTT", "ZL", "ZJ", "EWKZ", "ZLL"}).AddSyst(cb,
+                                                 "CMS_htt_zmm_norm_extrap_lowMjj_$CHANNEL_$ERA", "lnN",
+                                                 SystMap<channel, bin_id>::init({"em","tt"},{1,2,3,4,5,6,7,8}, 1.07));
+                cb.cp().process({"ZTT", "ZL", "ZJ", "EWKZ"}).AddSyst(cb,
+                                                 "CMS_htt_zmm_norm_extrap_lowMjj_lt_$ERA", "lnN",
+                                                 SystMap<channel, bin_id>::init({"et","mt"},{1,2,3,4,5,6,7,8}, 1.07));
                 
                 // VBF norm and shape for et/mt/tt
-                cb.cp().process( {"ZL","ZTT","ZJ", "EWKZ", "ZLL"}).channel({"em"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
-                                                 "CMS_htt_zmm_norm_extrap_dijet_em_$ERA", "lnN", SystMap<>::init(1.15));
-                cb.cp().process( {"ZL","ZTT","ZJ",  "EWKZ"}).channel({"et","mt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
-                                                 "CMS_htt_zmm_norm_extrap_dijet_lt_$ERA", "lnN", SystMap<>::init(1.15));
-                cb.cp().process( {"ZL","ZTT","ZJ", "EWKZ"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
-                                                 "CMS_htt_zmm_norm_extrap_dijet_tt_$ERA", "lnN", SystMap<>::init(1.10));
+                cb.cp().process( {"ZL","ZTT","ZJ", "EWKZ", "ZLL"}).channel({"em"}).bin_id({11,12,13,14,15,16,17,18}).AddSyst(cb,
+                                                 "CMS_htt_zmm_norm_extrap_highMjj_em_$ERA", "lnN", SystMap<>::init(1.15));
+                cb.cp().process( {"ZL","ZTT","ZJ",  "EWKZ"}).channel({"et","mt"}).bin_id({11,12,13,14,15,16,17,18}).AddSyst(cb,
+                                                 "CMS_htt_zmm_norm_extrap_highMjj_lt_$ERA", "lnN", SystMap<>::init(1.15));
+                cb.cp().process( {"ZL","ZTT","ZJ", "EWKZ"}).channel({"tt"}).bin_id({11,12,13,14,15,16,17,18}).AddSyst(cb,
+                                                 "CMS_htt_zmm_norm_extrap_highMjj_tt_$ERA", "lnN", SystMap<>::init(1.10));
             }
 
 //            // FIXME should have EWKZ in all
@@ -1100,10 +1198,10 @@ namespace ch {
                 cb.cp().process( {"ZL","ZTT","ZJ","ZLL"}).channel({"em"}).bin_id({3,4,5,6}).AddSyst(cb,
                                                 "CMS_htt_zmumuShape_VBF_$ERA", "shape", SystMap<>::init(1.00));
             }
-            else {
-                cb.cp().process( {"ZL","ZTT","ZJ","EWKZ","ZLL"}).channel({"tt","et","mt"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+            else { // still called VBF but is just highMjj (because it's shape syst, combine is gonna look for it)
+                cb.cp().process( {"ZL","ZTT","ZJ","EWKZ","ZLL"}).channel({"tt","et","mt"}).bin_id({11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                 "CMS_htt_zmumuShape_VBF_$ERA", "shape", SystMap<>::init(1.00));
-                cb.cp().process( {"ZL","ZTT","ZJ","ZLL"}).channel({"em"}).bin_id({1,2,3,4,5,6,7,8}).AddSyst(cb,
+                cb.cp().process( {"ZL","ZTT","ZJ","ZLL"}).channel({"em"}).bin_id({11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                 "CMS_htt_zmumuShape_VBF_$ERA", "shape", SystMap<>::init(1.00));
             }
 
