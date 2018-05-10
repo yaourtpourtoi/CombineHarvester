@@ -80,10 +80,10 @@ int main(int argc, char** argv) {
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_IC"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_IC"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_IC"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_IC"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_full"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_full"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_fullfakes"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_full"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("input_folder_ttbar", po::value<string>(&input_folder_ttbar)->default_value("USCMS"))
     ("only_init", po::value<string>(&only_init)->default_value(""))
@@ -153,10 +153,10 @@ int main(int argc, char** argv) {
             {1, "mt_0jet"},
             {2, "mt_boosted"}
         }; 
-        /* cats["em"] = {
+        cats["em"] = {
             {1, "em_0jet"},
             {2, "em_boosted"}
-        }; */
+        };
         
         cats["tt"] = {
             {1, "tt_0jet"},
@@ -165,12 +165,21 @@ int main(int argc, char** argv) {
     }
     else {
         cats["et"] = {
-            {3, "et_ztt"},
-            {4, "et_zll"},
-            {5, "et_qcd"},
-            {6, "et_tt"},
-            {7, "et_w"},
-            {8, "et_misc"} 
+            {1, "et_ggh_lowMjj"},
+            {2, "et_qqh_lowMjj"},
+            {3, "et_ztt_lowMjj"},
+            {4, "et_zll_lowMjj"},
+            {5, "et_qcd_lowMjj"},
+            {6, "et_tt_lowMjj"},
+            {7, "et_w_lowMjj"},
+            {8, "et_misc_lowMjj"},
+
+            {13, "et_ztt_highMjj"},
+            {14, "et_tt_highMjj"},
+            {15, "et_misc_highMjj"},
+            /* {16, "et_w_highMjj"}, */
+            /* {17, "et_zll_highMjj"}, */
+            /* {18, "et_qcd_highMjj"} */
         };
         
         cats["mt"] = {
@@ -181,30 +190,45 @@ int main(int argc, char** argv) {
             {5, "mt_qcd_lowMjj"},
             {6, "mt_tt_lowMjj"},
             {7, "mt_w_lowMjj"},
-            {8, "mt_misc_lowMjj"} ,
+            {8, "mt_misc_lowMjj"},
 
             {13, "mt_ztt_highMjj"},
-            {14, "mt_zll_highMjj"},
-            {15, "mt_qcd_highMjj"},
-            {16, "mt_tt_highMjj"},
-            {17, "mt_w_highMjj"},
-            {18, "mt_misc_highMjj"}
+            {14, "mt_tt_highMjj"},
+            {15, "mt_misc_highMjj"},
+            {16, "mt_fake_highMjj"},
+            /* {15, "mt_w_highMjj"}, */
+            /* {17, "mt_zll_highMjj"}, */
+            /* {18, "mt_qcd_highMjj"}, */
         };
 
-        /*cats["em"] = {
-            {1, "em_ggh"},
-            {2, "em_qqh"},
-            {3, "em_ztt"},
-            {4, "em_zll"},
-            {5, "em_w"},
-            {6, "em_qcd"},
-            {7, "em_misc"}
-        };*/
+        cats["em"] = {
+            {1, "em_ggh_lowMjj"},
+            {2, "em_qqh_lowMjj"},
+            {3, "em_ztt_lowMjj"},
+            {4, "em_zll_lowMjj"},
+            {5, "em_qcd_lowMjj"},
+            {6, "em_tt_lowMjj"},
+            {7, "em_w_lowMjj"},
+            {8, "em_misc_lowMjj"},
+
+            {13, "em_ztt_highMjj"},
+            {14, "em_zll_highMjj"},
+            {15, "em_qcd_highMjj"},
+            {16, "em_tt_highMjj"},
+            {17, "em_w_highMjj"},
+            {18, "em_misc_highMjj"}
+        };
         
         cats["tt"] = {
-            {3, "tt_ztt"},
-            {4, "tt_qcd"},
-            {5, "tt_misc"}
+            {1, "tt_ggh_lowMjj"},
+            {2, "tt_qqh_lowMjj"},
+            {3, "tt_ztt_lowMjj"},
+            {4, "tt_qcd_lowMjj"},
+            {5, "tt_misc_lowMjj"},
+
+            {13, "tt_ztt_highMjj"},
+            {14, "tt_qcd_highMjj"},
+            {15, "tt_misc_highMjj"}
         };
     }
     
@@ -220,10 +244,10 @@ int main(int argc, char** argv) {
     map<string,Categories> cats_cp;
     
     if (!mldijet_2d) {
-        /* cats_cp["em"] = {
+        cats_cp["em"] = {
             {3, "em_dijet_lowboost"},
             {4, "em_dijet_boosted"} 
-        }; */
+        };
         
         cats_cp["et"] = {
             {3, "et_dijet_lowboost"},
@@ -241,13 +265,14 @@ int main(int argc, char** argv) {
         }; 
     }
     else {
-        /*cats_cp["em"] = {
-            {8, "em_qqh_dijet"},
-        }; */
+        cats_cp["em"] = {
+            {11, "em_ggh_highMjj"},
+            {12, "em_qqh_highMjj"},
+        };
         
         cats_cp["et"] = {
-            {1, "et_ggh"},
-            {2, "et_qqh"},
+            {11, "et_ggh_highMjj"},
+            {12, "et_qqh_highMjj"},
         };
         
         cats_cp["mt"] = {
@@ -256,8 +281,8 @@ int main(int argc, char** argv) {
         };    
         
         cats_cp["tt"] = {
-            {1, "tt_ggh"},
-            {2, "tt_qqh"},
+            {11, "tt_ggh_highMjj"},
+            {12, "tt_qqh_highMjj"},
         };
     }
 
@@ -364,10 +389,16 @@ int main(int argc, char** argv) {
        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {{1, "mt_0jet"},{2, "mt_boosted"},{3, "mt_dijet_lowboost"},{4, "mt_dijet_boosted"}}, false);
         }
         else {
-       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {{1, "et_ggh"},{2, "et_qqh"},{3, "et_ztt"},{4, "et_zll"},{5, "et_qcd"}, {6, "et_tt"}, {7, "et_w"}, {8, "et_misc"}}, false);
+       cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {
+            {1, "et_ggh_lowMjj"},{2, "et_qqh_lowMjj"},{3, "et_ztt_lowMjj"},{4, "et_zll_lowMjj"},{5, "et_qcd_lowMjj"}, {6, "et_tt_lowMjj"}, {7, "et_w_lowMjj"}, {8, "et_misc_lowMjj"},
+            {11, "et_ggh_highMjj"},{12, "et_qqh_highMjj"},{13, "et_ztt_highMjj"},{14, "et_zll_highMjj"},{15, "et_qcd_highMjj"}, {16, "et_tt_highMjj"}, {17, "et_w_highMjj"}, {18, "et_misc_highMjj"}
+            }, false);
        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {
+            /* {1, "mt_ggh_lowMjj"},{2, "mt_qqh_lowMjj"},{3, "mt_ztt_lowMjj"},{4, "mt_zll_lowMjj"},{5, "mt_qcd_lowMjj"}, {6, "mt_tt_lowMjj"}, {7, "mt_w_lowMjj"}, {8, "mt_misc_lowMjj"}, */
+            /* {11, "mt_ggh_highMjj"},{12, "mt_qqh_highMjj"},{13, "mt_ztt_highMjj"},{14, "mt_zll_highMjj"},{15, "mt_qcd_highMjj"}, {16, "mt_tt_highMjj"}, {17, "mt_w_highMjj"}, {18, "mt_misc_highMjj"} */
+
             {1, "mt_ggh_lowMjj"},{2, "mt_qqh_lowMjj"},{3, "mt_ztt_lowMjj"},{4, "mt_zll_lowMjj"},{5, "mt_qcd_lowMjj"}, {6, "mt_tt_lowMjj"}, {7, "mt_w_lowMjj"}, {8, "mt_misc_lowMjj"},
-            {11, "mt_ggh_highMjj"},{12, "mt_qqh_highMjj"},{13, "mt_ztt_highMjj"},{14, "mt_zll_highMjj"},{15, "mt_qcd_highMjj"}, {16, "mt_tt_highMjj"}, {17, "mt_w_highMjj"}, {18, "mt_misc_highMjj"}
+            {11, "mt_ggh_highMjj"},{12, "mt_qqh_highMjj"},{13, "mt_ztt_highMjj"},{14, "mt_tt_highMjj"},{15, "mt_misc_highMjj"}, {16, "mt_fake_highMjj"}
             }, false);
         }
     
@@ -702,7 +733,9 @@ int main(int argc, char** argv) {
 
     // to look at dijet cutbased category vs MVA
     // writer.WriteCards("htt_cmb_dijet_13TeV", cb.cp().bin_id({3,4}));
-    writer.WriteCards("htt_cmb_ggh_qqh_dijet_13TeV", cb.cp().bin_id({1,2}));
+    // writer.WriteCards("htt_cmb_ggh_qqh_dijet_13TeV", cb.cp().bin_id({1,2}));
+    writer.WriteCards("htt_cmb_lowMjj_13TeV", cb.cp().bin_id({1,2,3,4,5,6,7,8}));
+    writer.WriteCards("htt_cmb_highMjj_13TeV", cb.cp().bin_id({11,12,13,14,15,16,17,18}));
     
     //
     //
