@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import sys
 import ROOT
-import math
+import numpy as np
 from functools import partial
 import CombineHarvester.CombineTools.plotting as plot
 import json
 import argparse
+from scipy.stats import chi2
 import os.path
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -191,7 +192,7 @@ print '--------------------------------------'
 
 fixed_name = args.POI
 if args.translate is not None:
-    with open(args.translate) as jsonfile:    
+    with open(args.translate) as jsonfile:
         name_translate = json.load(jsonfile)
     if args.POI in name_translate:
         fixed_name = name_translate[args.POI]
@@ -284,8 +285,7 @@ main_scan['func'].Draw('same')
 main_scan['graph'].Draw('PLSAME')
 
 if args.POI == 'alpha':
-  import scipy.stats
-  significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].Eval(1),1),1))
+  significance = np.sqrt(chi2.ppf(chi2.cdf(main_scan['func'].Eval(1),1),1))
   latex = ROOT.TLatex()
   latex.SetNDC()
   latex.SetTextSize(0.04)
@@ -337,7 +337,7 @@ if args.breakdown is None and args.envelope is False:
             print 'here'
             textfit = '#color[%s]{%s < %.3f (%i%% CL)}' % (other_scans_opts[i][2], fixed_name, other['val'][1], int(args.upper_cl * 100))
         pt.AddText(textfit)
-    
+
 breakdown_json = {}
 if args.breakdown is not None:
     pt.SetX1(0.50)
@@ -360,12 +360,12 @@ if args.breakdown is not None:
                 print 'ERROR SUBTRACTION IS NEGATIVE FOR %s HI' % br
                 hi = 0.
             else:
-                hi = math.sqrt(v_hi[i]*v_hi[i] - v_hi[i+1]*v_hi[i+1])
+                hi = np.sqrt(v_hi[i]*v_hi[i] - v_hi[i+1]*v_hi[i+1])
             if (abs(v_lo[i+1]) > abs(v_lo[i])):
                 print 'ERROR SUBTRACTION IS NEGATIVE FOR %s LO' % br
                 lo = 0.
             else:
-                lo = math.sqrt(v_lo[i]*v_lo[i] - v_lo[i+1]*v_lo[i+1])
+                lo = np.sqrt(v_lo[i]*v_lo[i] - v_lo[i+1]*v_lo[i+1])
         else:
             hi = v_hi[i]
             lo = v_lo[i]
@@ -373,16 +373,16 @@ if args.breakdown is not None:
         breakdown_json[br+"Lo"] = abs(lo) * -1.
         textfit += '{}^{#plus %.3f}_{#minus %.3f}(%s)' % (hi, abs(lo), br)
     pt.AddText(textfit)
-    # hi_1 = math.sqrt(val_nom[1]*val_nom[1] - other_scans[0]['val'][1]*other_scans[0]['val'][1])
-    # lo_1 = math.sqrt(val_nom[2]*val_nom[2] - other_scans[0]['val'][2]*other_scans[0]['val'][2])
+    # hi_1 = np.sqrt(val_nom[1]*val_nom[1] - other_scans[0]['val'][1]*other_scans[0]['val'][1])
+    # lo_1 = np.sqrt(val_nom[2]*val_nom[2] - other_scans[0]['val'][2]*other_scans[0]['val'][2])
     # textfit = '%s = %.3f{}^{#plus %.3f}_{#minus %.3f}(%s)' % (fixed_name, val_nom[0], hi_1, lo_1, breakdown[0])
-    # hi_2 = math.sqrt(other_scans[0]['val'][1]*other_scans[0]['val'][1] - other_scans[1]['val'][1]*other_scans[1]['val'][1])
-    # lo_2 = math.sqrt(other_scans[0]['val'][2]*other_scans[0]['val'][2] - other_scans[1]['val'][2]*other_scans[1]['val'][2])
-    # hi_3 = math.sqrt(other_scans[1]['val'][1]*other_scans[1]['val'][1] - other_scans[2]['val'][1]*other_scans[2]['val'][1])
-    # lo_3 = math.sqrt(other_scans[1]['val'][2]*other_scans[1]['val'][2] - other_scans[2]['val'][2]*other_scans[2]['val'][2])
+    # hi_2 = np.sqrt(other_scans[0]['val'][1]*other_scans[0]['val'][1] - other_scans[1]['val'][1]*other_scans[1]['val'][1])
+    # lo_2 = np.sqrt(other_scans[0]['val'][2]*other_scans[0]['val'][2] - other_scans[1]['val'][2]*other_scans[1]['val'][2])
+    # hi_3 = np.sqrt(other_scans[1]['val'][1]*other_scans[1]['val'][1] - other_scans[2]['val'][1]*other_scans[2]['val'][1])
+    # lo_3 = np.sqrt(other_scans[1]['val'][2]*other_scans[1]['val'][2] - other_scans[2]['val'][2]*other_scans[2]['val'][2])
     # textfit += '{}^{#plus %.3f}_{#minus %.3f}(%s)' % (hi_3, lo_3, breakdown[2])
-    # hi_4 = math.sqrt(other_scans[2]['val'][1]*other_scans[2]['val'][1])
-    # lo_4 = math.sqrt(other_scans[2]['val'][2]*other_scans[2]['val'][2])
+    # hi_4 = np.sqrt(other_scans[2]['val'][1]*other_scans[2]['val'][1])
+    # lo_4 = np.sqrt(other_scans[2]['val'][2]*other_scans[2]['val'][2])
     # textfit += '{}^{#plus %.3f}_{#minus %.3f}(%s)' % (hi_4, lo_4, breakdown[3])
 
 
@@ -411,8 +411,8 @@ if args.signif:
 
 # pt.AddText(textfit)
 # if len(args) >= 4:
-#     syst_hi = math.sqrt(val_nom[1]*val_nom[1] - syst_scan['val'][1] * syst_scan['val'][1])
-#     syst_lo = math.sqrt(val_nom[2]*val_nom[2] - syst_scan['val'][2] * syst_scan['val'][2])
+#     syst_hi = np.sqrt(val_nom[1]*val_nom[1] - syst_scan['val'][1] * syst_scan['val'][1])
+#     syst_lo = np.sqrt(val_nom[2]*val_nom[2] - syst_scan['val'][2] * syst_scan['val'][2])
 #     textfit = '%s = %.3f{}^{#plus %.3f}_{#minus %.3f} (stat.){}^{#plus %.3f}_{#minus %.3f} (syst.)' % (fixed_name, syst_scan['val'][0], abs(syst_scan['val'][1]), abs(syst_scan['val'][2]), syst_hi, syst_lo)
 #     pt.AddText(textfit)
 pt.SetTextAlign(11)
@@ -422,7 +422,7 @@ if not args.no_numbers: pt.Draw()
 
 if args.json is not None:
     if os.path.isfile(args.json):
-        with open(args.json) as jsonfile:    
+        with open(args.json) as jsonfile:
             js = json.load(jsonfile)
     else:
         js = {}

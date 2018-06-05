@@ -35,6 +35,7 @@ namespace ch {
         
         std::vector<std::string> sig_procs = {"ggH_htt","qqH_htt","WH_htt","ZH_htt","ggHsm_htt", "ggHps_htt", "ggHmm_htt","qqHsm_htt", "qqHps_htt", "qqHmm_htt"};
         std::vector<std::string> sig_procs_no_ggH_htt = {"qqH_htt","WH_htt","ZH_htt","ggHsm_htt", "ggHps_htt", "ggHmm_htt","qqHsm_htt", "qqHps_htt", "qqHmm_htt"};
+        std::vector<std::string> sig_procs_no_ggHps_htt_no_qqHmm_htt_no_ggHsm_htt = {"ggH_htt","qqH_htt","WH_htt","ZH_htt", "ggHmm_htt","qqHsm_htt", "qqHps_htt"};
         std::vector<std::string> ggH_sig_procs = {"ggH_htt","ggHsm_htt", "ggHps_htt", "ggHmm_htt"};
         std::vector<std::string> qqH_sig_procs = {"qqH_htt""qqHsm_htt", "qqHps_htt", "qqHmm_htt"};
         
@@ -50,6 +51,14 @@ namespace ch {
         std::vector<std::string> all_mc_bkgs_no_W = {
             "ZL","ZLL","ZJ","ZTT","TTJ","TTT","TT",
             "VV","VVT","VVJ",
+            "ggH_hww125","qqH_hww125","EWKZ"};
+        std::vector<std::string> all_mc_bkgs_no_W_ZL = {
+            "ZLL","ZJ","ZTT","TTJ","TTT","TT",
+            "VV","VVT","VVJ",
+            "ggH_hww125","qqH_hww125","EWKZ"};
+        std::vector<std::string> all_mc_bkgs_no_W_ZL_ZJ_TTJ_VVT = {
+            "ZLL","ZTT","TTT","TT",
+            "VV","VVJ",
             "ggH_hww125","qqH_hww125","EWKZ"};
         std::vector<std::string> all_mc_bkgs_no_W_ZJ = {
             "ZL","ZLL","ZTT","TTJ","TTT","TT",
@@ -209,32 +218,49 @@ namespace ch {
             cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"et","mt","em","tt"}).bin_id({1,2,3,4}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
         }
-        else { // taking the ones out which give zero W
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"et","tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
+        else { 
+            // full standard CMS_scale_met_clustered_
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em","et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"W"}).channel({"et"}).bin_id({1,2,3,5,6,7,8,11,12,13,15,16,17,18}).AddSyst(cb,
+            // taking the ones out which give zero W
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"W"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,12,13,14,15,16,17,18}).AddSyst(cb,
+            cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,3,4,5,7,8,11,12,13,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"mt","em"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
+            /* cb.cp().process({"W"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,12,13,14,15,16,17,18}).AddSyst(cb, */
+            /*                                           "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00)); */
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_TTJ})).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
+                                                      "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
+            cb.cp().process({"TTJ"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_clustered_$ERA", "shape", SystMap<>::init(1.00));
 
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W_ZJ})).channel({"et","tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
+
+            // full standard CMS_scale_met_unclustered_
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em","et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"W"}).channel({"et"}).bin_id({2,3,5,6,7,8,12,13,15,16,17,18}).AddSyst(cb,
+            cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,3,4,5,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"ZJ"}).channel({"et"}).bin_id({1,2,3,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
+
+            /* cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W_ZJ})).channel({"et","tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, */
+            /*                                           "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00)); */
+            /* cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, */
+            /*                                           "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00)); */
+            /* cb.cp().process({"W"}).channel({"et"}).bin_id({2,3,5,6,7,8,12,13,15,16,17,18}).AddSyst(cb, */
+            /*                                           "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00)); */
+            /* cb.cp().process({"ZJ"}).channel({"et"}).bin_id({1,2,3,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, */
+            /*                                           "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00)); */
+            /* cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, */
+            /*                                           "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00)); */
+
+            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W_ZJ})).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
+            cb.cp().process({"W"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"W"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,12,13,14,15,16,17,18}).AddSyst(cb,
+            cb.cp().process({"ZJ"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
                                                       "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"ZJ"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,13,14,15,16,17,18}).AddSyst(cb,
-                                                      "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
-                                                      "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
+
         }
         //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt"}).bin_id({1,2,}).AddSyst(cb,
         //                                          "CMS_scale_met_unclustered_$ERA", "shape", SystMap<>::init(1.00));
@@ -300,26 +326,34 @@ namespace ch {
             }
             else {
 
-                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,15,16,17,18}).AddSyst(cb,
+                // full original CMS_scale_j
+                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em","et","mt","tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,15,16,17,18}).AddSyst(cb,
                                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
 
-                cb.cp().process(JoinStr({sig_procs_no_ggH_htt, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({14}).AddSyst(cb,
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
+                /* cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,15,16,17,18}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
 
-                cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,4,3,5,7,8,11,12,13,15,17,18}).AddSyst(cb, //took bin id 4,6,16 out
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
+                /* cb.cp().process(JoinStr({sig_procs_no_ggH_htt, all_mc_bkgs_no_W})).channel({"mt"}).bin_id({14}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
 
-                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
-                cb.cp().process({"W"}).channel({"et"}).bin_id({1,2,4,3,5,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, //took bin id 6 out
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
+                /* cb.cp().process({"W"}).channel({"mt"}).bin_id({1,2,4,3,5,7,8,11,12,13,15,17,18}).AddSyst(cb, //took bin id 4,6,16 out */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
 
-                cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W_ZJ})).channel({"tt"}).bin_id({1,2,3,4,5,11,12,13,14,15}).AddSyst(cb,
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
-                cb.cp().process({"W"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb,
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
-                cb.cp().process({"ZJ"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,12,13,14,15,16,17,18}).AddSyst(cb,
-                                               "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
+                /* cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W})).channel({"et"}).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
+                /* cb.cp().process({"W"}).channel({"et"}).bin_id({1,2,4,3,5,7,8,11,12,13,14,15,16,17,18}).AddSyst(cb, //took bin id 6 out */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
+
+                /* cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W_ZL})).channel({"tt"}).bin_id({1,2,3,4,5,11,12,13,14,15}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
+                /* cb.cp().process(JoinStr({sig_procs, all_mc_bkgs_no_W_ZJ})).channel({"tt"}).bin_id({1,2,3,4,5,11,12,13,14,15}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
+                /* cb.cp().process({"ggHps_htt","qqHmm_htt","ggHsm_htt"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,12,13,14,15,16,17,18}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
+                /* cb.cp().process({"W"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,13,14,15,16,17,18}).AddSyst(cb, */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
+                /* cb.cp().process({"ZL"}).channel({"tt"}).bin_id({1,2,3,4,5,6,7,8,12,13,14,15,16,17,18}).AddSyst(cb, //remove 11 */
+                /*                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00)); */
 
                 cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, {"QCD"}})).bin_id({1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18}).channel({"em"}).AddSyst(cb,
                                                "CMS_scale_j"+uncert+"_$ERA", "shape", SystMap<>::init(1.00));
@@ -479,12 +513,10 @@ namespace ch {
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({4}).AddSyst(cb,
                                                  "WSFUncert_$CHANNEL_zll_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({5}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_qcd_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
+                                                 "WSFUncert_$CHANNEL_fake_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({6}).AddSyst(cb,
                                                  "WSFUncert_$CHANNEL_tt_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({7}).AddSyst(cb,
-                                                 "WSFUncert_$CHANNEL_w_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
-            cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({8}).AddSyst(cb,
                                                  "WSFUncert_$CHANNEL_misc_lowMjj_$ERA", "shape", SystMap<>::init(1.00));
 
             cb.cp().process({"QCD"}).channel({"et","mt"}).bin_id({11}).AddSyst(cb,
@@ -527,12 +559,12 @@ namespace ch {
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({4}).AddSyst(cb,
                                                  "WHighMTtoLowmt_zll_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({5}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_qcd_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
+                                                 "WHighMTtoLowmt_fake_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({6}).AddSyst(cb,
                                                  "WHighMTtoLowmt_tt_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
+            /* cb.cp().process({"W"}).channel({"et","mt"}).bin_id({7}).AddSyst(cb, */
+            /*                                      "WHighMTtoLowmt_w_lowMjj_$ERA", "lnN", SystMap<>::init(1.10)); */
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({7}).AddSyst(cb,
-                                                 "WHighMTtoLowmt_w_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
-            cb.cp().process({"W"}).channel({"et","mt"}).bin_id({8}).AddSyst(cb,
                                                  "WHighMTtoLowmt_misc_lowMjj_$ERA", "lnN", SystMap<>::init(1.10));
 
             cb.cp().process({"W"}).channel({"et","mt"}).bin_id({11}).AddSyst(cb,

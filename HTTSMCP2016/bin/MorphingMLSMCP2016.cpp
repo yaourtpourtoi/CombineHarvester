@@ -80,10 +80,10 @@ int main(int argc, char** argv) {
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_full"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_full"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_fullfakes"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_full"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP/MVA_Jun4"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP/MVA_Jun4"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP/MVA_Jun4"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP/MVA_Jun4"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("input_folder_ttbar", po::value<string>(&input_folder_ttbar)->default_value("USCMS"))
     ("only_init", po::value<string>(&only_init)->default_value(""))
@@ -120,6 +120,7 @@ int main(int argc, char** argv) {
     
     
     /* VString chns = {"mt","et","tt","em"}; */
+    /* VString chns = {"mt","et","tt"}; */
     VString chns = {"mt","et","tt"};
     if (mm_fit) chns.push_back("mm");
     if (ttbar_fit) chns.push_back("ttbar");
@@ -165,32 +166,49 @@ int main(int argc, char** argv) {
     }
     else {
         cats["et"] = {
+            /* {1, "et_ggh_lowMjj"}, */
+            /* {2, "et_qqh_lowMjj"}, */
+            /* {3, "et_ztt_lowMjj"}, */
+            /* {4, "et_zll_lowMjj"}, */
+            /* {5, "et_qcd_lowMjj"}, */
+            /* {6, "et_tt_lowMjj"}, */
+            /* {7, "et_w_lowMjj"}, */
+            /* {8, "et_misc_lowMjj"}, */
+
             {1, "et_ggh_lowMjj"},
             {2, "et_qqh_lowMjj"},
             {3, "et_ztt_lowMjj"},
             {4, "et_zll_lowMjj"},
-            {5, "et_qcd_lowMjj"},
+            {5, "et_fake_lowMjj"},
             {6, "et_tt_lowMjj"},
-            {7, "et_w_lowMjj"},
-            {8, "et_misc_lowMjj"},
+            {7, "et_misc_lowMjj"},
 
             {13, "et_ztt_highMjj"},
             {14, "et_tt_highMjj"},
             {15, "et_misc_highMjj"},
+            {16, "et_fake_highMjj"},
             /* {16, "et_w_highMjj"}, */
             /* {17, "et_zll_highMjj"}, */
             /* {18, "et_qcd_highMjj"} */
         };
         
         cats["mt"] = {
-            {1, "mt_ggh_lowMjj"},
+            /*{1, "mt_ggh_lowMjj"},
             {2, "mt_qqh_lowMjj"},
             {3, "mt_ztt_lowMjj"},
             {4, "mt_zll_lowMjj"},
             {5, "mt_qcd_lowMjj"},
             {6, "mt_tt_lowMjj"},
             {7, "mt_w_lowMjj"},
-            {8, "mt_misc_lowMjj"},
+            {8, "mt_misc_lowMjj"},*/
+
+            {1, "mt_ggh_lowMjj"},
+            {2, "mt_qqh_lowMjj"},
+            {3, "mt_ztt_lowMjj"},
+            {4, "mt_zll_lowMjj"},
+            {5, "mt_fake_lowMjj"},
+            {6, "mt_tt_lowMjj"},
+            {7, "mt_misc_lowMjj"},
 
             {13, "mt_ztt_highMjj"},
             {14, "mt_tt_highMjj"},
@@ -390,14 +408,23 @@ int main(int argc, char** argv) {
         }
         else {
        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"et"}, {"W"}, {
-            {1, "et_ggh_lowMjj"},{2, "et_qqh_lowMjj"},{3, "et_ztt_lowMjj"},{4, "et_zll_lowMjj"},{5, "et_qcd_lowMjj"}, {6, "et_tt_lowMjj"}, {7, "et_w_lowMjj"}, {8, "et_misc_lowMjj"},
-            {11, "et_ggh_highMjj"},{12, "et_qqh_highMjj"},{13, "et_ztt_highMjj"},{14, "et_zll_highMjj"},{15, "et_qcd_highMjj"}, {16, "et_tt_highMjj"}, {17, "et_w_highMjj"}, {18, "et_misc_highMjj"}
+            /* {1, "et_ggh_lowMjj"},{2, "et_qqh_lowMjj"},{3, "et_ztt_lowMjj"},{4, "et_zll_lowMjj"},{5, "et_qcd_lowMjj"}, {6, "et_tt_lowMjj"}, {7, "et_w_lowMjj"}, {8, "et_misc_lowMjj"}, */
+            /* {11, "et_ggh_highMjj"},{12, "et_qqh_highMjj"},{13, "et_ztt_highMjj"},{14, "et_zll_highMjj"},{15, "et_qcd_highMjj"}, {16, "et_tt_highMjj"}, {17, "et_w_highMjj"}, {18, "et_misc_highMjj"} */
+
+            /* {1, "et_ggh_lowMjj"},{2, "et_qqh_lowMjj"},{3, "et_ztt_lowMjj"},{4, "et_zll_lowMjj"},{5, "et_qcd_lowMjj"}, {6, "et_tt_lowMjj"}, {7, "et_w_lowMjj"}, {8, "et_misc_lowMjj"}, */
+            /* {11, "et_ggh_highMjj"},{12, "et_qqh_highMjj"},{13, "et_ztt_highMjj"},{14, "et_tt_highMjj"},{15, "et_misc_highMjj"}, {16, "et_fake_highMjj"} */
+
+            {1, "et_ggh_lowMjj"},{2, "et_qqh_lowMjj"},{3, "et_ztt_lowMjj"},{4, "et_zll_lowMjj"},{5, "et_fake_lowMjj"}, {6, "et_tt_lowMjj"}, {7, "et_misc_lowMjj"},
+            {11, "et_ggh_highMjj"},{12, "et_qqh_highMjj"},{13, "et_ztt_highMjj"},{14, "et_tt_highMjj"},{15, "et_misc_highMjj"}, {16, "et_fake_highMjj"}
             }, false);
        cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {"mt"}, {"W"}, {
             /* {1, "mt_ggh_lowMjj"},{2, "mt_qqh_lowMjj"},{3, "mt_ztt_lowMjj"},{4, "mt_zll_lowMjj"},{5, "mt_qcd_lowMjj"}, {6, "mt_tt_lowMjj"}, {7, "mt_w_lowMjj"}, {8, "mt_misc_lowMjj"}, */
             /* {11, "mt_ggh_highMjj"},{12, "mt_qqh_highMjj"},{13, "mt_ztt_highMjj"},{14, "mt_zll_highMjj"},{15, "mt_qcd_highMjj"}, {16, "mt_tt_highMjj"}, {17, "mt_w_highMjj"}, {18, "mt_misc_highMjj"} */
 
-            {1, "mt_ggh_lowMjj"},{2, "mt_qqh_lowMjj"},{3, "mt_ztt_lowMjj"},{4, "mt_zll_lowMjj"},{5, "mt_qcd_lowMjj"}, {6, "mt_tt_lowMjj"}, {7, "mt_w_lowMjj"}, {8, "mt_misc_lowMjj"},
+            /* {1, "mt_ggh_lowMjj"},{2, "mt_qqh_lowMjj"},{3, "mt_ztt_lowMjj"},{4, "mt_zll_lowMjj"},{5, "mt_qcd_lowMjj"}, {6, "mt_tt_lowMjj"}, {7, "mt_w_lowMjj"}, {8, "mt_misc_lowMjj"}, */
+            /* {11, "mt_ggh_highMjj"},{12, "mt_qqh_highMjj"},{13, "mt_ztt_highMjj"},{14, "mt_tt_highMjj"},{15, "mt_misc_highMjj"}, {16, "mt_fake_highMjj"} */
+
+            {1, "mt_ggh_lowMjj"},{2, "mt_qqh_lowMjj"},{3, "mt_ztt_lowMjj"},{4, "mt_zll_lowMjj"},{5, "mt_fake_lowMjj"}, {6, "mt_tt_lowMjj"}, {7, "mt_misc_lowMjj"},
             {11, "mt_ggh_highMjj"},{12, "mt_qqh_highMjj"},{13, "mt_ztt_highMjj"},{14, "mt_tt_highMjj"},{15, "mt_misc_highMjj"}, {16, "mt_fake_highMjj"}
             }, false);
         }
@@ -670,6 +697,15 @@ int main(int argc, char** argv) {
         writer.WriteCards("htt_"+chn+"_7_13TeV", cb.cp().channel({chn}).bin_id({7}));
         writer.WriteCards("htt_"+chn+"_8_13TeV", cb.cp().channel({chn}).bin_id({8}));
         
+        writer.WriteCards("htt_"+chn+"_11_13TeV", cb.cp().channel({chn}).bin_id({11}));
+        writer.WriteCards("htt_"+chn+"_12_13TeV", cb.cp().channel({chn}).bin_id({12}));
+        writer.WriteCards("htt_"+chn+"_13_13TeV", cb.cp().channel({chn}).bin_id({13}));
+        writer.WriteCards("htt_"+chn+"_14_13TeV", cb.cp().channel({chn}).bin_id({14}));
+        writer.WriteCards("htt_"+chn+"_15_13TeV", cb.cp().channel({chn}).bin_id({15}));
+        writer.WriteCards("htt_"+chn+"_16_13TeV", cb.cp().channel({chn}).bin_id({16}));
+        writer.WriteCards("htt_"+chn+"_17_13TeV", cb.cp().channel({chn}).bin_id({17}));
+        writer.WriteCards("htt_"+chn+"_18_13TeV", cb.cp().channel({chn}).bin_id({18}));
+        
         
         for (auto mmm : {"125"}){
             
@@ -736,6 +772,8 @@ int main(int argc, char** argv) {
     // writer.WriteCards("htt_cmb_ggh_qqh_dijet_13TeV", cb.cp().bin_id({1,2}));
     writer.WriteCards("htt_cmb_lowMjj_13TeV", cb.cp().bin_id({1,2,3,4,5,6,7,8}));
     writer.WriteCards("htt_cmb_highMjj_13TeV", cb.cp().bin_id({11,12,13,14,15,16,17,18}));
+    writer.WriteCards("htt_cmb_ggh_13TeV", cb.cp().bin_id({11}));
+    writer.WriteCards("htt_cmb_qqh_13TeV", cb.cp().bin_id({12}));
     
     //
     //
