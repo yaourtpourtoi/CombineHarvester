@@ -185,9 +185,9 @@ def parse_arguments():
                     help='Fix x axis maximum')
     parser.add_argument('--custom_y_range', action='store_true', 
                     default=False, help='Fix y axis range')
-    parser.add_argument('--y_axis_min', default=0.001, 
+    parser.add_argument('--y_axis_min', action='store', default=0.001, 
                     help='Fix y axis minimum')
-    parser.add_argument('--y_axis_max', default=100.0,
+    parser.add_argument('--y_axis_max', action='store', default=100.0,
                     help='Fix y axis maximum')
     parser.add_argument('--log_y', action='store_true',
                     help='Use log for y axis')
@@ -512,7 +512,8 @@ def main(args):
     total_datahist.SetMarkerStyle(20)
     blind_datahist.SetMarkerStyle(20)
     blind_datahist.SetLineColor(1)
-    
+
+
     #Blinding by hand using requested range, set to 100-150 by default
     # for 0jet category
     if int(bin_number) == 1 and manual_blind or auto_blind_check_only:
@@ -521,7 +522,7 @@ def main(args):
             high_edge = low_edge+total_datahist.GetBinWidth(i+1)
             if ((low_edge > float(x_blind_min) and low_edge < float(x_blind_max)) 
                     or (high_edge > float(x_blind_min) and high_edge<float(x_blind_max))):
-                blind_datahist.SetBinContent(i+1,-0.1)
+                blind_datahist.SetBinContent(i+1, -0.1)
                 blind_datahist.SetBinError(i+1,0)
     # for boosted category:
     if int(bin_number) == 2 and manual_blind or auto_blind_check_only:
@@ -544,10 +545,9 @@ def main(args):
             # always using 12 bins for sjdphi so blind 12 bins when i (x bin) is y_blind_ind times 12 
             x_blind_ind = [int(x) for x in np.arange(12*y_blind_ind[0],12*y_blind_ind[-1]+12,1)]
             if i in x_blind_ind:
-                blind_datahist.SetBinContent(i+1,-0.1)
+                blind_datahist.SetBinContent(i+1, -0.1)
                 blind_datahist.SetBinError(i+1,0)
 
-    
     #Set bin errors for empty bins if required:
     if empty_bin_error:
         for i in range (1,blind_datahist.GetNbinsX()+1):
@@ -572,8 +572,8 @@ def main(args):
     #         print blind_datahist.GetBinErrorUp(i)
 
     #Normalise by bin width 
-    blind_datahist.Scale(1.0,"width")
-    total_datahist.Scale(1.0,"width")
+    # blind_datahist.Scale(1.0,"width")
+    # total_datahist.Scale(1.0,"width")
     for shist in sighists:
         shist.Scale(1.0,"width")
     if int(bin_number) == 1:
@@ -584,6 +584,43 @@ def main(args):
         sbhist.Scale(1.0,"width")
         sbhist_PS.Scale(1.0,"width")
         bkghist.Scale(1.0,"width")
+
+    # created blinded graph here
+    proper_errs_dict = {
+            0: [0, 1.8410], 
+            1: [1-0.1728, 3.2995-1],
+            2: [2-0.7082, 4.6379-2],
+            3: [3-1.3673, 5.9182-3],
+            4: [4-2.0857, 7.1628-4],
+            5: [5-2.8403, 8.3825-5],
+            6: [6-3.6201, 9.5836-6],
+            7: [7-4.4185, 10.7703-7],
+            8: [8-5.2316, 11.9451-8],
+            9: [9-6.0565, 13.1102-9],
+            }
+    data_x = np.array([blind_datahist.GetBinCenter(x) for x in range(1,blind_datahist.GetNbinsX()+1)])
+    data_y_noscale = np.array([blind_datahist.GetBinContent(x) for x in range(1,blind_datahist.GetNbinsX()+1)])
+    print data_y_noscale
+    data_y = np.array([blind_datahist.GetBinContent(x)*1./blind_datahist.GetBinWidth(x) for x in range(1,blind_datahist.GetNbinsX()+1)])
+    err_y_lo = np.array(
+            [proper_errs_dict[round(x)][0]/blind_datahist.GetBinWidth(w) if x<10 and x>=0
+                else 0.0 if x<0
+                else np.sqrt(round(x))/blind_datahist.GetBinWidth(w) 
+                for x,w in zip(data_y_noscale, range(1,blind_datahist.GetNbinsX()+1))]
+            )
+    err_y_hi = np.array(
+            [proper_errs_dict[round(x)][1]/blind_datahist.GetBinWidth(w) if x<10 and x>=0
+                else 0.0 if x<0
+                else np.sqrt(round(x))/blind_datahist.GetBinWidth(w)
+                for x,w in zip(data_y_noscale, range(1,blind_datahist.GetNbinsX()+1))]
+            )
+    err_x_lo = np.zeros(len(err_y_lo))
+    err_x_hi = np.zeros(len(err_y_lo))
+    print data_x
+    print data_y
+    print err_y_lo
+    print err_y_hi
+    blind_datagraph = ROOT.TGraphAsymmErrors(len(data_x), data_x, data_y, err_x_lo, err_x_hi, err_y_lo, err_y_hi)
 
     channel = args.channel
     if channel == '':  channel=binname[4:6]
@@ -817,10 +854,13 @@ def main(args):
                             if entry < axish[0].GetMinimum():
                                 shist.SetBinContent(j,axish[0].GetMinimum()*1.00001)
                     shist.Draw("histsame][") # removing vertical lines at the borders of the pad; possible with the trick above
-        blind_datahist_copy = blind_datahist.Clone()
-        blind_datahist_copy.Sumw2(False)
-        blind_datahist_copy.SetBinErrorOption(ROOT.TH1.kPoisson)
-        blind_datahist_copy.Draw("e0x0same")
+        # blind_datahist_copy = blind_datahist.Clone()
+        # blind_datahist_copy.Sumw2(False)
+        # blind_datahist_copy.SetBinErrorOption(ROOT.TH1.kPoisson)
+        blind_datagraph_extra = blind_datagraph.Clone()
+        blind_datagraph_extra.Draw("P Z 0 same")
+        blind_datagraph.SetMarkerSize(0.)
+        blind_datagraph.Draw("P Z 0 same")
         axish[i].Draw("axissame")
     
     pads[0].cd()
@@ -882,7 +922,13 @@ def main(args):
             sbhist_PS.SetLineWidth(3)
         ratio_sighist = plot.MakeRatioHist(sbhist,bkghist,True,False)
         ratio_sighist_PS = plot.MakeRatioHist(sbhist_PS,bkghist,True,False)
-        ratio_datahist = plot.MakeRatioHist(blind_datahist_copy.Clone(),bkghist,True,False)
+        # ratio_datahist = plot.MakeRatioHist(blind_datahist,bkghist,True,False)
+        bkg_x = np.array([bkghist.GetBinCenter(x) for x in range(1,bkghist.GetNbinsX()+1)])
+        bkg_y = np.array([bkghist.GetBinContent(x) for x in range(1,bkghist.GetNbinsX()+1)])
+        ratio_y = np.array([x/y for x,y in zip(data_y,bkg_y)])
+        err_ratio_y_lo = np.array([round(x)/y for x,y in zip(err_y_lo,bkg_y)])
+        err_ratio_y_hi = np.array([round(x)/y for x,y in zip(err_y_hi,bkg_y)])
+        ratio_datahist = ROOT.TGraphAsymmErrors(len(data_x), data_x, ratio_y, err_x_lo, err_x_hi, err_ratio_y_lo, err_ratio_y_hi)
         pads[1].cd()
         pads[1].SetGrid(0,1)
         axish[1].Draw("axis")
@@ -893,7 +939,7 @@ def main(args):
         if int(bin_number) > 2:
             ratio_sighist_PS.Draw("histsame")
         ratio_sighist.Draw("histsame")
-        ratio_datahist.Draw("e0x0same")
+        ratio_datahist.Draw("P Z 0 same")
         pads[1].RedrawAxis("G")
         # if split_y_scale or sb_vs_b_ratio:
             # Add a ratio legend for y-splitted plots or plots with sb vs b ratios
