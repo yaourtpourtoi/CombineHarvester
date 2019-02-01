@@ -1,5 +1,4 @@
-<bin file="MorphingSMCP2016.cpp" name="MorphingSMCP2016"></bin>
-<bin file="MorphingFits.cpp" name="MorphingFits"></bin>
+<bin file="MorphingSMCPDecays18.cpp" name="MorphingSMCPDecays18"></bin>
 <use name="root"/>
 <use name="rootmath"/>
 <use name="roofit"/>
