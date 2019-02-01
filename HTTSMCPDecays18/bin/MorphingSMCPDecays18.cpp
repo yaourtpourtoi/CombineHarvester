@@ -20,7 +20,7 @@
 #include "CombineHarvester/CombineTools/interface/AutoRebin.h"
 #include "CombineHarvester/CombineTools/interface/CopyTools.h"
 #include "CombineHarvester/CombinePdfs/interface/MorphFunctions.h"
-#include "CombineHarvester/HTTSMCP2016/interface/HttSystematics_SMRun2.h"
+#include "CombineHarvester/HTTSMCPDecays18/interface/HttSystematics_SMRun2.h"
 #include "CombineHarvester/CombineTools/interface/JsonTools.h"
 #include "RooWorkspace.h"
 #include "RooRealVar.h"
@@ -401,7 +401,8 @@ int main(int argc, char** argv) {
     ("era", po::value<string>(&era)->default_value("2016"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true))
     ("cross_check", po::value<bool>(&cross_check)->default_value(false))
-    ("useJHU", po::value<bool>(&useJHU)->default_value(false));
+    ("useJHU", po::value<bool>(&useJHU)->default_value(false))
+    ("onlyInclusive", po::value<bool>(&onlyInclusive)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
@@ -488,7 +489,12 @@ int main(int argc, char** argv) {
     
     map<string,Categories> cats;
 
-    if (!do_mva) {
+    if (onlyInclusive) {
+      cats["inclusive"] = {
+        {99, "tt_inclusive"}
+      };
+    }
+    else if (!do_mva) {
       if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
         cats["et_2016"] = {
             {1, "et_0jet"},
