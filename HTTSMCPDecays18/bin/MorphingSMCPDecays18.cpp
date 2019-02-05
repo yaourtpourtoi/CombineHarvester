@@ -374,6 +374,7 @@ int main(int argc, char** argv) {
     bool do_mva = false;    
     int do_control_plots = 0;
     bool useJHU = false;
+    bool onlyInclusive = false;
  
     bool cross_check = false;
 
@@ -438,14 +439,14 @@ int main(int argc, char** argv) {
     // source the input files containing the datacard shapes
     //    string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/CombineTools/bin/AllROOT_20fb/";
     std::map<string, string> input_dir;
-    input_dir["em"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";
-    input_dir["mt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_mt+"/";
-    input_dir["et"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_et+"/";
-    input_dir["tt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_tt+"/";
-    input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
+    input_dir["em"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";
+    input_dir["mt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_mt+"/";
+    input_dir["et"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_et+"/";
+    input_dir["tt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_tt+"/";
+    input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"em","et","mt","tt"};
+    VString chns = {"tt"};
     if(cross_check) chns = {"mt"};
     if (ttbar_fit) chns.push_back("ttbar");
     
@@ -488,10 +489,12 @@ int main(int argc, char** argv) {
     ch::CombineHarvester cb;
     
     map<string,Categories> cats;
+    
+    map<string,Categories> cats_cp;
 
     if (onlyInclusive) {
-      cats["inclusive"] = {
-        {99, "tt_inclusive"}
+      cats_cp["tt_2016"] = {
+        {99, "tt_inclusive_rho"}
       };
     }
     else if (!do_mva) {
@@ -593,101 +596,101 @@ int main(int argc, char** argv) {
       };
     }
     
-    map<string,Categories> cats_cp;
-    
-    if (!do_mva) {
-      if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
+    if (!onlyInclusive) {
+      if (!do_mva) {
+        if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
+          cats_cp["em_2016"] = {
+              {3, "em_dijet_loosemjj_lowboost"},
+              {4, "em_dijet_loosemjj_boosted"},
+              {5, "em_dijet_tightmjj_lowboost"},
+              {6, "em_dijet_tightmjj_boosted"}
+
+          };
+          
+          cats_cp["et_2016"] = {
+              {3, "et_dijet_loosemjj_lowboost"},
+              {4, "et_dijet_loosemjj_boosted"},       
+              {5, "et_dijet_tightmjj_lowboost"},
+              {6, "et_dijet_tightmjj_boosted"}
+
+          };
+          
+          cats_cp["mt_2016"] = {
+              {3, "mt_dijet_loosemjj_lowboost"},
+              {4, "mt_dijet_loosemjj_boosted"},
+              {5, "mt_dijet_tightmjj_lowboost"},
+              {6, "mt_dijet_tightmjj_boosted"}
+          };    
+          
+          cats_cp["tt_2016"] = {
+              {3, "tt_dijet_loosemjj_lowboost"},
+              {4, "tt_dijet_loosemjj_boosted"},
+              {5, "tt_dijet_tightmjj_lowboost"},
+              {6, "tt_dijet_tightmjj_boosted"} 
+          };   
+        } 
+        if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
+          cats_cp["em_2017"] = {
+              {3, "em_dijet_loosemjj_lowboost"},
+              {4, "em_dijet_loosemjj_boosted"},
+              {5, "em_dijet_tightmjj_lowboost"},
+              {6, "em_dijet_tightmjj_boosted"}
+
+          };
+
+          cats_cp["et_2017"] = {
+              {3, "et_dijet_loosemjj_lowboost"},
+              {4, "et_dijet_loosemjj_boosted"},
+              {5, "et_dijet_tightmjj_lowboost"},
+              {6, "et_dijet_tightmjj_boosted"}
+
+          };
+
+          cats_cp["mt_2017"] = {
+              {3, "mt_dijet_loosemjj_lowboost"},
+              {4, "mt_dijet_loosemjj_boosted"},
+              {5, "mt_dijet_tightmjj_lowboost"},
+              {6, "mt_dijet_tightmjj_boosted"}
+          };
+
+          cats_cp["tt_2017"] = {
+              {3, "tt_dijet_loosemjj_lowboost"},
+              {4, "tt_dijet_loosemjj_boosted"},
+              {5, "tt_dijet_tightmjj_lowboost"},
+              {6, "tt_dijet_tightmjj_boosted"}
+          };
+        }
+
+      }
+      else {
         cats_cp["em_2016"] = {
-            {3, "em_dijet_loosemjj_lowboost"},
-            {4, "em_dijet_loosemjj_boosted"},
-            {5, "em_dijet_tightmjj_lowboost"},
-            {6, "em_dijet_tightmjj_boosted"}
+            
+            {41, "em_ggh_highMjj"},
+            {42, "em_qqh_highMjj"},
 
         };
         
         cats_cp["et_2016"] = {
-            {3, "et_dijet_loosemjj_lowboost"},
-            {4, "et_dijet_loosemjj_boosted"},       
-            {5, "et_dijet_tightmjj_lowboost"},
-            {6, "et_dijet_tightmjj_boosted"}
+
+            {41, "et_ggh_highMjj"},
+            {42, "et_qqh_highMjj"},
 
         };
         
         cats_cp["mt_2016"] = {
-            {3, "mt_dijet_loosemjj_lowboost"},
-            {4, "mt_dijet_loosemjj_boosted"},
-            {5, "mt_dijet_tightmjj_lowboost"},
-            {6, "mt_dijet_tightmjj_boosted"}
+
+            {41, "mt_ggh_highMjj"},
+            {42, "mt_qqh_highMjj"},
+
         };    
         
         cats_cp["tt_2016"] = {
-            {3, "tt_dijet_loosemjj_lowboost"},
-            {4, "tt_dijet_loosemjj_boosted"},
-            {5, "tt_dijet_tightmjj_lowboost"},
-            {6, "tt_dijet_tightmjj_boosted"} 
-        };   
-      } 
-      if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
-        cats_cp["em_2017"] = {
-            {3, "em_dijet_loosemjj_lowboost"},
-            {4, "em_dijet_loosemjj_boosted"},
-            {5, "em_dijet_tightmjj_lowboost"},
-            {6, "em_dijet_tightmjj_boosted"}
 
-        };
+            {41, "tt_ggh_highMjj"},
+            {42, "tt_qqh_highMjj"},
 
-        cats_cp["et_2017"] = {
-            {3, "et_dijet_loosemjj_lowboost"},
-            {4, "et_dijet_loosemjj_boosted"},
-            {5, "et_dijet_tightmjj_lowboost"},
-            {6, "et_dijet_tightmjj_boosted"}
-
-        };
-
-        cats_cp["mt_2017"] = {
-            {3, "mt_dijet_loosemjj_lowboost"},
-            {4, "mt_dijet_loosemjj_boosted"},
-            {5, "mt_dijet_tightmjj_lowboost"},
-            {6, "mt_dijet_tightmjj_boosted"}
-        };
-
-        cats_cp["tt_2017"] = {
-            {3, "tt_dijet_loosemjj_lowboost"},
-            {4, "tt_dijet_loosemjj_boosted"},
-            {5, "tt_dijet_tightmjj_lowboost"},
-            {6, "tt_dijet_tightmjj_boosted"}
         };
       }
-
-    }
-    else {
-      cats_cp["em_2016"] = {
-          
-          {41, "em_ggh_highMjj"},
-          {42, "em_qqh_highMjj"},
-
-      };
-      
-      cats_cp["et_2016"] = {
-
-          {41, "et_ggh_highMjj"},
-          {42, "et_qqh_highMjj"},
-
-      };
-      
-      cats_cp["mt_2016"] = {
-
-          {41, "mt_ggh_highMjj"},
-          {42, "mt_qqh_highMjj"},
-
-      };    
-      
-      cats_cp["tt_2016"] = {
-
-          {41, "tt_ggh_highMjj"},
-          {42, "tt_qqh_highMjj"},
-
-      };
     }
 
     if(do_control_plots>0) {
@@ -799,10 +802,10 @@ int main(int argc, char** argv) {
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_ph_htt"};
-    if(!useJHU) sig_procs["qqH"] = {"qqH_htt125","WH_htt125","ZH_htt125"};
-    else sig_procs["qqH"] = {"qqHsm_htt125","WHsm_htt125","ZHsm_htt125"};
-    sig_procs["qqH_BSM"] = {"qqHmm_htt","qqHps_htt","WHps_htt","WHmm_htt","ZHps_htt","ZHmm_htt"};
-    sig_procs["ggHCP"] = {"ggHsm_htt", "ggHps_htt", "ggHmm_htt"};
+    /* if(!useJHU) sig_procs["qqH"] = {"qqH_htt"}; */
+    /* else sig_procs["qqH"] = {"qqHsm_htt125"}; */
+    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_mm_htt","qqH_ps_htt"};
+    sig_procs["ggHCP"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
     
     vector<string> masses = {"125"};    
 
@@ -816,12 +819,19 @@ int main(int argc, char** argv) {
     sig_xsec_aachen["qqHmm_htt"] = 0.12242788;    
     sig_xsec_aachen["qqHps_htt"] = 0.0612201968;
 
-    sig_xsec_IC["ggHsm_htt"] = 0.3987;    
+    /* sig_xsec_IC["ggHsm_htt"] = 0.3987;    
     sig_xsec_IC["ggHmm_htt"] = 0.7893;    
     sig_xsec_IC["ggHps_htt"] = 0.3858;    
     sig_xsec_IC["qqHsm_htt"] = 2.6707;    
     sig_xsec_IC["qqHmm_htt"] = 0.47421;    
-    sig_xsec_IC["qqHps_htt"] = 0.2371314;    
+    sig_xsec_IC["qqHps_htt"] = 0.2371314; */
+
+    sig_xsec_IC["ggH_sm_htt"] = 3.045966;
+    sig_xsec_IC["ggH_mm_htt"] = 3.045966;
+    sig_xsec_IC["ggH_ps_htt"] = 3.045966;
+    sig_xsec_IC["qqH_sm_htt"] = 0.2371314;
+    sig_xsec_IC["qqH_mm_htt"] = 0.2371314;
+    sig_xsec_IC["qqH_ps_htt"] = 0.2371314;
     
     using ch::syst::bin_id;
     
@@ -835,8 +845,8 @@ int main(int argc, char** argv) {
           cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {chn+"_"+year}, bkg_procs[chn], cats_cp[chn+"_"+year], false);
 
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
-            cb.AddProcesses({"*"},   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats[chn+"_"+year], false); // SM VBF/VH are added as backgrounds
-            cb.AddProcesses({"*"},   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats_cp[chn+"_"+year], false);
+            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats[chn+"_"+year], true); // SM VBF/VH are added as signal
+            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats_cp[chn+"_"+year], true);
  
             if(useJHU){
               cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH_BSM"], cats[chn+"_"+year], true); // Non-SM VBF/VH are added as signal
@@ -894,6 +904,10 @@ int main(int argc, char** argv) {
                                                                     input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
                                                                     "$BIN/$PROCESS$MASS",
                                                                     "$BIN/$PROCESS$MASS_$SYSTEMATIC");
+            cb.cp().channel({chn+"_"+year}).process(sig_procs["qqH"]).ExtractShapes(
+                                                                    input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+                                                                    "$BIN/$PROCESS$MASS",
+                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
           }
       }
     }    
@@ -930,7 +944,7 @@ int main(int argc, char** argv) {
         "ggH_hww125","qqH_hww125","EWKZ", "qqHsm_htt125", "qqH_htt125", "WH_htt125", "ZH_htt125"};
     
         ////! Option to scale rate
-    std::vector< std::string > sig_processes = {"ggHsm_htt125","ggHmm_htt125","ggHps_htt125","qqHsm_htt125","qqHmm_htt125","qqHps_htt125"};
+    std::vector< std::string > sig_processes = {"ggH_sm_htt125","ggH_mm_htt125","ggH_ps_htt125","qqH_sm_htt125","qqH_mm_htt125","qqH_ps_htt125"};
      
     if (!scale_sig_procs.empty()) {	
     	cb.cp().PrintAll();		
@@ -941,8 +955,10 @@ int main(int argc, char** argv) {
          for (auto b : cb.cp().bin_set()) {
              std::cout << " - Replacing data with asimov in bin " << b << "\n";
              cb.cp().bin({b}).ForEachObs([&](ch::Observation *obs) {
-               obs->set_shape(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetShape()+cb.cp().bin({b}).signals().process({"ggHsm_htt", "ggH_htt"}).mass({"125"}).GetShape(), true);
-               obs->set_rate(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetRate()+cb.cp().bin({b}).signals().process({"ggHsm_htt", "ggH_htt"}).mass({"125"}).GetRate());
+               obs->set_shape(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetShape()+cb.cp().bin({b}).signals().process({"ggH_sm_htt", "ggH_htt"}).mass({"125"}).GetShape(), true);
+               obs->set_rate(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetRate()+cb.cp().bin({b}).signals().process({"ggH_sm_htt", "ggH_htt"}).mass({"125"}).GetRate());
+               obs->set_shape(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetShape()+cb.cp().bin({b}).signals().process({"qqH_sm_htt", "qqH_htt"}).mass({"125"}).GetShape(), true);
+               obs->set_rate(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetRate()+cb.cp().bin({b}).signals().process({"qqH_sm_htt", "qqH_htt"}).mass({"125"}).GetRate());
              });
            }
    }   
@@ -1133,7 +1149,7 @@ int main(int argc, char** argv) {
 	//make one directory per chn-cat, one per chn and cmb. In this code we only
 	//store the individual datacards for each directory to be combined later, but
 	//note that it's also possible to write out the full combined card with CH
-	string output_prefix = "output/";
+	string output_prefix = "output/201902_Feb/";
 	if(output_folder.compare(0,1,"/") == 0) output_prefix="";
 	ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
 	    	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
