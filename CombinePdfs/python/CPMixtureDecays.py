@@ -18,11 +18,11 @@ class CPMixtureDecays(PhysicsModel):
         poiNames = []
  
         if not self.do_fa3:
-          self.modelBuilder.doVar('alpha[0,-1,1]') 
-          poiNames.append('alpha')
+            self.modelBuilder.doVar('alpha[0,-1,1]') 
+            poiNames.append('alpha')
         else:
-          self.modelBuilder.doVar('fa3[0,0,1]')
-          poiNames.append('fa3')
+            self.modelBuilder.doVar('fa3[0,0,1]')
+            poiNames.append('fa3')
 
         self.modelBuilder.doVar('mutautau[1,0,10]')
         self.modelBuilder.doVar('muV[1,0,10]')
@@ -106,11 +106,11 @@ class CPMixtureDecays(PhysicsModel):
 
         if ('qqH' in process or 'WH' in process or 'ZH' in process) and 'hww' not in process:
             if "qqH_sm" in process:
-                scalings.append('vbf_sm_scaling')
+                scalings.append('sm_scaling')
             elif "qqH_ps" in process:
-                scalings.append('vbf_ps_scaling')
+                scalings.append('ps_scaling')
             elif "qqH_mm" in process:
-                scalings.append('vbf_mm_scaling')
+                scalings.append('mm_scaling')
             elif "WHsm" in process:
                 scalings.append('wh_sm_scaling')
             elif "WHps" in process:

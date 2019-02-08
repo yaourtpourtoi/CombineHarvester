@@ -494,8 +494,13 @@ int main(int argc, char** argv) {
 
     if (onlyInclusive) {
       cats_cp["tt_2016"] = {
-        {99, "tt_inclusive_rho"}
+        {1, "tt_0jet_rho"},
+        {2, "tt_boosted_rho"},
+        {3, "tt_dijet_rho"},
       };
+      /* cats_cp["tt_2016"] = { */
+      /*   {3, "tt_dijet_rho"}, */
+      /* }; */
     }
     else if (!do_mva) {
       if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
