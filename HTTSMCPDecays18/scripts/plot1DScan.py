@@ -256,7 +256,7 @@ x_min = axishist.GetXaxis().GetXmin()
 if args.x_min is not None: x_min=args.x_min
 if args.x_max is not None: x_max=args.x_max
 axishist.GetXaxis().SetLimits(x_min,x_max)
-print x_min, axishist.GetXaxis().GetXmin()
+# print x_min, axishist.GetXaxis().GetXmin()
 if args.x_title: axishist.GetXaxis().SetTitle(args.x_title)
 #if args.POI == 'alpha':
 #  new_min=-90.
@@ -502,6 +502,7 @@ plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsT
 
 #if not args.no_input_label: plot.DrawTitle(pads[0], '#bf{Input:} %s' % collab, 3)
 plot.DrawTitle(pads[0], '35.9 fb^{-1} (13 TeV)', 3)
+# plot.DrawTitle(pads[0], '140 fb^{-1} (13 TeV)', 3)
 #plot.DrawTitle(pads[0], '41.9 fb^{-1} (13 TeV)', 3)
 # plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3)
 #plot.DrawTitle(pads[0], 'm_{H} = 125 GeV', 1)

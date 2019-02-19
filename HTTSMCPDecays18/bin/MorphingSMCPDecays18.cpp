@@ -494,9 +494,14 @@ int main(int argc, char** argv) {
 
     if (onlyInclusive) {
       cats_cp["tt_2016"] = {
+        /* {1, "tt_higgs"}, 
+        {2, "tt_zttEmbed"},
+        {3, "tt_jetFakes"} */
         {1, "tt_0jet_rho"},
         {2, "tt_boosted_rho"},
-        {3, "tt_dijet_rho"},
+        {3, "tt_lowboost_rho"},
+        {4, "tt_dijet_boosted_rho"},
+        {5, "tt_dijet_lowboost_rho"}
       };
       /* cats_cp["tt_2016"] = { */
       /*   {3, "tt_dijet_rho"}, */
