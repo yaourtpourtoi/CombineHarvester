@@ -26,7 +26,6 @@ def read(scan, param, files, chop, remove_near_min, rezero, remove_delta = None,
     param_str = param
     # if we are scanning alpha then put back units of pi/2
     #if args.POI == 'alpha': param_str = param+'*%.5f' % (math.pi/2) for radians
-    if args.POI == 'alpha': param_str = param+'*90.'
 
     graph = plot.TGraphFromTree(limit, param_str, '2*deltaNLL', 'quantileExpected > -1.5')
     graph.SetName(scan)
