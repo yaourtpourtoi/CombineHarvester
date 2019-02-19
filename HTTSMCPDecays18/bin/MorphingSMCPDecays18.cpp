@@ -374,7 +374,7 @@ int main(int argc, char** argv) {
     bool do_mva = false;    
     int do_control_plots = 0;
     bool useJHU = false;
-    bool onlyInclusive = false;
+    bool doDecays = false;
  
     bool cross_check = false;
 
@@ -403,7 +403,7 @@ int main(int argc, char** argv) {
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true))
     ("cross_check", po::value<bool>(&cross_check)->default_value(false))
     ("useJHU", po::value<bool>(&useJHU)->default_value(false))
-    ("onlyInclusive", po::value<bool>(&onlyInclusive)->default_value(false));
+    ("doDecays", po::value<bool>(&doDecays)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
@@ -492,20 +492,21 @@ int main(int argc, char** argv) {
     
     map<string,Categories> cats_cp;
 
-    if (onlyInclusive) {
+    if (doDecays && !do_mva) {
       cats_cp["tt_2016"] = {
-        /* {1, "tt_higgs"}, 
-        {2, "tt_zttEmbed"},
-        {3, "tt_jetFakes"} */
         {1, "tt_0jet_rho"},
         {2, "tt_boosted_rho"},
         {3, "tt_lowboost_rho"},
         {4, "tt_dijet_boosted_rho"},
         {5, "tt_dijet_lowboost_rho"}
       };
-      /* cats_cp["tt_2016"] = { */
-      /*   {3, "tt_dijet_rho"}, */
-      /* }; */
+    }
+    else if (doDecays && do_mva) {
+      cats_cp["tt_2016"] = {
+        {1, "tt_higgs"}, 
+        {2, "tt_zttEmbed"},
+        {3, "tt_jetFakes"}
+      };
     }
     else if (!do_mva) {
       if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -606,7 +607,7 @@ int main(int argc, char** argv) {
       };
     }
     
-    if (!onlyInclusive) {
+    if (!doDecays) {
       if (!do_mva) {
         if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
           cats_cp["em_2016"] = {
