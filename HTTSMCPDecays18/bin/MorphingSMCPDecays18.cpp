@@ -496,16 +496,88 @@ int main(int argc, char** argv) {
       cats_cp["tt_2016"] = {
         {1, "tt_0jet_rho"},
         {2, "tt_boosted_rho"},
-        {3, "tt_lowboost_rho"},
-        {4, "tt_dijet_boosted_rho"},
-        {5, "tt_dijet_lowboost_rho"}
+        //{3, "tt_dijet_rho"}
+        {3, "tt_dijet_lowboost_rho"},
+        {4, "tt_dijet_boosted_rho"}
+
+        /* {5, "tt_0jet_other"}, */
+        /* {6, "tt_boosted_other"}, */
+        /* //{3, "tt_dijet_rho"} */
+        /* {7, "tt_dijet_lowboost_other"}, */
+        /* {8, "tt_dijet_boosted_other"} */
+
+        /*{1, "tt_0jet_rho_idg0p5"},
+        {2, "tt_boosted_rho_idg0p5"},
+        {3, "tt_dijet_rho_idg0p5"},
+
+        {4, "tt_0jet_rho_!idg0p5"},
+        {5, "tt_boosted_rho_!idg0p5"},
+        {6, "tt_dijet_rho_!idg0p5"}*/
+      };
+
+      cats_cp["mt_2016"] = {
+        {1, "mt_0jet_mixed"},
+        {2, "mt_boosted_mixed"},
+        //{3, "mt_dijet_mixed"}
+        {3, "mt_dijet_lowboost_mixed"},
+        {4, "mt_dijet_boosted_mixed"}
+
+        /*{1, "tt_0jet_mixed_idg0p5"},
+        {2, "tt_boosted_mixed_idg0p5"},
+        {3, "tt_dijet_mixed_idg0p5"},
+
+        {4, "tt_0jet_mixed_!idg0p5"},
+        {5, "tt_boosted_mixed_!idg0p5"},
+        {6, "tt_dijet_mixed_!idg0p5"}*/
       };
     }
     else if (doDecays && do_mva) {
       cats_cp["tt_2016"] = {
-        {1, "tt_higgs"}, 
+        {1,    "tt_higgs"}, 
         {2, "tt_zttEmbed"},
         {3, "tt_jetFakes"}
+
+        /*{1,    "tt_higgs_idg0p5"}, 
+        {2, "tt_zttEmbed_idg0p5"},
+        {3, "tt_jetFakes_idg0p5"},
+
+        {4,    "tt_higgs_NOTidg0p5"}, 
+        {5, "tt_zttEmbed_NOTidg0p5"},
+        {6, "tt_jetFakes_NOTidg0p5"}*/
+      };
+      cats_cp["mt_2016"] = {
+        {1,    "mt_higgs"}, 
+        {2, "mt_zttEmbed"},
+        {3, "mt_jetFakes"},
+        {4, "mt_zll"},
+        {5, "mt_tt"}
+      };
+      cats_cp["et_2016"] = {
+        {1,    "et_higgs"}, 
+        {2, "et_zttEmbed"},
+        {3, "et_jetFakes"},
+        {4, "et_zll"},
+        {5, "et_tt"}
+      };
+      cats["tt_2016"] = {
+        {31,    "tt_higgs_other"}, 
+        {32, "tt_zttEmbed_other"},
+        {33, "tt_jetFakes_other"}
+
+      };
+      cats["mt_2016"] = {
+        {31,    "mt_higgs_other"}, 
+        {32, "mt_zttEmbed_other"},
+        {33, "mt_jetFakes_other"},
+        {34, "mt_zll_other"},
+        {35, "mt_tt_other"}
+      };
+      cats["et_2016"] = {
+        {31,    "et_higgs_other"}, 
+        {32, "et_zttEmbed_other"},
+        {33, "et_jetFakes_other"},
+        {34, "et_zll_other"},
+        {35, "et_tt_other"}
       };
     }
     else if (!do_mva) {
@@ -1031,7 +1103,7 @@ int main(int argc, char** argv) {
       }
   });
 
-    if(!cross_check && do_control_plots==0)  {
+    /*if(!cross_check && do_control_plots==0)  {
 
       // In this part we convert shape uncertainties into lnN where the shape variations are small compared to statistical uncertainties, this helps remove artificial constraints and makes the fit simpler
 
@@ -1100,10 +1172,10 @@ int main(int argc, char** argv) {
       }
       ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}).channel({"em","em_2016","em_2017"}), "CMS_scale_e_13TeV", 0.);
 
-    }
+    } */
 
     // de-correlate systematics for 2016 and 2017
-    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos) ||  era.find("all") != std::string::npos){
+    /*if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos) ||  era.find("all") != std::string::npos){
       std::cout << "Partially Decorrelating systematics for 2016/2017" << std::endl;
       Json::Value js;
       string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/scripts/correlations.json";
@@ -1116,7 +1188,7 @@ int main(int argc, char** argv) {
         std::vector<string> chans_2017 = {"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"};
         DecorrelateSyst (cb, name, value, chans_2016, chans_2017);
       }
-    }
+    }*/
 
  
     ////! [part8]
@@ -1139,10 +1211,10 @@ int main(int argc, char** argv) {
 
 	
 	//// rename embedded energy-scale uncertainties so that they are not correlated with MC energy-scales
-	//cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV"); 
-	//cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV");
-	//cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV");
-	//cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV");
+	/* cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV"); */ 
+	/* cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV"); */
+	/* cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV"); */
+	/* cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV"); */
 
 	
 	// This function modifies every entry to have a standardised bin name of
@@ -1160,7 +1232,7 @@ int main(int argc, char** argv) {
 	//make one directory per chn-cat, one per chn and cmb. In this code we only
 	//store the individual datacards for each directory to be combined later, but
 	//note that it's also possible to write out the full combined card with CH
-	string output_prefix = "output/201902_Feb/";
+	string output_prefix = "output/201904_Apr/";
 	if(output_folder.compare(0,1,"/") == 0) output_prefix="";
 	ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
 	    	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
@@ -1192,6 +1264,9 @@ int main(int argc, char** argv) {
           writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
 	}
         else {
+          writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
+          writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
+          writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
           writer.WriteCards("htt_"+chn+"_31_13TeV", cb.cp().channel({chn}).bin_id({31}));
           writer.WriteCards("htt_"+chn+"_32_13TeV", cb.cp().channel({chn}).bin_id({32}));
           writer.WriteCards("htt_"+chn+"_33_13TeV", cb.cp().channel({chn}).bin_id({33}));
@@ -1212,6 +1287,10 @@ int main(int argc, char** argv) {
           writer.WriteCards("htt_"+chn+"_49_13TeV", cb.cp().channel({chn}).bin_id({49}));
           writer.WriteCards("htt_"+chn+"_lowMjj_13TeV", cb.cp().channel({chn}).bin_id({31,32,33,34,35,36,37,38,39}));
           writer.WriteCards("htt_"+chn+"_highMjj_13TeV", cb.cp().channel({chn}).bin_id({41,42,43,44,45,46,47,48,49}));
+
+          writer.WriteCards("htt_"+chn+"_rho_13TeV", cb.cp().channel({chn}).bin_id({1,2,3}));
+          writer.WriteCards("htt_"+chn+"_others_13TeV", cb.cp().channel({chn}).bin_id({31,32,33}));
+
         }
         
         

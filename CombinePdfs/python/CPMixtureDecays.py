@@ -11,7 +11,7 @@ class CPMixtureDecays(PhysicsModel):
     def doParametersOfInterest(self):
         """Create POI and other parameters, and define the POI set."""
         # --- POI and other parameters ----
-            
+
         poiNames = []
  
         self.modelBuilder.doVar('alpha[0,-1,1]') 
@@ -36,8 +36,8 @@ class CPMixtureDecays(PhysicsModel):
 
         self.modelBuilder.factory_('expr::muV_mutautau("@0*@1", muV, mutautau)')
         for x in ['sm_scaling', 'ps_scaling', 'mm_scaling']:
-          self.modelBuilder.factory_('expr::muV_%s("@0*@1", muV, %s)' % (x,x))
-          self.modelBuilder.factory_('expr::muggH_%s("@0*@1", muggH, %s)' % (x,x))
+            self.modelBuilder.factory_('expr::muV_%s("@0*@1", muV, %s)' % (x,x))
+            self.modelBuilder.factory_('expr::muggH_%s("@0*@1", muggH, %s)' % (x,x))
 
     def getYieldScale(self, bin_, process):
 
