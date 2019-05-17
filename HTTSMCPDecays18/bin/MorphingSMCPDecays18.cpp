@@ -530,6 +530,12 @@ int main(int argc, char** argv) {
         {5, "tt_boosted_mixed_!idg0p5"},
         {6, "tt_dijet_mixed_!idg0p5"}*/
       };
+      cats["tt_2016"] = {
+        {31, "tt_0jet_other"},
+        {32, "tt_boosted_other"},
+        {33, "tt_dijet_lowboost_other"},
+        {34, "tt_dijet_boosted_other"}
+      };
     }
     else if (doDecays && do_mva) {
       cats_cp["tt_2016"] = {
@@ -1191,15 +1197,15 @@ int main(int argc, char** argv) {
     }*/
 
  
-    ////! [part8]
+    ////! [part8] use autoMCStats for signal and bkgs
     // add bbb uncertainties for all backgrounds
-    auto bbb = ch::BinByBinFactory()
-    .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bin_$#")
-    .SetAddThreshold(0.)
-    .SetMergeThreshold(0.4)
-    .SetFixNorm(false);
-    bbb.MergeBinErrors(cb.cp().backgrounds());
-    bbb.AddBinByBin(cb.cp().backgrounds(), cb);
+    // auto bbb = ch::BinByBinFactory()
+    // .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bin_$#")
+    // .SetAddThreshold(0.)
+    // .SetMergeThreshold(0.4)
+    // .SetFixNorm(false);
+    // bbb.MergeBinErrors(cb.cp().backgrounds());
+    // bbb.AddBinByBin(cb.cp().backgrounds(), cb);
 
     //// add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
     //auto bbb_sig = ch::BinByBinFactory()
@@ -1223,6 +1229,8 @@ int main(int argc, char** argv) {
 	ch::SetStandardBinNames(cb);
 	//! [part8]
 	
+    // add autoMCStats options
+    cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
 
 	//! [part9]
 	// First we generate a set of bin names:
@@ -1232,7 +1240,7 @@ int main(int argc, char** argv) {
 	//make one directory per chn-cat, one per chn and cmb. In this code we only
 	//store the individual datacards for each directory to be combined later, but
 	//note that it's also possible to write out the full combined card with CH
-	string output_prefix = "output/201904_Apr/";
+	string output_prefix = "output/201905_May/";
 	if(output_folder.compare(0,1,"/") == 0) output_prefix="";
 	ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
 	    	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
@@ -1285,11 +1293,9 @@ int main(int argc, char** argv) {
           writer.WriteCards("htt_"+chn+"_47_13TeV", cb.cp().channel({chn}).bin_id({47}));
           writer.WriteCards("htt_"+chn+"_48_13TeV", cb.cp().channel({chn}).bin_id({48}));
           writer.WriteCards("htt_"+chn+"_49_13TeV", cb.cp().channel({chn}).bin_id({49}));
-          writer.WriteCards("htt_"+chn+"_lowMjj_13TeV", cb.cp().channel({chn}).bin_id({31,32,33,34,35,36,37,38,39}));
-          writer.WriteCards("htt_"+chn+"_highMjj_13TeV", cb.cp().channel({chn}).bin_id({41,42,43,44,45,46,47,48,49}));
 
-          writer.WriteCards("htt_"+chn+"_rho_13TeV", cb.cp().channel({chn}).bin_id({1,2,3}));
-          writer.WriteCards("htt_"+chn+"_others_13TeV", cb.cp().channel({chn}).bin_id({31,32,33}));
+          writer.WriteCards("htt_"+chn+"_rho_13TeV", cb.cp().channel({chn}).bin_id({1,2,3,4}));
+          writer.WriteCards("htt_"+chn+"_others_13TeV", cb.cp().channel({chn}).bin_id({31,32,33,34}));
 
         }
         
