@@ -539,9 +539,17 @@ int main(int argc, char** argv) {
     }
     else if (doDecays && do_mva) {
       cats_cp["tt_2016"] = {
-        {1,    "tt_higgs"}, 
+        {1, "tt_higgs"},
         {2, "tt_zttEmbed"},
-        {3, "tt_jetFakes"}
+        {3, "tt_jetFakes"},
+        //{4, "tt_misc"},
+
+          // vienna NN
+        /*{1, "tt_ggh"},
+        {2, "tt_qqh"},
+        {3, "tt_zttEmbed"},
+        {4, "tt_jetFakes"},
+        {5, "tt_misc"},*/
 
         /*{1,    "tt_higgs_idg0p5"}, 
         {2, "tt_zttEmbed_idg0p5"},
@@ -566,9 +574,17 @@ int main(int argc, char** argv) {
         {5, "et_tt"}
       };
       cats["tt_2016"] = {
-        {31,    "tt_higgs_other"}, 
+        {31, "tt_higgs_other"},
         {32, "tt_zttEmbed_other"},
-        {33, "tt_jetFakes_other"}
+        {33, "tt_jetFakes_other"},
+        //{34, "tt_misc_other"},
+
+          // vienna NN
+        /*{31, "tt_ggh_other"},
+        {32, "tt_qqh_other"},
+        {33, "tt_zttEmbed_other"},
+        {34, "tt_jetFakes_other"},
+        {35, "tt_misc_other"},*/
 
       };
       cats["mt_2016"] = {
@@ -1240,7 +1256,7 @@ int main(int argc, char** argv) {
 	//make one directory per chn-cat, one per chn and cmb. In this code we only
 	//store the individual datacards for each directory to be combined later, but
 	//note that it's also possible to write out the full combined card with CH
-	string output_prefix = "output/201905_May/";
+	string output_prefix = "output/";
 	if(output_folder.compare(0,1,"/") == 0) output_prefix="";
 	ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
 	    	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
