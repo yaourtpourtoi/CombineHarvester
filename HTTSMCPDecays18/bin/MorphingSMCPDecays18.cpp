@@ -167,6 +167,7 @@ int main(int argc, char** argv) {
     int do_control_plots = 0;
     bool doDecays = false;
     bool mergeXbbb = false; 
+    bool id_cats = false;
 
     string era;
     po::variables_map vm;
@@ -188,7 +189,8 @@ int main(int argc, char** argv) {
     ("era", po::value<string>(&era)->default_value("2016"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true))
     ("doDecays", po::value<bool>(&doDecays)->default_value(false))
-    ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
+    ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
+    ("id_cats", po::value<bool>(&id_cats)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
@@ -270,13 +272,21 @@ int main(int argc, char** argv) {
         {5, "tt_dijet_lowboost_rho"}
       };
     }
-    else if (doDecays && do_mva) {
+    else if (doDecays && do_mva && !id_cats) {
       cats_cp["tt_2016"] = {
         {1, "tt_higgs"}, 
         {2, "tt_zttEmbed"},
         {3, "tt_jetFakes"}
       };
     }
+    if (doDecays && do_mva && id_cats) {
+      cats_cp["tt_2016"] = {
+        {1, "tt_higgs"},
+        {2, "tt_zttEmbed"},
+        {3, "tt_jetFakes"}
+      };
+    }
+
 
     if(do_control_plots>0) {
       std::string extra="";
