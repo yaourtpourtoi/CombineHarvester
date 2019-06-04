@@ -1,5 +1,5 @@
-#ifndef SM2016_HttSystematics_SMRun2_h
-#define SM2016_HttSystematics_SMRun2_h
+#ifndef SMCPDecays2016_HttSystematics_SMRun2_h
+#define SMCPDecays2016_HttSystematics_SMRun2_h
 #include "CombineHarvester/CombineTools/interface/CombineHarvester.h"
 
 namespace ch {

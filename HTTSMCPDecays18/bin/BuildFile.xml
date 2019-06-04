@@ -13,5 +13,5 @@
 <use name="boost_regex"/>
 <use name="rootpy"/>
 <use name="CombineHarvester/CombineTools"/>
-<use name="CombineHarvester/HTTSMCP2016"/>
+<use name="CombineHarvester/HTTSMCPDecays18"/>
 <use name="CombineHarvester/CombinePdfs"/>
