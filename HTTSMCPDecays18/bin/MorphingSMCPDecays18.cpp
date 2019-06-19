@@ -539,17 +539,39 @@ int main(int argc, char** argv) {
     }
     else if (doDecays && do_mva) {
       cats_cp["tt_2016"] = {
-        {1, "tt_higgs"},
+        /*{1, "tt_higgs"},
         {2, "tt_zttEmbed"},
-        {3, "tt_jetFakes"},
+        {3, "tt_jetFakes"},*/
         //{4, "tt_misc"},
+        //
+        /*{1, "tt_higgs_rho"},
+        {2, "tt_zttEmbed_rho"},
+        {3, "tt_jetFakes_rho"},
+        //
+        {6, "tt_higgs_a1rho"},
+        {7, "tt_zttEmbed_a1rho"},
+        {8, "tt_jetFakes_a1rho"},*/
+
+        {1, "tt_higgs_mvarho"},
+        {2, "tt_zttEmbed_mvarho"},
+        {3, "tt_jetFakes_mvarho"},
+        //
+        {6, "tt_higgs_mvaa1rho"},
+        {7, "tt_zttEmbed_mvaa1rho"},
+        {8, "tt_jetFakes_mvaa1rho"},
 
           // vienna NN
-        /*{1, "tt_ggh"},
-        {2, "tt_qqh"},
-        {3, "tt_zttEmbed"},
-        {4, "tt_jetFakes"},
-        {5, "tt_misc"},*/
+        /*{1, "tt_ggh_rho"},
+        {2, "tt_qqh_rho"},
+        {3, "tt_zttEmbed_rho"},
+        {4, "tt_jetFakes_rho"},
+        {5, "tt_misc_rho"},
+
+        {6, "tt_ggh_a1rho"},
+        {7, "tt_qqh_a1rho"},
+        {8, "tt_zttEmbed_a1rho"},
+        {9, "tt_jetFakes_a1rho"},
+        {10, "tt_misc_a1rho"},*/
 
         /*{1,    "tt_higgs_idg0p5"}, 
         {2, "tt_zttEmbed_idg0p5"},
@@ -574,10 +596,14 @@ int main(int argc, char** argv) {
         {5, "et_tt"}
       };
       cats["tt_2016"] = {
-        {31, "tt_higgs_other"},
+        /*{31, "tt_higgs_other"},
         {32, "tt_zttEmbed_other"},
-        {33, "tt_jetFakes_other"},
+        {33, "tt_jetFakes_other"},*/
         //{34, "tt_misc_other"},
+        //
+        {31, "tt_higgs_mvaother"},
+        {32, "tt_zttEmbed_mvaother"},
+        {33, "tt_jetFakes_mvaother"},
 
           // vienna NN
         /*{31, "tt_ggh_other"},
@@ -830,7 +856,8 @@ int main(int argc, char** argv) {
           {108, "mt_"+extra+"m_sv"}
          };
          cats["tt_2016"] = {
-          {100, "tt_"+extra+"pt_1"},
+          {100, "tt_"+extra+"n_jets"},
+          /*{100, "tt_"+extra+"pt_1"},
           {101, "tt_"+extra+"pt_2"},
           {102, "tt_"+extra+"met"},
           {103, "tt_"+extra+"pt_tt"},
@@ -838,7 +865,7 @@ int main(int argc, char** argv) {
           {105, "tt_"+extra+"mjj"},
           {106, "tt_"+extra+"sjdphi"},  
           {107, "tt_"+extra+"n_jets"},
-          {108, "tt_"+extra+"m_sv"}
+          {108, "tt_"+extra+"m_sv"},*/
          };
          cats["em_2016"] = {
           {100, "em_"+extra+"pt_1"},
@@ -1282,13 +1309,14 @@ int main(int argc, char** argv) {
         if (!do_mva) {
           writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
           writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
-	  writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
-	  writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({4}));
+	      writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
+	      writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({4}));
           writer.WriteCards("htt_"+chn+"_5_13TeV", cb.cp().channel({chn}).bin_id({5}));
           writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
 	}
         else {
           writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
+          writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
           writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
           writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
           writer.WriteCards("htt_"+chn+"_31_13TeV", cb.cp().channel({chn}).bin_id({31}));
@@ -1310,7 +1338,8 @@ int main(int argc, char** argv) {
           writer.WriteCards("htt_"+chn+"_48_13TeV", cb.cp().channel({chn}).bin_id({48}));
           writer.WriteCards("htt_"+chn+"_49_13TeV", cb.cp().channel({chn}).bin_id({49}));
 
-          writer.WriteCards("htt_"+chn+"_rho_13TeV", cb.cp().channel({chn}).bin_id({1,2,3,4}));
+          writer.WriteCards("htt_"+chn+"_rho_13TeV", cb.cp().channel({chn}).bin_id({1,2,3,4,5}));
+          writer.WriteCards("htt_"+chn+"_a1rho_13TeV", cb.cp().channel({chn}).bin_id({6,7,8,9,10}));
           writer.WriteCards("htt_"+chn+"_others_13TeV", cb.cp().channel({chn}).bin_id({31,32,33,34}));
 
         }
