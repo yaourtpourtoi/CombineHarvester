@@ -102,7 +102,7 @@ def BuildScan(scan, param, files, color, yvals, chop, remove_near_min = None, re
     bestfit = None
     for i in xrange(graph.GetN()):
         print graph.GetY()[i]
-        if graph.GetY()[i] == 0.:
+        if round(graph.GetY()[i]) == 0.:
             bestfit = graph.GetX()[i]
     if envelope: plot.RemoveGraphYAll(graph, 0.)
     graph.SetMarkerColor(color)
@@ -116,6 +116,7 @@ def BuildScan(scan, param, files, color, yvals, chop, remove_near_min = None, re
       func.SetLineStyle(2)
       func.SetLineColor(ROOT.TColor.GetColor("#000099"))
       graph.SetMarkerSize(0)
+    print(bestfit)
     assert(bestfit is not None)
     if not envelope: plot.ImproveMinimum(graph, func)
     crossings = {}
@@ -256,7 +257,7 @@ axishist = plot.GetAxisHist(pads[0])
 # pads[0].SetLogy(True)
 axishist.SetMinimum(0.)
 axishist.SetMaximum(args.y_max)
-axishist.GetYaxis().SetTitle("- 2 #Delta ln L")
+axishist.GetYaxis().SetTitle("#minus 2 #Delta ln L")
 axishist.GetXaxis().SetTitle("%s" % fixed_name)
 axishist.GetXaxis().SetTitleOffset(0.97)
 x_max=  axishist.GetXaxis().GetXmax()
@@ -539,9 +540,9 @@ plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsT
 #plot.DrawCMSLogo(pads[0], '#it{ATLAS}#bf{ and }CMS', '#it{LHC Run 1 Preliminary}', 11, 0.025, 0.035, 1.1, cmsTextSize = 1.)
 
 #if not args.no_input_label: plot.DrawTitle(pads[0], '#bf{Input:} %s' % collab, 3)
-#plot.DrawTitle(pads[0], '35.9 fb^{-1} (13 TeV)', 3)
+plot.DrawTitle(pads[0], '35.9 fb^{-1} (13 TeV)', 3)
 #plot.DrawTitle(pads[0], '41.9 fb^{-1} (13 TeV)', 3)
-plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3)
+# plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3)
 #plot.DrawTitle(pads[0], 'm_{H} = 125 GeV', 1)
 pads[0].SetTicks(1)
 
@@ -568,8 +569,8 @@ if len(other_scans) >= 3:
         legend = ROOT.TLegend(0.46, 0.83, 0.95, 0.93, '', 'NBNDC')
         legend.SetNColumns(2)
 
-if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{hgg} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
-elif args.POI == 'beta': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{hvv} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
+if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{hgg} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
+elif args.POI == 'beta': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{hvv} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 elif args.POI == 'muggH': legend.AddEntry(main_scan['func'], args.main_label + ': #mu_{ggh}^{#tau#tau} = %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 elif args.POI == 'muV': legend.AddEntry(main_scan['func'], args.main_label + ': #mu_{V}^{#tau#tau} = %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 else: legend.AddEntry(main_scan['func'], args.main_label + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
