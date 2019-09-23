@@ -5,7 +5,7 @@ To create datacards first run morphing:
 
     `MorphingSMCP2016 --output_folder="cp261217" --postfix="-2D"`
 
-By default this only uses 2016 data at the moment. To run on 2017 data use option --era=2017. To combine 2016 and 2017 use option --era="2016,2017"
+By default this only uses 2016 data at the moment. To run on 2017 data use option --era=2017. To combine 2016, 2017 and 2018 use option --era="2016,2017,2018"
 
 To not include shape systematics use the option:
     `--no_shape_systs=true`
