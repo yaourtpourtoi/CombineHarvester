@@ -56,14 +56,25 @@ namespace ch {
         //  lumi
         //##############################################################################
         
-        // lumi uncertainty is 2.5% for 2016 and 2.6% for 2017,2018 - uncorrelated accross years
+        // total lumi uncertainty is 2.5% for 2016, 2.3% for 2017, 2.5% for 2018
+        //
+        // for correlations using https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
 
+        // uncorrelated parts 2.2%, 2.0%, 1.5%
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.025));
+                                            "lumi_2016_13TeV", "lnN", SystMap<>::init(1.022));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.026));
+                                            "lumi_2017_13TeV", "lnN", SystMap<>::init(1.020));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","mt_2018","et_2018","em_2018","ttbar_2018"}).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.026));
+                                            "lumi_2018_13TeV", "lnN", SystMap<>::init(1.015));
+
+        // correlated parts, 1.2%, 1.1%, 2.0%
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
+                                            "lumi_13TeV", "lnN", SystMap<>::init(1.012));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
+                                            "lumi_13TeV", "lnN", SystMap<>::init(1.011));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","mt_2018","et_2018","em_2018","ttbar_2018"}).AddSyst(cb,
+                                            "lumi_13TeV", "lnN", SystMap<>::init(1.020));
 
         //##############################################################################
         //  trigger   
