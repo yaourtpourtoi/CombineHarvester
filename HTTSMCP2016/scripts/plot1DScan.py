@@ -7,6 +7,7 @@ import CombineHarvester.CombineTools.plotting as plot
 import json
 import argparse
 import os.path
+import numpy as np
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -100,10 +101,15 @@ def BuildScan(scan, param, files, color, yvals, chop, remove_near_min = None, re
     else:
         graph = pregraph
     bestfit = None
+    vals = []
     for i in xrange(graph.GetN()):
         print graph.GetY()[i]
-        if round(graph.GetY()[i]) == 0.:
-            bestfit = graph.GetX()[i]
+        vals.append(graph.GetY()[i])
+        # if round(graph.GetY()[i]) == 0.:
+        #     print graph.GetX()[i]
+        #     bestfit = graph.GetX()[i]
+    # better than rounding to 0 in case of degeneracy
+    bestfit = graph.GetX()[np.abs(vals).argmin()]
     if envelope: plot.RemoveGraphYAll(graph, 0.)
     graph.SetMarkerColor(color)
     spline = ROOT.TSpline3("spline3", graph)
@@ -116,7 +122,6 @@ def BuildScan(scan, param, files, color, yvals, chop, remove_near_min = None, re
       func.SetLineStyle(2)
       func.SetLineColor(ROOT.TColor.GetColor("#000099"))
       graph.SetMarkerSize(0)
-    print(bestfit)
     assert(bestfit is not None)
     if not envelope: plot.ImproveMinimum(graph, func)
     crossings = {}
@@ -346,7 +351,7 @@ if args.POI == 'alpha':
   latex.SetNDC()
   latex.SetTextSize(0.04)
   latex.SetTextAlign(12)
-  #latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance)
+  # latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance)
   print "0^{+} vs 0^{-} = %.8f#sigma (%.8f#sigma)" % (significance,significance2)
 
 for other in other_scans:

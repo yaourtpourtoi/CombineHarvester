@@ -52,15 +52,15 @@ Run 2D liklihood scan of mu vs alpha using:
 
 1D scans can be plotted using scripts/plot1DScan.py script.
 To plot alpha:
-    `python scripts/plot1DScan.py --main=output/test/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha --no-numbers --no-box --x_title="#alpha_{hgg} (#circ)" --y-max=2.5`
+    `python scripts/plot1DScan.py --main output/test/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI alpha --output alpha --no-numbers --no-box --x_title "#alpha_{hgg} (#circ)" --y-max 2.5`
 
 Plot 1D scan of mu:
 
-  python scripts/plot1DScan.py --main=output/test/cmb/125/higgsCombine.mu.MultiDimFit.mH125.root --POI=muggH --output=muggH --no-numbers --no-box --x_title="#mu_{ggH}^{#tau#tau}" --y-max=12
+  python scripts/plot1DScan.py --main output/test/cmb/125/higgsCombine.mu.MultiDimFit.mH125.root --POI muggH --output muggH --no-numbers --no-box --x_title "#mu_{ggH}^{#tau#tau}" --y-max 12
 
 2D scans can be plotted using scripts/plotMultiDimFit.py script:
 
-    `python scripts/plotMultiDimFit.py --title-right="77.8 fb^{-1} (13 TeV)" --cms-sub="" --mass 125 -o mu_vs_alpha output/cp281118_nobbb/cmb/125/higgsCombine.2DScan.MultiDimFit.mH125.root --x-min=-90 --x-max=90`
+    `python scripts/plotMultiDimFit.py --title-right "77.8 fb^{-1} (13 TeV)" --cms-sub "" --mass 125 -o mu_vs_alpha output/cp281118_nobbb/cmb/125/higgsCombine.2DScan.MultiDimFit.mH125.root --x-min -90 --x-max 90`
 
 
 ## Impacts
