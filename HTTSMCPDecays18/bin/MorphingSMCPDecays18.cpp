@@ -787,7 +787,7 @@ int main(int argc, char** argv) {
 	//make one directory per chn-cat, one per chn and cmb. In this code we only
 	//store the individual datacards for each directory to be combined later, but
 	//note that it's also possible to write out the full combined card with CH
-	string output_prefix = "";
+	string output_prefix = "output/";
 	if(output_folder.compare(0,1,"/") == 0) output_prefix="";
 	ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
 	    	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
