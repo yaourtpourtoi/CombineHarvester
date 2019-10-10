@@ -323,13 +323,23 @@ int main(int argc, char** argv) {
         {7, "tt_zttEmbed_a1rho"},
         {8, "tt_jetFakes_a1rho"},*/
 
-        {1, "tt_higgs_mvarho"},
+        /*{1, "tt_higgs_mvarho"},
         {2, "tt_zttEmbed_mvarho"},
         {3, "tt_jetFakes_mvarho"},
         //
         {6, "tt_higgs_mvaa1rho"},
         {7, "tt_zttEmbed_mvaa1rho"},
-        {8, "tt_jetFakes_mvaa1rho"},
+        {8, "tt_jetFakes_mvaa1rho"},*/
+
+        {1, "tt_ggh_mvarho"},
+        {2, "tt_qqh_mvarho"},
+        {3, "tt_zttEmbed_mvarho"},
+        {4, "tt_jetFakes_mvarho"},
+        //
+        {6, "tt_ggh_mvaa1rho"},
+        {7, "tt_qqh_mvaa1rho"},
+        {8, "tt_zttEmbed_mvaa1rho"},
+        {9, "tt_jetFakes_mvaa1rho"},
 
           // vienna NN
         /*{1, "tt_ggh_rho"},
@@ -372,9 +382,14 @@ int main(int argc, char** argv) {
         {33, "tt_jetFakes_other"},*/
         //{34, "tt_misc_other"},
         //
-        {31, "tt_higgs_mvaother"},
+        /*{31, "tt_higgs_mvaother"},
         {32, "tt_zttEmbed_mvaother"},
-        {33, "tt_jetFakes_mvaother"},
+        {33, "tt_jetFakes_mvaother"},*/
+
+        {31, "tt_ggh_mvaother"},
+        {32, "tt_qqh_mvaother"},
+        {33, "tt_zttEmbed_mvaother"},
+        {34, "tt_jetFakes_mvaother"},
 
           // vienna NN
         /*{31, "tt_ggh_other"},
@@ -760,6 +775,9 @@ int main(int argc, char** argv) {
 	
      // add autoMCStats options
      if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
+     // add lumi_scale for projection scans
+     cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
+     cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
 
 	//! [part9]
 	// First we generate a set of bin names:
@@ -799,6 +817,7 @@ int main(int argc, char** argv) {
         else {
           writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
           writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
+          writer.WriteCards("htt_"+chn+"_7_13TeV", cb.cp().channel({chn}).bin_id({7}));
           writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
           writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
           writer.WriteCards("htt_"+chn+"_31_13TeV", cb.cp().channel({chn}).bin_id({31}));
