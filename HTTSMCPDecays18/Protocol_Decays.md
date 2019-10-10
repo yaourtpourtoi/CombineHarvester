@@ -2,12 +2,11 @@
 
 with cutbased cats:
 
-    MorphingSMCPDecays18 --output_folder="test__cp" --postfix="-2D" --ttbar_fit=false --doDecays=true --input_folder_tt="Imperial/CP/test_cp/" --do_jetfakes=true --no_shape_systs=true
+    MorphingSMCPDecays18 --output_folder="19_cp" --postfix="-2D" --ttbar_fit=false --doDecays=true --input_folder_tt="Imperial/CP/201902_Feb/19_cp/" --do_jetfakes=true --no_shape_systs=1
 
 with ML based cats:
 
-    MorphingSMCPDecays18 --output_folder="test_cp" --postfix="-2D" --ttbar_fit=false --doDecays=true --do_mva=true --input_folder_tt="Imperial/CP/test_cp/" --do_jetfakes=true 
-
+    MorphingSMCPDecays18 --output_folder="15_cp" --postfix="-2D" --ttbar_fit=false --doDecays=true --do_mva=true --input_folder_tt="Imperial/CP/201902_Feb/19_cp/" --do_jetfakes=true --no_shape_systs=1
 option --no_shape_systs=true can be used as well
 
 # Building the workspaces:
