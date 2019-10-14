@@ -323,15 +323,17 @@ int main(int argc, char** argv) {
         {7, "tt_zttEmbed_a1rho"},
         {8, "tt_jetFakes_a1rho"},*/
 
-        /*{1, "tt_higgs_mvarho"},
+        // combined Higgs with MVA DM
+        {1, "tt_higgs_mvarho"},
         {2, "tt_zttEmbed_mvarho"},
         {3, "tt_jetFakes_mvarho"},
         //
         {6, "tt_higgs_mvaa1rho"},
         {7, "tt_zttEmbed_mvaa1rho"},
-        {8, "tt_jetFakes_mvaa1rho"},*/
+        {8, "tt_jetFakes_mvaa1rho"},
 
-        {1, "tt_ggh_mvarho"},
+        // split Higgs with MVA DM
+        /*{1, "tt_ggh_mvarho"},
         {2, "tt_qqh_mvarho"},
         {3, "tt_zttEmbed_mvarho"},
         {4, "tt_jetFakes_mvarho"},
@@ -339,7 +341,7 @@ int main(int argc, char** argv) {
         {6, "tt_ggh_mvaa1rho"},
         {7, "tt_qqh_mvaa1rho"},
         {8, "tt_zttEmbed_mvaa1rho"},
-        {9, "tt_jetFakes_mvaa1rho"},
+        {9, "tt_jetFakes_mvaa1rho"},*/
 
           // vienna NN
         /*{1, "tt_ggh_rho"},
@@ -354,13 +356,6 @@ int main(int argc, char** argv) {
         {9, "tt_jetFakes_a1rho"},
         {10, "tt_misc_a1rho"},*/
 
-        /*{1,    "tt_higgs_idg0p5"}, 
-        {2, "tt_zttEmbed_idg0p5"},
-        {3, "tt_jetFakes_idg0p5"},
-
-        {4,    "tt_higgs_NOTidg0p5"}, 
-        {5, "tt_zttEmbed_NOTidg0p5"},
-        {6, "tt_jetFakes_NOTidg0p5"}*/
       };
       cats_cp["mt_2016"] = {
         {1,    "mt_higgs"}, 
@@ -382,14 +377,17 @@ int main(int argc, char** argv) {
         {33, "tt_jetFakes_other"},*/
         //{34, "tt_misc_other"},
         //
-        /*{31, "tt_higgs_mvaother"},
+        
+        // with MVA DM
+        {31, "tt_higgs_mvaother"},
         {32, "tt_zttEmbed_mvaother"},
-        {33, "tt_jetFakes_mvaother"},*/
+        {33, "tt_jetFakes_mvaother"},
 
-        {31, "tt_ggh_mvaother"},
+        // split Higgs with MVA DM
+        /*{31, "tt_ggh_mvaother"},
         {32, "tt_qqh_mvaother"},
         {33, "tt_zttEmbed_mvaother"},
-        {34, "tt_jetFakes_mvaother"},
+        {34, "tt_jetFakes_mvaother"},*/
 
           // vienna NN
         /*{31, "tt_ggh_other"},
