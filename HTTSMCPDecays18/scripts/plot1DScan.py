@@ -99,9 +99,10 @@ def BuildScan(scan, param, files, color, yvals, chop, remove_near_min = None, re
     else:
         graph = pregraph
     bestfit = None
+    vals = []
     for i in xrange(graph.GetN()):
         print graph.GetY()[i]
-        if graph.GetY()[i] == 0.:
+        if round(graph.GetY()[i]) == 0.:
             bestfit = graph.GetX()[i]
     if envelope: plot.RemoveGraphYAll(graph, 0.)
     graph.SetMarkerColor(color)

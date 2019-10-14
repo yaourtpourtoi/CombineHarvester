@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
     ("do_mva", po::value<bool>(&do_mva)->default_value(false))
     ("do_control_plots", po::value<int>(&do_control_plots)->default_value(0))    
     ("era", po::value<string>(&era)->default_value("2016"))
-    ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true))
+    ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("doDecays", po::value<bool>(&doDecays)->default_value(false))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
     ("id_cats", po::value<bool>(&id_cats)->default_value(false));
