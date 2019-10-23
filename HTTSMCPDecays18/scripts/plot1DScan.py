@@ -7,6 +7,7 @@ import CombineHarvester.CombineTools.plotting as plot
 import json
 import argparse
 import os.path
+import numpy as np
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -102,8 +103,9 @@ def BuildScan(scan, param, files, color, yvals, chop, remove_near_min = None, re
     vals = []
     for i in xrange(graph.GetN()):
         print graph.GetY()[i]
-        if round(graph.GetY()[i]) == 0.:
-            bestfit = graph.GetX()[i]
+	vals.append(graph.GetY()[i])
+     	bestfit = graph.GetX()[np.abs(vals).argmin()]
+
     if envelope: plot.RemoveGraphYAll(graph, 0.)
     graph.SetMarkerColor(color)
     spline = ROOT.TSpline3("spline3", graph)
