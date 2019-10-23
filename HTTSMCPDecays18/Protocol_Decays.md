@@ -16,7 +16,7 @@ option --no_shape_systs=true can be used as well
 
 # Run maximum liklihood scan
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90 --points 20 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --main-label Expected
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 20 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --main-label Expected
 
     If want to scale to some lumi X, include the rate parameter lumi_scale=X in the --setParameters option
 
@@ -30,4 +30,4 @@ option --no_shape_systs=true can be used as well
 1D scans can be plotted using scripts/plot1DScan.py script.
 To plot alpha:
 
-    python scripts/plot1DScan.py --main=output/test_cp/cmb/125/higgsCoine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha --no-numbers --no-box --x_title="#alpha (#circ)" --y-max=0.7
+    python scripts/plot1DScan.py --main=output/test_cp/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha --no-numbers --no-box --x_title="#alpha (#circ)" --y-max=0.7
