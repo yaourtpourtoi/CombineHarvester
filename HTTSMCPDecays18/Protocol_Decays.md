@@ -1,14 +1,9 @@
 # Creating datacard
 
-with cutbased cats:
 
-    MorphingSMCPDecays18 --output_folder="19_cp" --postfix="-2D" --doDecays=true --input_folder_tt="Imperial/CP/201902_Feb/19_cp/" --do_jetfakes=true --no_shape_systs=1
+    MorphingSMCPDecays18 --output_folder="cpdecay2017" --postfix="-2D" 
 
-with ML based cats:
-
-    MorphingSMCPDecays18 --output_folder="15_cp" --postfix="-2D" --doDecays=true --do_mva=true --input_folder_tt="Imperial/CP/201902_Feb/19_cp/" --do_jetfakes=true --no_shape_systs=1
-
-option --no_shape_systs=true can be used as well
+the option --no_shape_systs=true can be used as well to remove all shape uncertainties except for bbb's
 
 # Building the workspaces:
 
@@ -16,7 +11,7 @@ option --no_shape_systs=true can be used as well
 
 # Run maximum liklihood scan
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 20 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --main-label Expected
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 20 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 
 
     If want to scale to some lumi X, include the rate parameter lumi_scale=X in the --setParameters option
 

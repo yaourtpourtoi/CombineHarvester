@@ -151,10 +151,10 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
 int main(int argc, char** argv) {
 
     string output_folder = "sm_run2";
-    string input_folder_em="Imperial/CP/";
-    string input_folder_et="Imperial/CP/";
-    string input_folder_mt="Imperial/CP/";
-    string input_folder_tt="Imperial/CP/";
+    string input_folder_em="IC/";
+    string input_folder_et="IC/";
+    string input_folder_mt="IC/";
+    string input_folder_tt="IC/";
     string input_folder_mm="USCMS/";
     string scale_sig_procs="";
     string postfix="";
@@ -163,20 +163,16 @@ int main(int argc, char** argv) {
     bool do_embedding = true;
     bool auto_rebin = false;
     bool do_jetfakes = true;
-    bool do_mva = false;    
-    int do_control_plots = 0;
-    bool doDecays = false;
     bool mergeXbbb = false; 
-    bool id_cats = false;
 
     string era;
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("IC/"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("IC/"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("IC/"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("postfix", po::value<string>(&postfix)->default_value(postfix))
     ("output_folder", po::value<string>(&output_folder)->default_value("sm_run2"))
@@ -184,34 +180,20 @@ int main(int argc, char** argv) {
     ("do_embedding", po::value<bool>(&do_embedding)->default_value(true))
     ("do_jetfakes", po::value<bool>(&do_jetfakes)->default_value(true))
     ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
-    ("do_mva", po::value<bool>(&do_mva)->default_value(false))
-    ("do_control_plots", po::value<int>(&do_control_plots)->default_value(0))    
-    ("era", po::value<string>(&era)->default_value("2016"))
+    ("era", po::value<string>(&era)->default_value("2017"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
-    ("doDecays", po::value<bool>(&doDecays)->default_value(false))
-    ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
-    ("id_cats", po::value<bool>(&id_cats)->default_value(false));
+    ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
     typedef vector<string> VString;
-
- 
-    if(do_control_plots>0){
-      ttbar_fit = false;
-      input_folder_em="/Imperial/control_cards_"+era+"/";
-      input_folder_et="/Imperial/control_cards_"+era+"/";
-      input_folder_mt="/Imperial/control_cards_"+era+"/";
-      input_folder_tt="/Imperial/control_cards_"+era+"/";
-    }
-
  
     VString years;
     if ( era.find("2016") != std::string::npos ) years.push_back("2016");
     if ( era.find("2017") != std::string::npos ) years.push_back("2017");
-    if ( era=="all" ) years = {"2016","2017"};
+    if ( era.find("2018") != std::string::npos ) years.push_back("2018");
+    if ( era=="all" ) years = {"2016","2017","2018"};
  
-    typedef vector<string> VString;
     typedef vector<pair<int, string>> Categories;
     //! [part1]
     // First define the location of the "auxiliaries" directory where we can
@@ -261,273 +243,27 @@ int main(int argc, char** argv) {
     
     map<string,Categories> cats;
     
-    map<string,Categories> cats_cp;
-
-    if (doDecays && !do_mva) {
-      cats_cp["tt_2016"] = {
-        {1, "tt_0jet_rho"},
-        {2, "tt_boosted_rho"},
-        //{3, "tt_dijet_rho"}
-        {3, "tt_dijet_lowboost_rho"},
-        {4, "tt_dijet_boosted_rho"}
-
-        /* {5, "tt_0jet_other"}, */
-        /* {6, "tt_boosted_other"}, */
-        /* //{3, "tt_dijet_rho"} */
-        /* {7, "tt_dijet_lowboost_other"}, */
-        /* {8, "tt_dijet_boosted_other"} */
-
-        /*{1, "tt_0jet_rho_idg0p5"},
-        {2, "tt_boosted_rho_idg0p5"},
-        {3, "tt_dijet_rho_idg0p5"},
-
-        {4, "tt_0jet_rho_!idg0p5"},
-        {5, "tt_boosted_rho_!idg0p5"},
-        {6, "tt_dijet_rho_!idg0p5"}*/
-      };
-
-      cats_cp["mt_2016"] = {
-        {1, "mt_0jet_mixed"},
-        {2, "mt_boosted_mixed"},
-        //{3, "mt_dijet_mixed"}
-        {3, "mt_dijet_lowboost_mixed"},
-        {4, "mt_dijet_boosted_mixed"}
-
-        /*{1, "tt_0jet_mixed_idg0p5"},
-        {2, "tt_boosted_mixed_idg0p5"},
-        {3, "tt_dijet_mixed_idg0p5"},
-
-        {4, "tt_0jet_mixed_!idg0p5"},
-        {5, "tt_boosted_mixed_!idg0p5"},
-        {6, "tt_dijet_mixed_!idg0p5"}*/
-      };
+    if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2016"] = {
-        {31, "tt_0jet_other"},
-        {32, "tt_boosted_other"},
-        {33, "tt_dijet_lowboost_other"},
-        {34, "tt_dijet_boosted_other"}
+        {1, "tt_2016_zttEmbed"},
+        {2, "tt_2016_jetFakes"}
       };
-    }
-    else if (doDecays && do_mva && !id_cats) {
-      cats_cp["tt_2016"] = {
-        /*{1, "tt_higgs"},
-        {2, "tt_zttEmbed"},
-        {3, "tt_jetFakes"},*/
-        //{4, "tt_misc"},
-        //
-        /*{1, "tt_higgs_rho"},
-        {2, "tt_zttEmbed_rho"},
-        {3, "tt_jetFakes_rho"},
-        //
-        {6, "tt_higgs_a1rho"},
-        {7, "tt_zttEmbed_a1rho"},
-        {8, "tt_jetFakes_a1rho"},*/
-
-        // combined Higgs with MVA DM
-        {1, "tt_higgs_mvarho"},
-        {2, "tt_zttEmbed_mvarho"},
-        {3, "tt_jetFakes_mvarho"},
-        //
-        {6, "tt_higgs_mvaa1rho"},
-        {7, "tt_zttEmbed_mvaa1rho"},
-        {8, "tt_jetFakes_mvaa1rho"},
-
-        // split Higgs with MVA DM
-        /*{1, "tt_ggh_mvarho"},
-        {2, "tt_qqh_mvarho"},
-        {3, "tt_zttEmbed_mvarho"},
-        {4, "tt_jetFakes_mvarho"},
-        //
-        {6, "tt_ggh_mvaa1rho"},
-        {7, "tt_qqh_mvaa1rho"},
-        {8, "tt_zttEmbed_mvaa1rho"},
-        {9, "tt_jetFakes_mvaa1rho"},*/
-
-          // vienna NN
-        /*{1, "tt_ggh_rho"},
-        {2, "tt_qqh_rho"},
-        {3, "tt_zttEmbed_rho"},
-        {4, "tt_jetFakes_rho"},
-        {5, "tt_misc_rho"},
-
-        {6, "tt_ggh_a1rho"},
-        {7, "tt_qqh_a1rho"},
-        {8, "tt_zttEmbed_a1rho"},
-        {9, "tt_jetFakes_a1rho"},
-        {10, "tt_misc_a1rho"},*/
-
-      };
-      cats_cp["mt_2016"] = {
-        {1,    "mt_higgs"}, 
-        {2, "mt_zttEmbed"},
-        {3, "mt_jetFakes"},
-        {4, "mt_zll"},
-        {5, "mt_tt"}
-      };
-      cats_cp["et_2016"] = {
-        {1,    "et_higgs"}, 
-        {2, "et_zttEmbed"},
-        {3, "et_jetFakes"},
-        {4, "et_zll"},
-        {5, "et_tt"}
-      };
-      cats["tt_2016"] = {
-        /*{31, "tt_higgs_other"},
-        {32, "tt_zttEmbed_other"},
-        {33, "tt_jetFakes_other"},*/
-        //{34, "tt_misc_other"},
-        //
-        
-        // with MVA DM
-        {31, "tt_higgs_mvaother"},
-        {32, "tt_zttEmbed_mvaother"},
-        {33, "tt_jetFakes_mvaother"},
-
-        // split Higgs with MVA DM
-        /*{31, "tt_ggh_mvaother"},
-        {32, "tt_qqh_mvaother"},
-        {33, "tt_zttEmbed_mvaother"},
-        {34, "tt_jetFakes_mvaother"},*/
-
-          // vienna NN
-        /*{31, "tt_ggh_other"},
-        {32, "tt_qqh_other"},
-        {33, "tt_zttEmbed_other"},
-        {34, "tt_jetFakes_other"},
-        {35, "tt_misc_other"},*/
-
-      };
-      cats["mt_2016"] = {
-        {31,    "mt_higgs_other"}, 
-        {32, "mt_zttEmbed_other"},
-        {33, "mt_jetFakes_other"},
-        {34, "mt_zll_other"},
-        {35, "mt_tt_other"}
-      };
-      cats["et_2016"] = {
-        {31,    "et_higgs_other"}, 
-        {32, "et_zttEmbed_other"},
-        {33, "et_jetFakes_other"},
-        {34, "et_zll_other"},
-        {35, "et_tt_other"}
-      };
-    }
-    if (doDecays && do_mva && id_cats) {
-      cats_cp["tt_2016"] = {
-        {1, "tt_higgs"},
-        {2, "tt_zttEmbed"},
-        {3, "tt_jetFakes"}
+    } 
+    if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
+      cats["tt_2017"] = {
+        {1, "tt_2017_zttEmbed"},
+        {2, "tt_2017_jetFakes"},
+        {3, "tt_2017_higgs_Rho_Rho"},
+        {4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
+        {5, "tt_2017_higgs_A1_Rho_angle1"}, // reserved for a1, rho channel
+        {6, "tt_2017_higgs_A1_A1_angle1"},
+        {7, "tt_2017_higgs_Pi_Rho_Mixed"},
+        {8, "tt_2017_higgs_Pi_Pi"},
+        //{9, "tt_2017_higgs_"}, // reserved for a1, pi channel
+        //{10, "tt_2017_higgs_"}, // reserved for a residual category (all tt events that are not CP sensitive)
       };
     }
 
-
-    if(do_control_plots>0) {
-      std::string extra="";
-      if(do_control_plots==2) extra="lomsv_";
-      if(do_control_plots==3) extra="himsv_";
-      if(era=="2016"){
-        cats_cp["et_2016"] = {};
-        cats_cp["mt_2016"] = {};
-        cats_cp["tt_2016"] = {};
-        cats_cp["em_2016"] = {};
-        cats["et_2016"] = {
-          {100, "et_"+extra+"pt_1"},
-          {101, "et_"+extra+"pt_2"},
-          {102, "et_"+extra+"met"},
-          {103, "et_"+extra+"pt_tt"},
-          {104, "et_"+extra+"m_vis"},
-          {105, "et_"+extra+"mjj"},
-          {106, "et_"+extra+"sjdphi"},
-          {107, "et_"+extra+"n_jets"}, 
-          {108, "et_"+extra+"m_sv"}
-         };
-         cats["mt_2016"] = {
-          {100, "mt_"+extra+"pt_1"},
-          {101, "mt_"+extra+"pt_2"},
-          {102, "mt_"+extra+"met"},
-          {103, "mt_"+extra+"pt_tt"},
-          {104, "mt_"+extra+"m_vis"},
-          {105, "mt_"+extra+"mjj"},
-          {106, "mt_"+extra+"sjdphi"},  
-          {107, "mt_"+extra+"n_jets"},
-          {108, "mt_"+extra+"m_sv"}
-         };
-         cats["tt_2016"] = {
-          {100, "tt_"+extra+"n_jets"},
-          /*{100, "tt_"+extra+"pt_1"},
-          {101, "tt_"+extra+"pt_2"},
-          {102, "tt_"+extra+"met"},
-          {103, "tt_"+extra+"pt_tt"},
-          {104, "tt_"+extra+"m_vis"},
-          {105, "tt_"+extra+"mjj"},
-          {106, "tt_"+extra+"sjdphi"},  
-          {107, "tt_"+extra+"n_jets"},
-          {108, "tt_"+extra+"m_sv"},*/
-         };
-         cats["em_2016"] = {
-          {100, "em_"+extra+"pt_1"},
-          {101, "em_"+extra+"pt_2"},
-          {102, "em_"+extra+"met"},
-          {103, "em_"+extra+"pt_tt"},
-          {104, "em_"+extra+"m_vis"},
-          {105, "em_"+extra+"mjj"},
-          {106, "em_"+extra+"sjdphi"},
-          {107, "em_"+extra+"n_jets"},
-          {108, "em_"+extra+"m_sv"}
-         }; 
-       }
-     if(era=="2017"){
-        cats_cp["et_2017"] = {};
-        cats_cp["mt_2017"] = {};
-        cats_cp["tt_2017"] = {};
-        cats_cp["em_2017"] = {};
-        cats["et_2017"] = {
-          {100, "et_"+extra+"pt_1"},
-          {101, "et_"+extra+"pt_2"},
-          {102, "et_"+extra+"met"},
-          {103, "et_"+extra+"pt_tt"},
-          {104, "et_"+extra+"m_vis"},
-          {105, "et_"+extra+"mjj"},
-          {106, "et_"+extra+"sjdphi"},
-          {107, "et_"+extra+"n_jets"},
-          {108, "et_"+extra+"m_sv"}
-         };
-         cats["mt_2017"] = {
-          {100, "mt_"+extra+"pt_1"},
-          {101, "mt_"+extra+"pt_2"},
-          {102, "mt_"+extra+"met"},
-          {103, "mt_"+extra+"pt_tt"},
-          {104, "mt_"+extra+"m_vis"},
-          {105, "mt_"+extra+"mjj"},
-          {106, "mt_"+extra+"sjdphi"},
-          {107, "mt_"+extra+"n_jets"},
-          {108, "mt_"+extra+"m_sv"}
-         };
-         cats["tt_2017"] = {
-          {100, "tt_"+extra+"pt_1"},
-          {101, "tt_"+extra+"pt_2"},
-          {102, "tt_"+extra+"met"},
-          {103, "tt_"+extra+"pt_tt"},
-          {104, "tt_"+extra+"m_vis"},
-          {105, "tt_"+extra+"mjj"},
-          {106, "tt_"+extra+"sjdphi"},
-          {107, "tt_"+extra+"n_jets"},
-          {108, "tt_"+extra+"m_sv"}
-         };
-         cats["em_2017"] = {
-          {100, "em_"+extra+"pt_1"},
-          {101, "em_"+extra+"pt_2"},
-          {102, "em_"+extra+"met"},
-          {103, "em_"+extra+"pt_tt"},
-          {104, "em_"+extra+"m_vis"},
-          {105, "em_"+extra+"mjj"},
-          {106, "em_"+extra+"sjdphi"},
-          {107, "em_"+extra+"n_jets"},
-          {108, "em_"+extra+"m_sv"}
-         };
-       }
-
-     }
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
@@ -541,17 +277,13 @@ int main(int argc, char** argv) {
     for(auto year: years) {
       for (auto chn : chns) {
           cb.AddObservations({"*"}, {"htt"}, {"13TeV"}, {chn+"_"+year}, cats[chn+"_"+year]);
-          cb.AddObservations({"*"}, {"htt"}, {"13TeV"}, {chn+"_"+year}, cats_cp[chn+"_"+year]);
 
           cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {chn+"_"+year}, bkg_procs[chn], cats[chn+"_"+year], false);
-          cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {chn+"_"+year}, bkg_procs[chn], cats_cp[chn+"_"+year], false);
 
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats[chn+"_"+year], true); // SM VBF/VH are added as signal
-            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats_cp[chn+"_"+year], true);
 
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ggH"], cats[chn+"_"+year], true);
-            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ggH"], cats_cp[chn+"_"+year], true);
           }
       }
     } 
@@ -578,7 +310,7 @@ int main(int argc, char** argv) {
       for (string chn : chns){
           string channel = chn;
           string extra = "";
-          if (year == "2017" && !do_control_plots) extra = "/2017/";
+          extra = "/"+year+"/";
           if(chn == "ttbar") channel = "em"; 
           cb.cp().channel({chn+"_"+year}).backgrounds().ExtractShapes(
                                                              input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
@@ -777,75 +509,46 @@ int main(int argc, char** argv) {
      cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
      cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
 
-	//! [part9]
-	// First we generate a set of bin names:
-	
-
-	//Write out datacards. Naming convention important for rest of workflow. We
-	//make one directory per chn-cat, one per chn and cmb. In this code we only
-	//store the individual datacards for each directory to be combined later, but
-	//note that it's also possible to write out the full combined card with CH
-	string output_prefix = "output/";
-	if(output_folder.compare(0,1,"/") == 0) output_prefix="";
-	ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
-	    	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
-	
-	
-	if(do_control_plots==0) writer.WriteCards("cmb", cb);
-	//Add all di-jet categories combined
-	//
-	
-        writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
-        writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
-
-	for (auto chn : cb.channel_set()) {
-		 writer.WriteCards("htt_"+chn+"_dijet", cb.cp().channel({chn}).bin_id({3,4,5,6}));  
-
-        // per-channel
-	    writer.WriteCards(chn, cb.cp().channel({chn}));
-        // And per-channel-category
-        if (!do_mva) {
-          writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
-          writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
-	      writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
-	      writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({4}));
-          writer.WriteCards("htt_"+chn+"_5_13TeV", cb.cp().channel({chn}).bin_id({5}));
-          writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
-	}
-        else {
-          writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
-          writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
-          writer.WriteCards("htt_"+chn+"_7_13TeV", cb.cp().channel({chn}).bin_id({7}));
-          writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
-          writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
-          writer.WriteCards("htt_"+chn+"_31_13TeV", cb.cp().channel({chn}).bin_id({31}));
-          writer.WriteCards("htt_"+chn+"_32_13TeV", cb.cp().channel({chn}).bin_id({32}));
-          writer.WriteCards("htt_"+chn+"_33_13TeV", cb.cp().channel({chn}).bin_id({33}));
-          writer.WriteCards("htt_"+chn+"_34_13TeV", cb.cp().channel({chn}).bin_id({34}));
-          writer.WriteCards("htt_"+chn+"_35_13TeV", cb.cp().channel({chn}).bin_id({35}));
-          writer.WriteCards("htt_"+chn+"_36_13TeV", cb.cp().channel({chn}).bin_id({36}));
-          writer.WriteCards("htt_"+chn+"_37_13TeV", cb.cp().channel({chn}).bin_id({37}));
-          writer.WriteCards("htt_"+chn+"_38_13TeV", cb.cp().channel({chn}).bin_id({38}));
-          writer.WriteCards("htt_"+chn+"_39_13TeV", cb.cp().channel({chn}).bin_id({39}));
-          writer.WriteCards("htt_"+chn+"_41_13TeV", cb.cp().channel({chn}).bin_id({41}));
-          writer.WriteCards("htt_"+chn+"_42_13TeV", cb.cp().channel({chn}).bin_id({42}));
-          writer.WriteCards("htt_"+chn+"_43_13TeV", cb.cp().channel({chn}).bin_id({43}));
-          writer.WriteCards("htt_"+chn+"_44_13TeV", cb.cp().channel({chn}).bin_id({44}));
-          writer.WriteCards("htt_"+chn+"_45_13TeV", cb.cp().channel({chn}).bin_id({45}));
-          writer.WriteCards("htt_"+chn+"_46_13TeV", cb.cp().channel({chn}).bin_id({46}));
-          writer.WriteCards("htt_"+chn+"_47_13TeV", cb.cp().channel({chn}).bin_id({47}));
-          writer.WriteCards("htt_"+chn+"_48_13TeV", cb.cp().channel({chn}).bin_id({48}));
-          writer.WriteCards("htt_"+chn+"_49_13TeV", cb.cp().channel({chn}).bin_id({49}));
-
-          writer.WriteCards("htt_"+chn+"_rho_13TeV", cb.cp().channel({chn}).bin_id({1,2,3,4,5}));
-          writer.WriteCards("htt_"+chn+"_a1rho_13TeV", cb.cp().channel({chn}).bin_id({6,7,8,9,10}));
-          writer.WriteCards("htt_"+chn+"_others_13TeV", cb.cp().channel({chn}).bin_id({31,32,33,34}));
-
-        }
+     //! [part9]
+     // First we generate a set of bin names:
+     
+     
+     //Write out datacards. Naming convention important for rest of workflow. We
+     //make one directory per chn-cat, one per chn and cmb. In this code we only
+     //store the individual datacards for each directory to be combined later, but
+     //note that it's also possible to write out the full combined card with CH
+     string output_prefix = "output/";
+     if(output_folder.compare(0,1,"/") == 0) output_prefix="";
+     ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
+         	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
+     
+     
+     writer.WriteCards("cmb", cb);
+     
+     writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
+     writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
+     writer.WriteCards("htt_2018", cb.cp().channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"}));
+     
+     for (auto chn : cb.channel_set()) {
+       writer.WriteCards("htt_"+chn+"_dijet", cb.cp().channel({chn}).bin_id({1,2,3,4,5,6,7,8/*,9,10*/}));  
+     
+       // per-channel
+       writer.WriteCards(chn, cb.cp().channel({chn}));
+       // And per-channel-category
+       writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
+       writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
+       writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({1,2,3}));
+       writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({1,2,4}));
+       writer.WriteCards("htt_"+chn+"_5_13TeV", cb.cp().channel({chn}).bin_id({1,2,5}));
+       writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({1,2,6}));
+       writer.WriteCards("htt_"+chn+"_7_13TeV", cb.cp().channel({chn}).bin_id({1,2,7}));
+       writer.WriteCards("htt_"+chn+"_8_13TeV", cb.cp().channel({chn}).bin_id({1,2,8}));
+       //writer.WriteCards("htt_"+chn+"_9_13TeV", cb.cp().channel({chn}).bin_id({1,2,9}));
+       //writer.WriteCards("htt_"+chn+"_10_13TeV", cb.cp().channel({chn}).bin_id({1,2,10}));
+     
+     }
         
-    }
-    
-    
+        
     cb.PrintAll();
     cout << " done\n";
     
