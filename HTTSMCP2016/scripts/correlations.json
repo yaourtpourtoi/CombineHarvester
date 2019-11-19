@@ -107,5 +107,7 @@
   "CMS_scale_j_eta0to5_uncorr_13TeV": 0.0,
   "CMS_scale_j_eta0to3_uncorr_13TeV": 0.0,
   "CMS_scale_j_eta3to5_uncorr_13TeV": 0.0,
-  "CMS_htt_jetFakeLep_13TeV": 0.5
+  "CMS_htt_jetFakeLep_13TeV": 0.5,
+  "CMS_scale_e_13TeV": 0.0,
+  "CMS_scale_mu_13TeV": 0.0
 }

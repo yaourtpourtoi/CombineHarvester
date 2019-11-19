@@ -351,7 +351,7 @@ if args.POI == 'alpha':
   latex.SetNDC()
   latex.SetTextSize(0.04)
   latex.SetTextAlign(12)
-  # latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance)
+  latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance2)
   print "0^{+} vs 0^{-} = %.8f#sigma (%.8f#sigma)" % (significance,significance2)
 
 for other in other_scans:

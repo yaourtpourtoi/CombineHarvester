@@ -514,6 +514,10 @@ namespace ch {
         //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
         //                                        "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
 
+        // Muon ES
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed, {"jetFakes", "QCD"}})).channel({"mt","mt_2016","mt_2017","et_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}).AddSyst(cb,
+                                             "CMS_scale_mu_13TeV", "shape", SystMap<>::init(1.00));
+
         //##############################################################################
         //  Embedded uncertainty on ttbar contamination (and VV contamination)
         //##############################################################################        
