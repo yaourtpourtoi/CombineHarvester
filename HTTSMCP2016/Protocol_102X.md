@@ -33,12 +33,16 @@ To take VBF/VH cross-section as SM in both rate and shape use:
 To take the H->tautau BR as SM use:
     `--freezeNuisances mutautau`
 
+
+
 To scan alpha:
-    `combineTool.py -m 125 -M MultiDimFit --setParameters alpha=0 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/cp130219/cmb/125/ws.root --algo grid  --there -n .alpha --floatOtherPOIs 1 --points=37 --alignEdges 1 -t -1`
+    `combineTool.py -m 125 -M MultiDimFit --setParameters alpha=0 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/cp130219/cmb/125/ws.root --algo grid  --there -n .alpha --floatOtherPOIs 1 --points=37 --alignEdges 1 -t -1 --cminDefaultMinimizerStrategy 0`
+(Note we may want to change the --cminDefaultMinimizerStrategy 0 at some point but the fit does not always converget for --cminDefaultMinimizerStrategy 1 - could adjust the number of function calls and/or tolerance to get this to work)
+
 
 To scan mu:
 We need to freeze tautau BR to 1 as the fit has no sensitivity to muggH it only has sensitivity to muggH*mutautau so by setting mutautau to 1 we effecitivly just get one rate parameter that scales the XS*BR
-    `combineTool.py -m 125 -M MultiDimFit --setParameters muggH=1 --setParameterRanges muggH=-0.1,3 --points 20 --redefineSignalPOIs muggH --freezeNuisances mutautau -d ws.root --algo grid -t -1 --there -n .mu --floatOtherPOIs 1`
+    `combineTool.py -m 125 -M MultiDimFit --setParameters muggH=1 --setParameterRanges muggH=-0.1,3 --points 20 --redefineSignalPOIs muggH --freezeNuisances mutautau -d ws.root --algo grid -t -1 --there -n .mu --floatOtherPOIs 1 --cminDefaultMinimizerStrategy 0`
 
 To run on IC batch use (1 point per job):
  `--job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --split-points 1`

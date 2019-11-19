@@ -101,8 +101,9 @@ namespace ch {
                                             "CMS_eff_embedded_trigger_tt_13TeV", "lnN", SystMap<>::init(1.10));
 
         // additional uncertainties due to tau SF on cross-triggers - decorrelated for embedded samples in Morphing code
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_13TeV", "shape", SystMap<>::init(1.00));
+        //  Add back when this is working properly
+//        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_13TeV", "shape", SystMap<>::init(1.00));
+//        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Electron, muon and tau Id  efficiencies
@@ -497,20 +498,21 @@ namespace ch {
         //  Electron, muon and tau energy Scale
         //##############################################################################
         
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed, {"jetFakes", "QCD"}})).channel({"et","et_2016","et_2017","et_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}).AddSyst(cb,
-                                             "CMS_scale_e_13TeV", "shape", SystMap<>::init(1.00));
+        // Add back later!
+        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed, {"jetFakes", "QCD"}})).channel({"et","et_2016","et_2017","et_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}).AddSyst(cb,
+        //                                     "CMS_scale_e_13TeV", "shape", SystMap<>::init(1.00));
        
         //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed, {"jetFakes", "QCD"}})).channel({"em","em_2016","em_2017","ttbar","ttbar_2016","ttbar_2017"}).AddSyst(cb,
         //                                     "CMS_scale_e_13TeV", "shape", SystMap<>::init(1.00));
 
  
         // Decay Mode based TES Settings
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
 
         //##############################################################################
         //  Embedded uncertainty on ttbar contamination (and VV contamination)
@@ -520,34 +522,25 @@ namespace ch {
         //##############################################################################
         //  jet and met energy Scale
         //##############################################################################
- 
+
+
+        // Add back later! 
+        //
         // MET Systematic shapes - recoil uncertainties for recoil corrected met, unclustered energy uncertainty for samples with no recoil correction, jes uncertainties propogated to met for samples with no recoil correction
-        cb.cp().process({"TT","TTJ","TTT","VV","VVJ","VVT"}).AddSyst(cb,
-                                                  "CMS_scale_met_unclustered_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"TT","TTJ","TTT","VV","VVJ","VVT"}).AddSyst(cb,
+        //                                          "CMS_scale_met_unclustered_13TeV", "shape", SystMap<>::init(1.00));
 
 
-        cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
-                                                  "CMS_htt_boson_reso_met_13TeV", "shape", SystMap<>::init(1.00)); 
-        cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
-                                                  "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      
+        //cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
+        //                                          "CMS_htt_boson_reso_met_13TeV", "shape", SystMap<>::init(1.00)); 
+        //cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
+        //                                          "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      
  
 
       
 
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_corr_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_uncorr_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_13TeV", "shape", SystMap<>::init(1.00));
  
-        // uncomment for regional JES uncertainties
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_eta0to5_corr_13TeV", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_eta0to3_corr_13TeV", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_eta3to5_corr_13TeV", "shape", SystMap<>::init(1.00)); 
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_eta0to5_uncorr_13TeV", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_eta0to3_uncorr_13TeV", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_eta3to5_uncorr_13TeV", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_RelativeBal_13TeV", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"}).AddSyst(cb,"CMS_scale_j_RelativeSample_$ERA", "shape", SystMap<>::init(1.00));
-        // cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"}).AddSyst(cb,"CMS_scale_j_RelativeSample_$ERA", "shape", SystMap<>::init(1.00));
-
         
         //##############################################################################
         //  Background normalization uncertainties
@@ -862,257 +855,204 @@ namespace ch {
         );
 
         // QCD uncerts for em
-        
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_0JetRate_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"em","em_2016"}, {1}, {"QCD"}, 0.904, 1.096)
-          ({"em_2017"}, {1}, {"QCD"}, 0.923, 1.077)
-          ({"em_2018"}, {1}, {"QCD"}, 0.923, 1.077)
-        ); 
-        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({31,32,33,34,35,36,37,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
-                                             "CMS_em_QCD_0JetRate_13TeV", "shape", SystMap<>::init(1.00));
-    
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_1JetRate_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"em","em_2016"}, {4}, {"QCD"}, 0.995, 1.005)
-          ({"em","em_2016"}, {3}, {"QCD"}, 0.995, 1.005)
-          ({"em","em_2016"}, {6}, {"QCD"}, 0.993, 1.007)
-          ({"em","em_2016"}, {5}, {"QCD"}, 0.995, 1.005)
-          ({"em","em_2016"}, {2}, {"QCD"}, 0.995, 1.005)
-          ({"ttbar","ttbar_2016"}, {1}, {"QCD"}, 0.997, 1.003)
-          ({"ttbar_2017"}, {1}, {"QCD"}, 0.958, 1.042)
-          ({"em_2017"}, {4}, {"QCD"}, 0.940, 1.061)
-          ({"em_2017"}, {3}, {"QCD"}, 0.959, 1.041)
-          ({"em_2017"}, {6}, {"QCD"}, 0.949, 1.051)
-          ({"em_2017"}, {5}, {"QCD"}, 0.960, 1.040)
-          ({"em_2017"}, {2}, {"QCD"}, 0.958, 1.042)
-
-          ({"ttbar_2018"}, {1}, {"QCD"}, 0.958, 1.042)
-          ({"em_2018"}, {4}, {"QCD"}, 0.940, 1.061)
-          ({"em_2018"}, {3}, {"QCD"}, 0.959, 1.041)
-          ({"em_2018"}, {6}, {"QCD"}, 0.949, 1.051)
-          ({"em_2018"}, {5}, {"QCD"}, 0.960, 1.040)
-          ({"em_2018"}, {2}, {"QCD"}, 0.958, 1.042)
-
-        ); // neglect small uncertainties
-
-        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({31,32,33,34,35,36,37,41,42,43,44,45,46,47,48,49,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
-                                             "CMS_em_QCD_1JetRate_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({1,31,32,33,34,35,36,37,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
-                                             "CMS_em_QCD_0JetShape_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_1JetShape_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}, {1}, {"QCD"}, 0.955, 1.045)
-          ({"em","em_2016"}, {4}, {"QCD"}, 0.966, 1.034)
-          ({"em","em_2016"}, {3}, {"QCD"}, 0.955, 1.045)
-          ({"em","em_2016"}, {6}, {"QCD"}, 0.874, 1.121)
-          ({"em","em_2016"}, {5}, {"QCD"}, 0.940, 1.060)
-          ({"ttbar_2017"}, {1}, {"QCD"}, 0.959, 1.041)
-          ({"em_2017"}, {4}, {"QCD"}, 0.903, 1.099)
-          ({"em_2017"}, {3}, {"QCD"}, 0.960, 1.040)
-          ({"em_2017"}, {6}, {"QCD"}, 0.933, 1.068)
-          ({"em_2017"}, {5}, {"QCD"}, 0.963, 1.037)
-
-          ({"ttbar_2018"}, {1}, {"QCD"}, 0.959, 1.041)
-          ({"em_2018"}, {4}, {"QCD"}, 0.903, 1.099)
-          ({"em_2018"}, {3}, {"QCD"}, 0.960, 1.040)
-          ({"em_2018"}, {6}, {"QCD"}, 0.933, 1.068)
-          ({"em_2018"}, {5}, {"QCD"}, 0.963, 1.037)
-        );
-
-        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({2,31,32,33,34,35,36,37,41,42,43,44,45,47,48,49,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
-                                             "CMS_em_QCD_1JetShape_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_IsoExtrap_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"ttbar","ttbar_2016"}, {1}, {"QCD"}, 0.967, 1.039)
-          ({"em","em_2016"}, {1}, {"QCD"}, 1.050, 0.956)
-          ({"em","em_2016"}, {4}, {"QCD"}, 1.034, 0.965)
-          ({"em","em_2016"}, {3}, {"QCD"}, 1.042, 0.962)
-          ({"em","em_2016"}, {6}, {"QCD"}, 1.040, 0.965) // set to same values as for bin 5 as statistics are too bad to estimate uncertainty
-          ({"em","em_2016"}, {5}, {"QCD"}, 1.040, 0.965)
-          ({"em","em_2016"}, {2}, {"QCD"}, 1.047, 0.960)
-          ({"ttbar_2017"}, {1}, {"QCD"}, 1.076, 0.930)
-          ({"em_2017"}, {1}, {"QCD"}, 1.084, 0.925)
-          ({"em_2017"}, {4}, {"QCD"}, 1.086, 0.923) // set to same values as for bin 3 as statistics are too bad to estimate uncertainty
-          ({"em_2017"}, {3}, {"QCD"}, 1.086, 0.923)
-          ({"em_2017"}, {6}, {"QCD"}, 1.064, 0.939)
-          ({"em_2017"}, {5}, {"QCD"}, 1.091, 0.920)
-          ({"em_2017"}, {2}, {"QCD"}, 1.081, 0.927)
-
-          ({"ttbar_2018"}, {1}, {"QCD"}, 1.076, 0.930)
-          ({"em_2018"}, {1}, {"QCD"}, 1.084, 0.925)
-          ({"em_2018"}, {4}, {"QCD"}, 1.086, 0.923) // set to same values as for bin 3 as statistics are too bad to estimate uncertainty
-          ({"em_2018"}, {3}, {"QCD"}, 1.086, 0.923)
-          ({"em_2018"}, {6}, {"QCD"}, 1.064, 0.939)
-          ({"em_2018"}, {5}, {"QCD"}, 1.091, 0.920)
-          ({"em_2018"}, {2}, {"QCD"}, 1.081, 0.927)
-        );
-
-        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({31,32,33,34,35,36,37,41,42,43,44,45,47,48,49,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
-                                             "CMS_em_QCD_IsoExtrap_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({2,3,4,5,6}, false).AddSyst(cb,
-                                             "CMS_em_QCD_BackgroundSubtraction_13TeV", "shape", SystMap<>::init(1.00)); // this uncertanty is only included as a shape uncertainty for he 0jet category no bin label in the name since it applied only to this category (the others will have bin labels in the name so that they are added as seperate uncertainties)
+        // add lnN uncertainties for now        
 
 
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_BackgroundSubtraction_ttbar_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"ttbar_2016"}, {1}, {"QCD"}, 1.902, 0.098)
-          ({"ttbar_2017"}, {1}, {"QCD"}, 1.359, 0.641)
-          ({"ttbar_2018"}, {1}, {"QCD"}, 1.359, 0.641)
-        );
+        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+                                                       "CMS_$CHANNEL_QCD_$BIN_13TeV", "lnN", SystMap<>::init(1.15));
 
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_BackgroundSubtraction_boosted_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"em_2016"}, {2}, {"QCD"}, 1.094, 0.906)
-          ({"em_2017"}, {2}, {"QCD"}, 1.055, 0.944)
-          ({"em_2018"}, {2}, {"QCD"}, 1.055, 0.944)
-        );       
-
-        // for dijet categories all uncertainties are treated as correlated (subtracted background fractions are ~ the same for all). For the boosted di-jet categories the stats are too low to get a good estimate of the uncertainty so take the same values as for the low boost categories
-        cb.cp().AddSyst(cb,
-          "CMS_em_QCD_BackgroundSubtraction_dijet_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
-          ({"em_2016"}, {3}, {"QCD"}, 1.203, 0.797)
-          ({"em_2016"}, {4}, {"QCD"}, 1.203, 0.797)
-          ({"em_2016"}, {6}, {"QCD"}, 1.144, 0.856)
-          ({"em_2016"}, {5}, {"QCD"}, 1.144, 0.856)
  
-          ({"em_2017"}, {3}, {"QCD"}, 1.091, 0.909)
-          ({"em_2017"}, {4}, {"QCD"}, 1.091, 0.909)
-          ({"em_2017"}, {6}, {"QCD"}, 1.076, 0.924)
-          ({"em_2017"}, {5}, {"QCD"}, 1.076, 0.924)
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_0JetRate_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"em","em_2016"}, {1}, {"QCD"}, 0.904, 1.096)
+//          ({"em_2017"}, {1}, {"QCD"}, 0.923, 1.077)
+//          ({"em_2018"}, {1}, {"QCD"}, 0.923, 1.077)
+//        ); 
+//        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({31,32,33,34,35,36,37,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
+//                                             "CMS_em_QCD_0JetRate_13TeV", "shape", SystMap<>::init(1.00));
+//    
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_1JetRate_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"em","em_2016"}, {4}, {"QCD"}, 0.995, 1.005)
+//          ({"em","em_2016"}, {3}, {"QCD"}, 0.995, 1.005)
+//          ({"em","em_2016"}, {6}, {"QCD"}, 0.993, 1.007)
+//          ({"em","em_2016"}, {5}, {"QCD"}, 0.995, 1.005)
+//          ({"em","em_2016"}, {2}, {"QCD"}, 0.995, 1.005)
+//          ({"ttbar","ttbar_2016"}, {1}, {"QCD"}, 0.997, 1.003)
+//          ({"ttbar_2017"}, {1}, {"QCD"}, 0.958, 1.042)
+//          ({"em_2017"}, {4}, {"QCD"}, 0.940, 1.061)
+//          ({"em_2017"}, {3}, {"QCD"}, 0.959, 1.041)
+//          ({"em_2017"}, {6}, {"QCD"}, 0.949, 1.051)
+//          ({"em_2017"}, {5}, {"QCD"}, 0.960, 1.040)
+//          ({"em_2017"}, {2}, {"QCD"}, 0.958, 1.042)
+//
+//          ({"ttbar_2018"}, {1}, {"QCD"}, 0.958, 1.042)
+//          ({"em_2018"}, {4}, {"QCD"}, 0.940, 1.061)
+//          ({"em_2018"}, {3}, {"QCD"}, 0.959, 1.041)
+//          ({"em_2018"}, {6}, {"QCD"}, 0.949, 1.051)
+//          ({"em_2018"}, {5}, {"QCD"}, 0.960, 1.040)
+//          ({"em_2018"}, {2}, {"QCD"}, 0.958, 1.042)
+//
+//        ); // neglect small uncertainties
+//
+//        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({31,32,33,34,35,36,37,41,42,43,44,45,46,47,48,49,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
+//                                             "CMS_em_QCD_1JetRate_13TeV", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({1,31,32,33,34,35,36,37,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
+//                                             "CMS_em_QCD_0JetShape_13TeV", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_1JetShape_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}, {1}, {"QCD"}, 0.955, 1.045)
+//          ({"em","em_2016"}, {4}, {"QCD"}, 0.966, 1.034)
+//          ({"em","em_2016"}, {3}, {"QCD"}, 0.955, 1.045)
+//          ({"em","em_2016"}, {6}, {"QCD"}, 0.874, 1.121)
+//          ({"em","em_2016"}, {5}, {"QCD"}, 0.940, 1.060)
+//          ({"ttbar_2017"}, {1}, {"QCD"}, 0.959, 1.041)
+//          ({"em_2017"}, {4}, {"QCD"}, 0.903, 1.099)
+//          ({"em_2017"}, {3}, {"QCD"}, 0.960, 1.040)
+//          ({"em_2017"}, {6}, {"QCD"}, 0.933, 1.068)
+//          ({"em_2017"}, {5}, {"QCD"}, 0.963, 1.037)
+//
+//          ({"ttbar_2018"}, {1}, {"QCD"}, 0.959, 1.041)
+//          ({"em_2018"}, {4}, {"QCD"}, 0.903, 1.099)
+//          ({"em_2018"}, {3}, {"QCD"}, 0.960, 1.040)
+//          ({"em_2018"}, {6}, {"QCD"}, 0.933, 1.068)
+//          ({"em_2018"}, {5}, {"QCD"}, 0.963, 1.037)
+//        );
+//
+//        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({2,31,32,33,34,35,36,37,41,42,43,44,45,47,48,49,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
+//                                             "CMS_em_QCD_1JetShape_13TeV", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_IsoExtrap_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"ttbar","ttbar_2016"}, {1}, {"QCD"}, 0.967, 1.039)
+//          ({"em","em_2016"}, {1}, {"QCD"}, 1.050, 0.956)
+//          ({"em","em_2016"}, {4}, {"QCD"}, 1.034, 0.965)
+//          ({"em","em_2016"}, {3}, {"QCD"}, 1.042, 0.962)
+//          ({"em","em_2016"}, {6}, {"QCD"}, 1.040, 0.965) // set to same values as for bin 5 as statistics are too bad to estimate uncertainty
+//          ({"em","em_2016"}, {5}, {"QCD"}, 1.040, 0.965)
+//          ({"em","em_2016"}, {2}, {"QCD"}, 1.047, 0.960)
+//          ({"ttbar_2017"}, {1}, {"QCD"}, 1.076, 0.930)
+//          ({"em_2017"}, {1}, {"QCD"}, 1.084, 0.925)
+//          ({"em_2017"}, {4}, {"QCD"}, 1.086, 0.923) // set to same values as for bin 3 as statistics are too bad to estimate uncertainty
+//          ({"em_2017"}, {3}, {"QCD"}, 1.086, 0.923)
+//          ({"em_2017"}, {6}, {"QCD"}, 1.064, 0.939)
+//          ({"em_2017"}, {5}, {"QCD"}, 1.091, 0.920)
+//          ({"em_2017"}, {2}, {"QCD"}, 1.081, 0.927)
+//
+//          ({"ttbar_2018"}, {1}, {"QCD"}, 1.076, 0.930)
+//          ({"em_2018"}, {1}, {"QCD"}, 1.084, 0.925)
+//          ({"em_2018"}, {4}, {"QCD"}, 1.086, 0.923) // set to same values as for bin 3 as statistics are too bad to estimate uncertainty
+//          ({"em_2018"}, {3}, {"QCD"}, 1.086, 0.923)
+//          ({"em_2018"}, {6}, {"QCD"}, 1.064, 0.939)
+//          ({"em_2018"}, {5}, {"QCD"}, 1.091, 0.920)
+//          ({"em_2018"}, {2}, {"QCD"}, 1.081, 0.927)
+//        );
+//
+//        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({31,32,33,34,35,36,37,41,42,43,44,45,47,48,49,100,101,102,103,104,105,106,107,108}).AddSyst(cb,
+//                                             "CMS_em_QCD_IsoExtrap_13TeV", "shape", SystMap<>::init(1.00));
 
-          ({"em_2018"}, {3}, {"QCD"}, 1.091, 0.909)
-          ({"em_2018"}, {4}, {"QCD"}, 1.091, 0.909)
-          ({"em_2018"}, {6}, {"QCD"}, 1.076, 0.924)
-          ({"em_2018"}, {5}, {"QCD"}, 1.076, 0.924)
-        );
+//        cb.cp().process({"QCD"}).channel({"em","em_2016","em_2017","em_2018"}).bin_id({2,3,4,5,6}, false).AddSyst(cb,
+//                                             "CMS_em_QCD_BackgroundSubtraction_13TeV", "shape", SystMap<>::init(1.00)); // this uncertanty is only included as a shape uncertainty for he 0jet category no bin label in the name since it applied only to this category (the others will have bin labels in the name so that they are added as seperate uncertainties)
+//
+//
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_BackgroundSubtraction_ttbar_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"ttbar_2016"}, {1}, {"QCD"}, 1.902, 0.098)
+//          ({"ttbar_2017"}, {1}, {"QCD"}, 1.359, 0.641)
+//          ({"ttbar_2018"}, {1}, {"QCD"}, 1.359, 0.641)
+//        );
+//
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_BackgroundSubtraction_boosted_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"em_2016"}, {2}, {"QCD"}, 1.094, 0.906)
+//          ({"em_2017"}, {2}, {"QCD"}, 1.055, 0.944)
+//          ({"em_2018"}, {2}, {"QCD"}, 1.055, 0.944)
+//        );       
+//
+//        // for dijet categories all uncertainties are treated as correlated (subtracted background fractions are ~ the same for all). For the boosted di-jet categories the stats are too low to get a good estimate of the uncertainty so take the same values as for the low boost categories
+//        cb.cp().AddSyst(cb,
+//          "CMS_em_QCD_BackgroundSubtraction_dijet_13TeV", "lnN", SystMapAsymm<channel,bin_id,process>::init
+//          ({"em_2016"}, {3}, {"QCD"}, 1.203, 0.797)
+//          ({"em_2016"}, {4}, {"QCD"}, 1.203, 0.797)
+//          ({"em_2016"}, {6}, {"QCD"}, 1.144, 0.856)
+//          ({"em_2016"}, {5}, {"QCD"}, 1.144, 0.856)
+// 
+//          ({"em_2017"}, {3}, {"QCD"}, 1.091, 0.909)
+//          ({"em_2017"}, {4}, {"QCD"}, 1.091, 0.909)
+//          ({"em_2017"}, {6}, {"QCD"}, 1.076, 0.924)
+//          ({"em_2017"}, {5}, {"QCD"}, 1.076, 0.924)
+//
+//          ({"em_2018"}, {3}, {"QCD"}, 1.091, 0.909)
+//          ({"em_2018"}, {4}, {"QCD"}, 1.091, 0.909)
+//          ({"em_2018"}, {6}, {"QCD"}, 1.076, 0.924)
+//          ({"em_2018"}, {5}, {"QCD"}, 1.076, 0.924)
+//        );
         
-        // QCD norm, just for tt 
-        cb.cp().process({"QCD"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "CMS_htt_QCD_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.02));
-        cb.cp().process({"QCD"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({2,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "CMS_htt_QCD_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.04));
-        cb.cp().process({"QCD"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({3,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "CMS_htt_QCD_dijet_lowboost_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.08));
-        cb.cp().process({"QCD"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({4,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "CMS_htt_QCD_dijet_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.48));
-        
-        
-        // QCD OS/SS uncertainty should include also extrapolation from non-iso -> iso (update me)
-        cb.cp().process({"QCD"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,10,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "QCD_OSSS_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.21));											 
-        cb.cp().process({"QCD"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,13,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "QCD_OSSS_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.33));										 
-        cb.cp().process({"QCD"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({3,4,16,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "QCD_OSSS_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.48));
-
-	cb.cp().process({"QCD"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,10,31,32,33,34,35,36,37}).AddSyst(cb,
-	                                     "QCD_OSSS_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.09));											 
-        cb.cp().process({"QCD"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,13,31,32,33,34,35,36,37}).AddSyst(cb,
-	                                     "QCD_OSSS_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.07));										 
-        cb.cp().process({"QCD"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({3,4,16,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-	                                     "QCD_OSSS_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.08));       
-        
-        // based on the Ersatz study
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,11,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WHighMTtoLowMT_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.033));
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,14,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WHighMTtoLowMT_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.067));
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).bin_id({3,4,17,20,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WHighMTtoLowMT_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.182));
-        
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).bin_id({4,20,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WlowPTtoHighPT_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.279));
-        
-        // W OS/SS systematic uncertainties 
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,10,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_syst_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.002));
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,13,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_syst_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.029));
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({3,4,16,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WOSSS_syst_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.131));
-        cb.cp().process({"W"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,10,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_syst_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.012));
-        cb.cp().process({"W"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,13,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WOSSS_syst_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.049));
-        cb.cp().process({"W"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({3,4,16,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WOSSS_syst_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.086));
-        
-        // W OS/SS statistical uncertainties
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,10,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_stat_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.035));
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,13,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_stat_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.026));
-        cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({3,4,16,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WOSSS_stat_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.082));
-        cb.cp().process({"W"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,10,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_stat_0jet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.026));
-        cb.cp().process({"W"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,13,31,32,33,34,35,36,37}).AddSyst(cb,
-                                             "WOSSS_stat_boosted_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.020));
-        cb.cp().process({"W"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({3,4,16,41,42,43,44,45,46,47,48,49}).AddSyst(cb,
-                                             "WOSSS_stat_dijet_$CHANNEL_13TeV", "lnN", SystMap<>::init(1.066));
 
         //##############################################################################
         //  Fake-Factor Method Uncertainties
         //##############################################################################
 
         // FF statistical uncertainties are uncorrelated between all years
+        //
+        // add lnN uncertainties fow now!
+        //
+        cb.cp().process({"jetFakes"}).AddSyst(cb,
+                                                       "CMS_$CHANNEL_FF_$BIN_13TeV", "lnN", SystMap<>::init(1.15));
 
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_qcd_dm0_njet0_et_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00)); //2.00
-        cb.cp().process({"jetFakes"}).channel({"et_2017"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et_2018"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_w_dm0_njet0_et_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00)); //2.00
-        cb.cp().process({"jetFakes"}).channel({"et_2017"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et_2018"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet0_et_stat", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_qcd_dm0_njet0_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00)); //2.00
+     //   cb.cp().process({"jetFakes"}).channel({"et_2017"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et_2018"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_w_dm0_njet0_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00)); //2.00
+     //   cb.cp().process({"jetFakes"}).channel({"et_2017"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et_2018"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet0_et_stat", "shape", SystMap<>::init(1.00));
+     //   //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet1_et_stat", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_qcd_dm0_njet0_mt_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_mt_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_w_dm0_njet0_mt_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_mt_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet0_mt_stat", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet1_mt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_qcd_dm0_njet0_mt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_mt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_w_dm0_njet0_mt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_w_dm0_njet1_mt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet0_mt_stat", "shape", SystMap<>::init(1.00));
+     //   //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017"}).bin_id({1,2,3,4,5,6}).AddSyst(cb, "ff_tt_dm0_njet1_mt_stat", "shape", SystMap<>::init(1.00));
 
-        // tt statistical uncertainties
+     //   // tt statistical uncertainties
 
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_qcd_dm0_njet0_tt_stat", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_tt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_qcd_dm0_njet0_tt_stat", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_qcd_dm0_njet1_tt_stat", "shape", SystMap<>::init(1.00));
 
-        // FF systematic uncertainties 
+     //   // FF systematic uncertainties 
 
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018","et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_w_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","et","et_2016","et_2017"}).AddSyst(cb, "ff_tt_syst", "shape", SystMap<>::init(1.00)); // dropping for now since FF are the same as the nominal
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018","et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_w_syst", "shape", SystMap<>::init(1.00));
+     //   //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","et","et_2016","et_2017"}).AddSyst(cb, "ff_tt_syst", "shape", SystMap<>::init(1.00)); // dropping for now since FF are the same as the nominal
 
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_w_tt_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_tt_syst", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_w_tt_syst", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_tt_syst", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_qcd_et_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_qcd_mt_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_qcd_tt_syst", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_qcd_et_syst", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_qcd_mt_syst", "shape", SystMap<>::init(1.00));
+     //   cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_qcd_tt_syst", "shape", SystMap<>::init(1.00));
 
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017"}).AddSyst(cb,"ff_w_frac_tt_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017"}).AddSyst(cb,"ff_tt_frac_tt_syst", "shape", SystMap<>::init(1.00));
+     //   //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017"}).AddSyst(cb,"ff_w_frac_tt_syst", "shape", SystMap<>::init(1.00));
+     //   //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017"}).AddSyst(cb,"ff_tt_frac_tt_syst", "shape", SystMap<>::init(1.00));
 
-        // et subtraction uncertainties
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_sub_syst_et", "shape", SystMap<>::init(1.00));
+     //   // et subtraction uncertainties
+     //   cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_sub_syst_et", "shape", SystMap<>::init(1.00));
 
-        // mt subtraction uncertainties
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_sub_syst_mt", "shape", SystMap<>::init(1.00));
+     //   // mt subtraction uncertainties
+     //   cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_sub_syst_mt", "shape", SystMap<>::init(1.00));
 
-        // tt subtraction uncertainties
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_sub_syst_tt", "shape", SystMap<>::init(1.00));
+     //   // tt subtraction uncertainties
+     //   cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_sub_syst_tt", "shape", SystMap<>::init(1.00));
 
         //##############################################################################
         //  DY LO->NLO reweighting, Between no and twice the correction.
         //##############################################################################
-        
+        //
         cb.cp().process( {"ZTT","ZJ","ZL","ZLL"}).AddSyst(cb,
                                              "CMS_htt_dyShape_13TeV", "shape", SystMap<>::init(0.1));
         
@@ -1128,16 +1068,16 @@ namespace ch {
         // ZL shape  and electron/muon  to tau fake only in  mt and et channels (updated March 22)
         //##############################################################################
 
-        
-        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
-                                                         "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
-                                                         "CMS_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        // Add back later!   
+        //cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+        //                                                 "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+        //                                                 "CMS_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-                                                         "CMS_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-                                                         "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        //                                                 "CMS_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        //                                                 "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
        
         // weighted avarages of recommended tau POG uncertainties provided in bins of eta
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016"}).AddSyst(cb,
@@ -1158,24 +1098,6 @@ namespace ch {
                                                         "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.23));
         cb.cp().process({"ZL","EWKZ"}).channel({"tt_2018"}).AddSyst(cb,
                                                         "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.23));
-        
-        //##############################################################################
-        // jet  to tau fake only in tt, mt and et channels
-        //##############################################################################
-        
-        
-        cb.cp().process({"W"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                       "CMS_htt_jetFakeTau_13TeV", "lnN", SystMap<>::init(1.20)); 
-        cb.cp().process({"VVJ","TTJ","ZJ"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                       "CMS_htt_jetFakeTau_13TeV", "lnN", SystMap<>::init(1.20));
-        if(control_region==0){
-          cb.cp().process({"W"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-                                                       "CMS_htt_jetFakeTau_13TeV", "lnN", SystMap<>::init(1.20));    
-        }
-        
-        cb.cp().process( {"W"}).channel({"tt","tt_2016","tt_2017","tt_2018","mt","mt_2016","mt_2017","mt_2018","et","et_2016","et_2017","et_2018"}).AddSyst(cb,
-                                                                "CMS_htt_jetToTauFake_13TeV", "shape", SystMap<>::init(1.00));
-        
         
         //##############################################################################
         // Theoretical Uncertainties on signal (update me)

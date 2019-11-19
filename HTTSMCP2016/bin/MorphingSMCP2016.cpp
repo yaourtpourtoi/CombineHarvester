@@ -387,11 +387,10 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
 int main(int argc, char** argv) {
 
     string output_folder = "sm_run2";
-    string input_folder_em="Imperial/CP/";
-    string input_folder_et="Imperial/CP/";
-    string input_folder_mt="Imperial/CP/";
-    string input_folder_tt="Imperial/CP/";
-    string input_folder_mm="USCMS/";
+    string input_folder_em="FullRun2/";
+    string input_folder_et="FullRun2/";
+    string input_folder_mt="FullRun2/";
+    string input_folder_tt="FullRun2/";
     string only_init="";
     string scale_sig_procs="";
     string postfix="";
@@ -407,17 +406,15 @@ int main(int argc, char** argv) {
     bool useJHU = false;
     bool powheg_check = false;
  
-    bool cross_check = false;
 
     string era;
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("Imperial/CP"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("Imperial/CP"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("Imperial/CP"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("Imperial/CP"))
-    ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("FullRun2"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("FullRun2"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("FullRun2"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("FullRun2"))
     ("only_init", po::value<string>(&only_init)->default_value(""))
     ("real_data", po::value<bool>(&real_data)->default_value(real_data))
     ("scale_sig_procs", po::value<string>(&scale_sig_procs)->default_value(""))
@@ -432,22 +429,12 @@ int main(int argc, char** argv) {
     ("do_control_plots", po::value<int>(&do_control_plots)->default_value(0))    
     ("era", po::value<string>(&era)->default_value("2016,2017,2018"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true))
-    ("cross_check", po::value<bool>(&cross_check)->default_value(false))
     ("powheg_check", po::value<bool>(&powheg_check)->default_value(false))
     ("useJHU", po::value<bool>(&useJHU)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
     typedef vector<string> VString;
-
-    if(cross_check){
-      //no_shape_systs = true;
-      ttbar_fit = false;
-      input_folder_em="Imperial/CP/cross_check/";
-      input_folder_et="Imperial/CP/cross_check/";
-      input_folder_mt="Imperial/CP/cross_check/";
-      input_folder_tt="Imperial/CP/cross_check/";
-    }
  
     if(do_control_plots>0){
       ttbar_fit = false;
@@ -478,8 +465,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"mt"};
-    if(cross_check) chns = {"mt"};
+    VString chns = {"mt","tt","et","em"};
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -509,14 +495,6 @@ int main(int argc, char** argv) {
       }
 
     }
-
-    if(cross_check){
-      bkg_procs["et"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-      bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-      bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
-      bkg_procs["em"] = {"ZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-      bkg_procs["ttbar"] = {"ZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-    } 
 
     ch::CombineHarvester cb;
     
@@ -1145,7 +1123,7 @@ int main(int argc, char** argv) {
    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_13TeV","CMS_eff_embedded_Xtrigger_mt_13TeV");
    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_13TeV","CMS_eff_embedded_Xtrigger_et_13TeV");
 
-    if(!cross_check && do_control_plots==0)  {
+    if(do_control_plots==0)  {
 
       // In this part we convert shape uncertainties into lnN where the shape variations are small compared to statistical uncertainties, this helps remove artificial constraints and makes the fit simpler
 

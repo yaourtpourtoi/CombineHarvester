@@ -226,11 +226,16 @@ class CPMixture(PhysicsModel):
 
             if self.sm_fix:
                 if "_1_13TeV" in bin_ or "_2_13TeV" in bin_:
-                    year = '2016'
-                    if '2017' in bin_: year = '2017' 
-                    if "ggHsm" in process: scaling = "muggH_mutautau_sm_01jetnorm_%s" % year
-                    elif "ggHmm" in process: scaling = "muggH_mutautau_mm_01jetnorm_%s" % year
-                    elif "ggHps" in process: scaling = "muggH_mutautau_ps_01jetnorm_%s" % year
+                    # simply this by only take SM template for 0 and 1 jet categories
+                    if "ggHsm" in process: scaling = "muggH_mutautau"
+                    else: scaling = "Zero"
+
+                    #year = '2016'
+                    #if '2017' in bin_: year = '2017' 
+                    #if "ggHsm" in process: scaling = "muggH_mutautau_sm_01jetnorm_%s" % year
+                    #else: scaling = "Zero"
+                    #elif "ggHmm" in process: scaling = "muggH_mutautau_mm_01jetnorm_%s" % year
+                    #elif "ggHps" in process: scaling = "muggH_mutautau_ps_01jetnorm_%s" % year
                     
                     #if "ggHsm" in process: scaling = "muggH_mutautau"
                     #elif "ggHmm" in process: scaling = "Zero" 
