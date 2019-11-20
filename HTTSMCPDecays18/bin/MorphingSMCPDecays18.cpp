@@ -94,7 +94,37 @@ void ConvertShapesToLnN (ch::CombineHarvester& cb, string name, double min_ks) {
 
 }
 
-void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation, std::vector<string> chans_2016, std::vector<string> chans_2017) {
+void DecorrelateMCAndEMB (ch::CombineHarvester& cb, string name, string embed_name, double scale) {
+  auto cb_syst = cb.cp().process({"EmbedZTT"}).syst_name({name});
+  double val = sqrt(1-scale*scale);
+  ch::CloneSysts(cb_syst, cb, [&](ch::Systematic *s) {
+      s->set_name(embed_name);
+      if (s->type().find("shape") != std::string::npos) {
+        s->set_scale(s->scale() * val);
+      }
+      if (s->type().find("lnN") != std::string::npos) {
+        s->set_value_u((s->value_u() - 1.) * val + 1.);
+        if (s->asymm()){
+          s->set_value_d((s->value_d() - 1.) * val + 1.);
+        }
+      }
+  });
+  cb_syst.ForEachSyst([scale](ch::Systematic *syst) {
+    if (syst->type().find("shape") != std::string::npos) {
+      syst->set_scale(syst->scale() * scale);
+    }
+    if (syst->type().find("lnN") != std::string::npos) {
+      syst->set_value_u((syst->value_u() - 1.) * scale + 1.);
+      if (syst->asymm()){
+        syst->set_value_d((syst->value_d() - 1.) * scale + 1.);
+      }
+    }
+  });
+
+}
+
+
+void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
   if (correlation >= 1.) return;
   auto cb_syst = cb.cp().syst_name({name});
   double val = sqrt(1. - correlation);
@@ -124,6 +154,19 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
         }
       }
   });
+  // clone 2018 systs
+  ch::CloneSysts(cb.cp().channel(chans_2018).syst_name({name}), cb, [&](ch::Systematic *s) {
+      s->set_name(s->name()+"_2018");
+      if (s->type().find("shape") != std::string::npos) {
+        s->set_scale(s->scale() * val);
+      }
+      if (s->type().find("lnN") != std::string::npos) {
+        s->set_value_u((s->value_u() - 1.) * val + 1.);
+        if (s->asymm()){
+          s->set_value_d((s->value_d() - 1.) * val + 1.);
+        }
+      }
+  });
 
   if(correlation>0.) {
     // re-scale un-correlated part
@@ -142,11 +185,12 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
   } else {
     // remove uncorrelated part if systs are 100% un-correlated
     cb.FilterSysts([&](ch::Systematic *s){
-        return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos;
+        return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
     });
 
   }
 }
+
 
 int main(int argc, char** argv) {
 
@@ -504,14 +548,55 @@ int main(int argc, char** argv) {
 
     }
 
+    // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
+  
+    // partially decorrelate the energy scale uncertainties
+    DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
+    // partially decorrelate the ID uncertainties uncertainties
+    DecorrelateMCAndEMB(cb,"CMS_eff_m","CMS_eff_embedded_m",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_e","CMS_eff_embedded_e",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_mt_13TeV","CMS_eff_embedded_t_mt_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_et_13TeV","CMS_eff_embedded_t_et_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_tt_13TeV","CMS_eff_embedded_t_tt_13TeV",0.5);
+  
+    // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM1_13TeV","CMS_eff_embedded_Xtrigger_mt_DM1_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM10_13TeV","CMS_eff_embedded_Xtrigger_mt_DM10_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM11_13TeV","CMS_eff_embedded_Xtrigger_mt_DM11_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM0_13TeV","CMS_eff_embedded_Xtrigger_et_DM0_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM1_13TeV","CMS_eff_embedded_Xtrigger_et_DM1_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM10_13TeV","CMS_eff_embedded_Xtrigger_et_DM10_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV");
+  
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM0_13TeV","CMS_eff_embedded_t_trg_DM0_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM1_13TeV","CMS_eff_embedded_t_trg_DM1_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM10_13TeV","CMS_eff_embedded_t_trg_DM10_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM11_13TeV","CMS_eff_embedded_t_trg_DM11_13TeV");
+  
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_mt_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_et_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
-	
-    // rename embedded energy-scale uncertainties so that they are not correlated with MC energy-scales
-     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV"); 
-     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV"); 
-     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV"); 
-     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV"); 
-
+    // de-correlate systematics for 2016 and 2017, ADD 2018 
+    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
+      std::cout << "Partially Decorrelating systematics for 2016/2017/2018" << std::endl;
+      Json::Value js;
+      string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/scripts/correlations.json";
+      js = ch::ExtractJsonFromFile(json_file);
+      std::vector<std::string> keys = js.getMemberNames();
+      for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it){
+        string name = *it;
+        double value = js[*it].asDouble();
+        std::vector<string> chans_2016 = {"em","em_2016","et","et_2016","mt","mt_2016","tt","tt_2016","ttbar","ttbar_2016"};
+        std::vector<string> chans_2017 = {"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"};
+        std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
+        DecorrelateSyst (cb, name, value, chans_2016, chans_2017, chans_2018);
+      }
+    }
 
      ch::SetStandardBinNames(cb);
 	//! [part8]
