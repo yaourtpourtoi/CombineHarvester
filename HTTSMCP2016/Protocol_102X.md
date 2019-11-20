@@ -66,7 +66,7 @@ Plot 1D scan of mu:
 
     `python scripts/plotMultiDimFit.py --title-right "77.8 fb^{-1} (13 TeV)" --cms-sub "" --mass 125 -o mu_vs_alpha output/cp281118_nobbb/cmb/125/higgsCombine.2DScan.MultiDimFit.mH125.root --x-min -90 --x-max 90`
 
-
+nclusivly
 ## Impacts
 
 cd into output directory:

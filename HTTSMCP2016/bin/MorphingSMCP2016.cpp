@@ -316,6 +316,34 @@ void FakeFactorSystsSplitNorm (ch::CombineHarvester& cb, string name) {
   });
 }
 
+void DecorrelateMCAndEMB (ch::CombineHarvester& cb, string name, string embed_name, double scale) {
+  auto cb_syst = cb.cp().process({"EmbedZTT"}).syst_name({name});
+  double val = sqrt(1-scale*scale);
+  ch::CloneSysts(cb_syst, cb, [&](ch::Systematic *s) {
+      s->set_name(embed_name);
+      if (s->type().find("shape") != std::string::npos) {
+        s->set_scale(s->scale() * val);
+      }
+      if (s->type().find("lnN") != std::string::npos) {
+        s->set_value_u((s->value_u() - 1.) * val + 1.);
+        if (s->asymm()){
+          s->set_value_d((s->value_d() - 1.) * val + 1.);
+        }
+      }
+  });
+  cb_syst.ForEachSyst([scale](ch::Systematic *syst) {
+    if (syst->type().find("shape") != std::string::npos) {
+      syst->set_scale(syst->scale() * scale);
+    }
+    if (syst->type().find("lnN") != std::string::npos) {
+      syst->set_value_u((syst->value_u() - 1.) * scale + 1.);
+      if (syst->asymm()){
+        syst->set_value_d((syst->value_d() - 1.) * scale + 1.);
+      }
+    }
+  });
+
+}
 
 void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
   if (correlation >= 1.) return;
@@ -986,9 +1014,7 @@ int main(int argc, char** argv) {
     for(auto year: years) {
       for (string chn : chns){
           string channel = chn;
-          string extra = "";
-          if (year == "2017" && !do_control_plots) extra = "/2017/";
-          if (year == "2018" && !do_control_plots) extra = "/2018/";
+          string extra = "/"+year+"/";
           if(chn == "ttbar") channel = "em"; 
           cb.cp().channel({chn+"_"+year}).backgrounds().ExtractShapes(
                                                              input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
@@ -1118,118 +1144,147 @@ int main(int argc, char** argv) {
          s->set_type("lnN");
       }
   });
- 
-    // decorrelate lepton+tau cross trigger shape uncertainties for embedded and MC
-   cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_13TeV","CMS_eff_embedded_Xtrigger_mt_13TeV");
-   cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_13TeV","CMS_eff_embedded_Xtrigger_et_13TeV");
 
-    if(do_control_plots==0)  {
+  // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
 
-      // In this part we convert shape uncertainties into lnN where the shape variations are small compared to statistical uncertainties, this helps remove artificial constraints and makes the fit simpler
+  // partially decorrelate the energy scale uncertainties
+  DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
+  // partially decorrelate the ID uncertainties uncertainties
+  DecorrelateMCAndEMB(cb,"CMS_eff_m","CMS_eff_embedded_m",0.5); 
+  DecorrelateMCAndEMB(cb,"CMS_eff_e","CMS_eff_embedded_e",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_eff_t_mt_13TeV","CMS_eff_embedded_t_mt_13TeV",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_eff_t_et_13TeV","CMS_eff_embedded_t_et_13TeV",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_eff_t_tt_13TeV","CMS_eff_embedded_t_tt_13TeV",0.5);
 
-      // convert b-tag uncertainties to lnN:
-      cb.cp().ForEachSyst([](ch::Systematic *s) {
-        if (s->type().find("shape") == std::string::npos || s->type().find("CMS_eff_b") == std::string::npos) return;
-           s->set_type("lnN");
-      });
-     
+  // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM1_13TeV","CMS_eff_embedded_Xtrigger_mt_DM1_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM10_13TeV","CMS_eff_embedded_Xtrigger_mt_DM10_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM11_13TeV","CMS_eff_embedded_Xtrigger_mt_DM11_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM0_13TeV","CMS_eff_embedded_Xtrigger_et_DM0_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM1_13TeV","CMS_eff_embedded_Xtrigger_et_DM1_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM10_13TeV","CMS_eff_embedded_Xtrigger_et_DM10_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV");
 
-      // if the analysis changes the number of jdphi or mass bins (for boosted) category then these need to be changed here also
-      int ndphibins = 12;
-      int nmassbins = 10;
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM0_13TeV","CMS_eff_embedded_t_trg_DM0_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM1_13TeV","CMS_eff_embedded_t_trg_DM1_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM10_13TeV","CMS_eff_embedded_t_trg_DM10_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM11_13TeV","CMS_eff_embedded_t_trg_DM11_13TeV");
 
-      // convert JES uncertainties to lnN:
-      std::vector<std::string> systs_lnN = {"CMS_scale_j_eta3to5_13TeV","CMS_scale_j_eta0to5_13TeV","CMS_scale_j_eta0to3_13TeV","CMS_scale_j_RelativeBal_13TeV","CMS_scale_j_RelativeSample_13TeV","CMS_scale_j_13TeV", "CMS_scale_j_eta3to5_corr_13TeV","CMS_scale_j_eta0to5_corr_13TeV","CMS_scale_j_eta0to3_corr_13TeV","CMS_scale_j_corr_13TeV", "CMS_scale_j_eta3to5_uncorr_13TeV","CMS_scale_j_eta0to5_uncorr_13TeV","CMS_scale_j_eta0to3_uncorr_13TeV","CMS_scale_j_uncorr_13TeV"};
-      for (auto i : systs_lnN) {
-        // all 0jet JES uncerts to lnN
-        ConvertShapesToLnN(cb.cp().bin_id({1}), i, 0.); 
-        // all tt channel MC backgrounds except Higgs to lnN
-        ConvertShapesToLnN(cb.cp().backgrounds().process({"TTT","VVT","EWKZ","ZL"}).channel({"tt","tt_2017","tt_2016","tt_2018"}), i, 0.);
-        // EWKZ and ZLL (em channel) always small so convert to lnN
-        ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ","ZLL"}), i, 0.);
-        // all backgrounds except ttbar and Higgs to lnN for dijet categories
-        ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3,4,5,6}).process({"W","VVT","VV","ZLL","ZL","EWKZ"}), i, 0.);
-        // Convert VH processes to lnN
-        ConvertShapesToLnN(cb.cp().process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), i, 0.);  
-        // group mass bins for boosted categories to get smooth templates
-        SmoothShapes(cb.cp().bin_id({2}), i, nmassbins, false, true, false);
-        // group mass bins for dijet categories to get smooth templates
-        SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, false, true);
-      }
-      // convert MET unclustered energy uncertainties to lnN
-      ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_scale_met_unclustered_13TeV", 0.);
-      //for tt channel lnN uncertainties are not needed for 0 jet and boosted categories as MET is not used in selection cuts so these are removed completly
-      cb.cp().backgrounds().channel({"tt","tt_2016","tt_2017","tt_2018"}).FilterSysts([&](ch::Systematic *s){
-        bool remove_syst = (s->name().find("CMS_scale_met_unclustered_13TeV") != std::string::npos);
-        return remove_syst;
-      });
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_mt_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_et_13TeV");
+  cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
-      // MET response and resolution uncertainties for recoil corrected samples
-      // EWKZ always small so set to lnN
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}), "CMS_htt_boson_scale_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZLL","W"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZLL","W"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
-      // merge together mass bins for boosted category
-      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
-      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
-      // lnN uncertainties for ZL in dijet categories
-      //ConvertShapesToLnN(cb.cp().bin_id({1,2,3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_scale_met_13TeV", 0.);
-      // merge jdphi bins for signal in dijet categories
-      SmoothShapes(cb.cp().bin_id({3,4,5,6}).process({"ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125"}), "CMS_htt_boson_reso_met_13TeV", ndphibins, false, true, false);
-      SmoothShapes(cb.cp().bin_id({3,4,5,6}).process({"ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125"}), "CMS_htt_boson_scale_met_13TeV", ndphibins, false, true, false);
+//    if(do_control_plots==0)  {
+//
+//      // In this part we convert shape uncertainties into lnN where the shape variations are small compared to statistical uncertainties, this helps remove artificial constraints and makes the fit simpler
+//
+//      // convert b-tag uncertainties to lnN:
+//      cb.cp().ForEachSyst([](ch::Systematic *s) {
+//        if (s->type().find("shape") == std::string::npos || s->type().find("CMS_eff_b") == std::string::npos) return;
+//           s->set_type("lnN");
+//      });
+//     
+//
+//      // if the analysis changes the number of jdphi or mass bins (for boosted) category then these need to be changed here also
+//      int ndphibins = 12;
+//      int nmassbins = 10;
+//
+//      // convert JES uncertainties to lnN:
+//      std::vector<std::string> systs_lnN = {"CMS_scale_j_eta3to5_13TeV","CMS_scale_j_eta0to5_13TeV","CMS_scale_j_eta0to3_13TeV","CMS_scale_j_RelativeBal_13TeV","CMS_scale_j_RelativeSample_13TeV","CMS_scale_j_13TeV", "CMS_scale_j_eta3to5_corr_13TeV","CMS_scale_j_eta0to5_corr_13TeV","CMS_scale_j_eta0to3_corr_13TeV","CMS_scale_j_corr_13TeV", "CMS_scale_j_eta3to5_uncorr_13TeV","CMS_scale_j_eta0to5_uncorr_13TeV","CMS_scale_j_eta0to3_uncorr_13TeV","CMS_scale_j_uncorr_13TeV"};
+//      for (auto i : systs_lnN) {
+//        // all 0jet JES uncerts to lnN
+//        ConvertShapesToLnN(cb.cp().bin_id({1}), i, 0.); 
+//        // all tt channel MC backgrounds except Higgs to lnN
+//        ConvertShapesToLnN(cb.cp().backgrounds().process({"TTT","VVT","EWKZ","ZL"}).channel({"tt","tt_2017","tt_2016","tt_2018"}), i, 0.);
+//        // EWKZ and ZLL (em channel) always small so convert to lnN
+//        ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ","ZLL"}), i, 0.);
+//        // all backgrounds except ttbar and Higgs to lnN for dijet categories
+//        ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3,4,5,6}).process({"W","VVT","VV","ZLL","ZL","EWKZ"}), i, 0.);
+//        // Convert VH processes to lnN
+//        ConvertShapesToLnN(cb.cp().process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), i, 0.);  
+//        // group mass bins for boosted categories to get smooth templates
+//        SmoothShapes(cb.cp().bin_id({2}), i, nmassbins, false, true, false);
+//        // group mass bins for dijet categories to get smooth templates
+//        SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, false, true);
+//      }
+//      // convert MET unclustered energy uncertainties to lnN
+//      ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_scale_met_unclustered_13TeV", 0.);
+//      //for tt channel lnN uncertainties are not needed for 0 jet and boosted categories as MET is not used in selection cuts so these are removed completly
+//      cb.cp().backgrounds().channel({"tt","tt_2016","tt_2017","tt_2018"}).FilterSysts([&](ch::Systematic *s){
+//        bool remove_syst = (s->name().find("CMS_scale_met_unclustered_13TeV") != std::string::npos);
+//        return remove_syst;
+//      });
+//
+//      // MET response and resolution uncertainties for recoil corrected samples
+//      // EWKZ always small so set to lnN
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}), "CMS_htt_boson_reso_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}), "CMS_htt_boson_scale_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZLL","W"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZLL","W"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
+//      // merge together mass bins for boosted category
+//      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
+//      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
+//      // lnN uncertainties for ZL in dijet categories
+//      //ConvertShapesToLnN(cb.cp().bin_id({1,2,3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_scale_met_13TeV", 0.);
+//      // merge jdphi bins for signal in dijet categories
+//      SmoothShapes(cb.cp().bin_id({3,4,5,6}).process({"ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125"}), "CMS_htt_boson_reso_met_13TeV", ndphibins, false, true, false);
+//      SmoothShapes(cb.cp().bin_id({3,4,5,6}).process({"ggHsm_htt","ggHmm_htt","ggHps_htt","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125"}), "CMS_htt_boson_scale_met_13TeV", ndphibins, false, true, false);
+//
+//      ConvertShapesToLnN(cb.cp().bin_id({3,4,5,6}).process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", 0.);
+//      ConvertShapesToLnN(cb.cp().bin_id({3,4,5,6}).process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", 0.);
+//
+//      // tau ES / electron uncertainties. Keep these as shape uncertainties but for the dijet categpory group jdphi bins together to improve statistics
+//      std::vector<std::string> systs_ES = {"CMS_scale_t_1prong_13TeV","CMS_scale_t_1prong1pizero_13TeV","CMS_scale_t_3prong_13TeV","CMS_scale_e_13TeV"};
+//      for (auto i : systs_ES) {
+//        SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, true, false);
+//      }
+//      ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_scale_e_13TeV", 0.);
+//
+//      // merge sjdphi bins for FF subraction systematics
+//      SmoothShapes(cb.cp().bin_id({3,4,5,6}), "ff_sub_syst_et", ndphibins, false, true, false);
+//      SmoothShapes(cb.cp().bin_id({3,4,5,6}), "ff_sub_syst_mt", ndphibins, false, true, false);
+//      SmoothShapes(cb.cp().bin_id({3,4,5,6}), "ff_sub_syst_tt", ndphibins, false, true, false);
+// 
+//    }
 
-      ConvertShapesToLnN(cb.cp().bin_id({3,4,5,6}).process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().bin_id({3,4,5,6}).process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", 0.);
-
-      // tau ES / electron uncertainties. Keep these as shape uncertainties but for the dijet categpory group jdphi bins together to improve statistics
-      std::vector<std::string> systs_ES = {"CMS_scale_t_1prong_13TeV","CMS_scale_t_1prong1pizero_13TeV","CMS_scale_t_3prong_13TeV","CMS_scale_e_13TeV"};
-      for (auto i : systs_ES) {
-        SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, true, false);
-      }
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_scale_e_13TeV", 0.);
-
-      // merge sjdphi bins for FF subraction systematics
-      SmoothShapes(cb.cp().bin_id({3,4,5,6}), "ff_sub_syst_et", ndphibins, false, true, false);
-      SmoothShapes(cb.cp().bin_id({3,4,5,6}), "ff_sub_syst_mt", ndphibins, false, true, false);
-      SmoothShapes(cb.cp().bin_id({3,4,5,6}), "ff_sub_syst_tt", ndphibins, false, true, false);
- 
-    }
-
-    // apply 50% correlations for tau and electron energy scales
-    vector<string> es_uncerts = {
-      "t_1prong_13TeV",
-      "t_1prong1pizero_13TeV",
-      "t_3prong_13TeV",
-      "e_13TeV"
-    };
-    for (auto name : es_uncerts) {
-      auto cb_syst = cb.cp().syst_name({"CMS_scale_"+name});
-      ch::CloneSysts(cb.cp().process({"EmbedZTT"}).syst_name({"CMS_scale_"+name}), cb, [&](ch::Systematic *s) {
-        s->set_name("CMS_scale_embedded_"+name);
-        if (s->type().find("shape") != std::string::npos) {
-          s->set_scale(s->scale() * 0.707);
-        }
-      });
-
-      ch::CloneSysts(cb.cp().process({"EmbedZTT"},false).syst_name({"CMS_scale_"+name}), cb, [&](ch::Systematic *s) {
-        s->set_name("CMS_scale_mc_"+name);
-        if (s->type().find("shape") != std::string::npos) {
-          s->set_scale(s->scale() * 0.707);
-        }
-      });
-
-      cb_syst.ForEachSyst([](ch::Systematic *syst) {
-        if (syst->type().find("shape") != std::string::npos) {
-          syst->set_scale(syst->scale() * 0.707);
-        }
-      });
-
-    }
+//    // apply 50% correlations for tau and electron energy scales
+//    vector<string> es_uncerts = {
+//      "t_1prong_13TeV",
+//      "t_1prong1pizero_13TeV",
+//      "t_3prong_13TeV",
+//      "e_13TeV"
+//    };
+//    for (auto name : es_uncerts) {
+//      auto cb_syst = cb.cp().syst_name({"CMS_scale_"+name});
+//      ch::CloneSysts(cb.cp().process({"EmbedZTT"}).syst_name({"CMS_scale_"+name}), cb, [&](ch::Systematic *s) {
+//        s->set_name("CMS_scale_embedded_"+name);
+//        if (s->type().find("shape") != std::string::npos) {
+//          s->set_scale(s->scale() * 0.707);
+//        }
+//      });
+//
+//      ch::CloneSysts(cb.cp().process({"EmbedZTT"},false).syst_name({"CMS_scale_"+name}), cb, [&](ch::Systematic *s) {
+//        s->set_name("CMS_scale_mc_"+name);
+//        if (s->type().find("shape") != std::string::npos) {
+//          s->set_scale(s->scale() * 0.707);
+//        }
+//      });
+//
+//      cb_syst.ForEachSyst([](ch::Systematic *syst) {
+//        if (syst->type().find("shape") != std::string::npos) {
+//          syst->set_scale(syst->scale() * 0.707);
+//        }
+//      });
+//
+//    }
 
     // de-correlate systematics for 2016 and 2017, ADD 2018 
     if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
@@ -1249,50 +1304,50 @@ int main(int argc, char** argv) {
     }
 
 
-    // split FF systematics into lnN part and pure shape part as recomended 
-    std::vector<string> ff_systs = {
-      "ff_qcd_dm0_njet0_et_stat",
-      "ff_qcd_dm0_njet1_et_stat",
-      "ff_qcd_dm1_njet0_et_stat",
-      "ff_qcd_dm1_njet1_et_stat",
-      "ff_w_dm0_njet0_et_stat",
-      "ff_w_dm0_njet1_et_stat",
-      "ff_w_dm1_njet0_et_stat",
-      "ff_w_dm1_njet1_et_stat",
-      "ff_tt_dm0_njet0_et_stat",
-      "ff_tt_dm1_njet0_et_stat",
-      "ff_qcd_dm0_njet0_mt_stat",
-      "ff_qcd_dm0_njet1_mt_stat",
-      "ff_qcd_dm1_njet0_mt_stat",
-      "ff_qcd_dm1_njet1_mt_stat",
-      "ff_w_dm0_njet0_mt_stat",
-      "ff_w_dm0_njet1_mt_stat",
-      "ff_w_dm1_njet0_mt_stat",
-      "ff_w_dm1_njet1_mt_stat",
-      "ff_tt_dm0_njet0_mt_stat",
-      "ff_tt_dm1_njet0_mt_stat",
-      "ff_qcd_dm0_njet0_tt_stat",
-      "ff_qcd_dm0_njet1_tt_stat",
-      "ff_qcd_dm1_njet0_tt_stat",
-      "ff_qcd_dm1_njet1_tt_stat",
-      "ff_w_syst",
-      "ff_tt_syst",
-      "ff_w_tt_syst",
-      "ff_tt_tt_syst",
-      "ff_qcd_et_syst",
-      "ff_qcd_mt_syst",
-      "ff_qcd_tt_syst",
-      "ff_dy_frac_tt_syst",
-      "ff_w_frac_tt_syst",
-      "ff_tt_frac_tt_syst"
-    };
-
-    for (auto name: ff_systs) {
-      FakeFactorSystsSplitNorm(cb, name);
-      FakeFactorSystsSplitNorm(cb, name+"_2016");
-      FakeFactorSystsSplitNorm(cb, name+"_2017");
-      FakeFactorSystsSplitNorm(cb, name+"_2018");
-    }
+//    // split FF systematics into lnN part and pure shape part as recomended 
+//    std::vector<string> ff_systs = {
+//      "ff_qcd_dm0_njet0_et_stat",
+//      "ff_qcd_dm0_njet1_et_stat",
+//      "ff_qcd_dm1_njet0_et_stat",
+//      "ff_qcd_dm1_njet1_et_stat",
+//      "ff_w_dm0_njet0_et_stat",
+//      "ff_w_dm0_njet1_et_stat",
+//      "ff_w_dm1_njet0_et_stat",
+//      "ff_w_dm1_njet1_et_stat",
+//      "ff_tt_dm0_njet0_et_stat",
+//      "ff_tt_dm1_njet0_et_stat",
+//      "ff_qcd_dm0_njet0_mt_stat",
+//      "ff_qcd_dm0_njet1_mt_stat",
+//      "ff_qcd_dm1_njet0_mt_stat",
+//      "ff_qcd_dm1_njet1_mt_stat",
+//      "ff_w_dm0_njet0_mt_stat",
+//      "ff_w_dm0_njet1_mt_stat",
+//      "ff_w_dm1_njet0_mt_stat",
+//      "ff_w_dm1_njet1_mt_stat",
+//      "ff_tt_dm0_njet0_mt_stat",
+//      "ff_tt_dm1_njet0_mt_stat",
+//      "ff_qcd_dm0_njet0_tt_stat",
+//      "ff_qcd_dm0_njet1_tt_stat",
+//      "ff_qcd_dm1_njet0_tt_stat",
+//      "ff_qcd_dm1_njet1_tt_stat",
+//      "ff_w_syst",
+//      "ff_tt_syst",
+//      "ff_w_tt_syst",
+//      "ff_tt_tt_syst",
+//      "ff_qcd_et_syst",
+//      "ff_qcd_mt_syst",
+//      "ff_qcd_tt_syst",
+//      "ff_dy_frac_tt_syst",
+//      "ff_w_frac_tt_syst",
+//      "ff_tt_frac_tt_syst"
+//    };
+//
+//    for (auto name: ff_systs) {
+//      FakeFactorSystsSplitNorm(cb, name);
+//      FakeFactorSystsSplitNorm(cb, name+"_2016");
+//      FakeFactorSystsSplitNorm(cb, name+"_2017");
+//      FakeFactorSystsSplitNorm(cb, name+"_2018");
+//    }
 
     // add line to group theory systematics so they can be frozen together
     // cb.AddDatacardLineAtEnd("theory group = CMS_scale_gg_13TeV CMS_FiniteQuarkMass_13TeV CMS_PS_ggH_13TeV CMS_UE_ggH_13TeV BR_htt_THU BR_htt_PU_mq BR_htt_PU_alphas QCDScale_ggH QCDScale_qqH QCDScale_WH QCDScale_ZH pdf_Higgs_WH pdf_Higgs_ZH pdf_Higgs_gg pdf_Higgs_qq CMS_ggH_mig01 CMS_ggH_mig12");
