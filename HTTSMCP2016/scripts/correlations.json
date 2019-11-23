@@ -38,5 +38,12 @@
   "CMS_scale_j_eta3to5_uncorr_13TeV": 0.0,
   "CMS_htt_jetFakeLep_13TeV": 0.5,
   "CMS_scale_e_13TeV": 0.0,
-  "CMS_scale_mu_13TeV": 0.0
+  "CMS_scale_mu_13TeV": 0.0,
+  "CMS_em_QCD_BackgroundSubtraction_13TeV" : 0.0,
+  "CMS_em_QCD_stat_njets0_unc1_13TeV" : 0.0,
+  "CMS_em_QCD_stat_njets0_unc2_13TeV" : 0.0,
+  "CMS_em_QCD_stat_njets1_unc1_13TeV" : 0.0,
+  "CMS_em_QCD_stat_njets1_unc2_13TeV" : 0.0,
+  "CMS_em_QCD_stat_njets2_unc1_13TeV" : 0.0,
+  "CMS_em_QCD_stat_njets2_unc2_13TeV" : 0.0
 }
