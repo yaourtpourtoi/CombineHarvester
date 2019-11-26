@@ -196,12 +196,12 @@ namespace ch {
         /*                                      "CMS_scale_mu_13TeV", "shape", SystMap<>::init(1.00)); */
         
        // // Decay Mode based TES Settings
-       // cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-       //                                         "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
-       // cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-       //                                         "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-       // cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-       //                                         "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+                                                "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+                                                "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, {"jetFakes"}})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+                                                "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Embedded uncertainty on ttbar contamination (and VV contamination)
@@ -215,17 +215,17 @@ namespace ch {
         // Add back later!
 
         // MET Systematic shapes - recoil uncertainties for recoil corrected met, unclustered energy uncertainty for samples with no recoil correction, jes uncertainties propogated to met for samples with no recoil correction
-        /* cb.cp().process({"TT","TTJ","TTT","VV","VVJ","VVT"}).AddSyst(cb, */
-        /*                                           "CMS_scale_met_unclustered_13TeV", "shape", SystMap<>::init(1.00)); */
+        cb.cp().process({"TT","TTJ","TTT","VV","VVJ","VVT"}).AddSyst(cb,
+                                                  "CMS_scale_met_unclustered_13TeV", "shape", SystMap<>::init(1.00));
 
 
-        /* cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb, */
-        /*                                           "CMS_htt_boson_reso_met_13TeV", "shape", SystMap<>::init(1.00)); */ 
-        /* cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb, */
-        /*                                           "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00)); */      
+        cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
+                                                  "CMS_htt_boson_reso_met_13TeV", "shape", SystMap<>::init(1.00)); 
+        cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
+                                                  "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      
  
  
-        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Background normalization uncertainties
@@ -293,7 +293,7 @@ namespace ch {
 
         // Add back later!
         
-        /*cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
                                                          "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
                                                          "CMS_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
@@ -301,7 +301,7 @@ namespace ch {
         cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                          "CMS_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-                                                         "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));*/
+                                                         "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
        
         // weighted avarages of recommended tau POG uncertainties provided in bins of eta (update later!)
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016"}).AddSyst(cb,
