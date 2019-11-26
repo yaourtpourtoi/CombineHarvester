@@ -13,7 +13,7 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 
     combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 20 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 
 
-    If want to scale to some lumi X, include the rate parameter lumi_scale=X in the --setParameters option
+    If want to scale to some lumi X, include the rate parameter lumi_scale=X in the --setParameters option (scaling 2017+2018 to full run2 = 1.35)
 
     To run on IC batch use (1 point per job):
     `--job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" --split-points 1`
