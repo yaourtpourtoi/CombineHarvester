@@ -299,12 +299,13 @@ int main(int argc, char** argv) {
         {2, "tt_2017_jetFakes"},
         {3, "tt_2017_higgs_Rho_Rho"},
         {4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2017_higgs_A1_Rho_angle1"}, // reserved for a1, rho channel
+        {5, "tt_2017_higgs_A1_Rho_angle1"},
         {6, "tt_2017_higgs_A1_A1_angle1"},
         {7, "tt_2017_higgs_Pi_Rho_Mixed"},
         {8, "tt_2017_higgs_Pi_Pi"},
-        //{9, "tt_2017_higgs_"}, // reserved for a1, pi channel
-        //{10, "tt_2017_higgs_"}, // reserved for a residual category (all tt events that are not CP sensitive)
+        {9, "tt_2017_higgs_Pi_A1_Mixed"},
+        {10, "tt_2017_higgs_Pi_0A1_Mixed"},
+        {11, "tt_2017_higgs_other"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -313,15 +314,15 @@ int main(int argc, char** argv) {
         {2, "tt_2018_jetFakes"},
         {3, "tt_2018_higgs_Rho_Rho"},
         {4, "tt_2018_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2018_higgs_A1_Rho_angle1"}, // reserved for a1, rho channel
+        {5, "tt_2018_higgs_A1_Rho_angle1"},
         {6, "tt_2018_higgs_A1_A1_angle1"},
         {7, "tt_2018_higgs_Pi_Rho_Mixed"},
         {8, "tt_2018_higgs_Pi_Pi"},
-        //{9, "tt_2018_higgs_"}, // reserved for a1, pi channel
-        //{10, "tt_2018_higgs_"}, // reserved for a residual category (all tt events that are not CP sensitive)
+        {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
+        {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
+        {11, "tt_2018_higgs_other"},
       };
     }
-
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
@@ -642,8 +643,9 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_tt_6_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,6}));
      writer.WriteCards("htt_tt_7_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7}));
      writer.WriteCards("htt_tt_8_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,8}));
-//     writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
-//     writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
+     writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
+     writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
+     writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
         
     cb.PrintAll();
     cout << " done\n";
