@@ -42,7 +42,7 @@ To scan alpha:
 
 To scan mu:
 We need to freeze tautau BR to 1 as the fit has no sensitivity to muggH it only has sensitivity to muggH*mutautau so by setting mutautau to 1 we effecitivly just get one rate parameter that scales the XS*BR
-    `combineTool.py -m 125 -M MultiDimFit --setParameters muggH=1 --setParameterRanges muggH=-0.1,3 --points 20 --redefineSignalPOIs muggH --freezeNuisances mutautau -d ws.root --algo grid -t -1 --there -n .mu --floatOtherPOIs 1 --cminDefaultMinimizerStrategy 0`
+    `combineTool.py -m 125 -M MultiDimFit --setParameters muggH=1 --setParameterRanges muggH=-0.1,3 --points 20 --redefineSignalPOIs muggH --freezeParameters mutautau -d ws.root --algo grid -t -1 --there -n .mu --floatOtherPOIs 1 --cminDefaultMinimizerStrategy 0`
 
 To run on IC batch use (1 point per job):
  `--job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --split-points 1`
@@ -99,6 +99,12 @@ Run fit:
 
 Run postfitshapes:
    PostFitShapesFromWorkspace -m 125 -d output/cp110219/htt_01jet/125/combined.txt.cmb -w output/cp110219/htt_01jet/125/ws.root -o shapes_unblinding_01jets.root --print --sampling --postfit -f output/cp110219/htt_01jet/125/multidimfit.muggH.plots.freeze.root:fit_mdf
+
+you can also freeze a parameter for plotting purposes e.g if you want to show CP-odd signal use --freeze alpha=90
+
+Plot can be produced using the postFitPlotJetFakes.py script, e.g:
+
+`python scripts/postFitPlotJetFakes.py --mode prefit --file_dir htt_tt_2018_6_ -f shapes_prefit_tt_6.root --file_alt=shapes_prefit_tt_6_ps.root --ratio  --proper_errors_uniform --manual_blind --log_y`
 
 Run with (some) systematics frozen
 Do fit and store workspace

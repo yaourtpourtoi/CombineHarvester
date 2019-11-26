@@ -237,8 +237,10 @@ def main(args):
         lumi = "35.9 fb^{-1} (13 TeV)"
     elif era == "2017":
         lumi = "41.9 fb^{-1} (13 TeV)"
+    elif era == "2018":
+        lumi = "59.7 fb^{-1} (13 TeV)"
     elif era == "all":
-        lumi = "77.8 fb^{-1} (13 TeV)"
+        lumi = "137.2 fb^{-1} (13 TeV)"
 
     plot.ModTDRStyle(width=1800, height=600, r=0.46, l=0.16, t=0.12,b=0.15)
     ROOT.TGaxis.SetExponentOffset(-0.06, 0.01, "y")
@@ -586,7 +588,6 @@ def main(args):
                 blind_datahist.SetBinContent(i+1,-0.1)
                 blind_datahist.SetBinError(i+1,0)
     # for dijet categories:
-    print "!!!!!!!!!!!!!!!!!!!!"
     print int(bin_number) > 2, manual_blind, auto_blind_check_only
     print int(bin_number) > 2 and manual_blind or auto_blind_check_only
     if int(bin_number) > 2 and manual_blind or auto_blind_check_only:
@@ -595,7 +596,6 @@ def main(args):
             # always using 12 bins for sjdphi so blind 12 bins when i (x bin) is y_blind_ind times 12 
             x_blind_ind = [int(x) for x in np.arange(12*y_blind_ind[0],12*y_blind_ind[-1]+12,1)]
             if i in x_blind_ind:
-                print "test"
                 blind_datahist.SetBinContent(i+1, -0.1)
                 blind_datahist.SetBinError(i+1,0)
 
