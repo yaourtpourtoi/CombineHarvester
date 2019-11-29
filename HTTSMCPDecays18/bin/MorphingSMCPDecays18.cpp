@@ -251,12 +251,16 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt","mt"};
+//    VString chns = {"tt","mt"};
+    VString chns = {"mt"}; //Merijn: select 1 mode only..
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
     bkg_procs["et"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-    bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
+//    bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
+    bkg_procs["mt"] = {"Ztt","Zll","W","VV","TT","QCD"}; //Merijn 2019 11 29: adjust for mt case..
+
+
     bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
     bkg_procs["em"] = {"ZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
     bkg_procs["ttbar"] = {"ZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
@@ -293,8 +297,16 @@ int main(int argc, char** argv) {
         {2, "tt_2016_jetFakes"}
       };
       cats["mt_2016"] = {
-        {1, "mt_2016_zttEmbed"},
-        {2, "mt_2016_jetFakes"}
+//        {1, "mt_2016_zttEmbed"},
+  //      {2, "mt_2016_jetFakes"}
+
+//Merijn 2019 11 29: here specify the categories for mt
+      {1, "mt_ggH_mupi_IP"},
+      {2, "mt_qqH_mupi_IP"},
+      {3, "mt_Ztt_mupi_IP"},
+      {4, "mt_W_mupi_IP"},
+      {5, "mt_tt_mupi_IP"},
+      {6, "mt_QCD_mupi_IP"}
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -313,11 +325,20 @@ int main(int argc, char** argv) {
       };
 
       cats["mt_2017"] = {
+/*
         {1, "mt_2017_zttEmbed"},
         {2, "mt_2017_jetFakes"},
         {3, "mt_2017_higgs_Mu_Pi"},
         {4, "mt_2017_higgs_Mu_A1"},
-        {5, "mt_2017_higgs_Mu_Rho_Mixed"},
+        {5, "mt_2017_higgs_Mu_Rho_Mixed"},*/
+
+//Merijn 2019 11 29: here specify the categories for mt
+      {1, "mt_ggH_mupi_IP"},
+      {2, "mt_qqH_mupi_IP"},
+      {3, "mt_Ztt_mupi_IP"},
+      {4, "mt_W_mupi_IP"},
+      {5, "mt_tt_mupi_IP"},
+      {6, "mt_QCD_mupi_IP"},
         //{6, "mt_2017_higgs_Mu_Rho_Ip"},
       };
     }
@@ -336,12 +357,22 @@ int main(int argc, char** argv) {
         {11, "tt_2018_higgs_other"},
       };
       cats["mt_2018"] = {
+/*
         {1, "mt_2018_zttEmbed"},
         {2, "mt_2018_jetFakes"},
         {3, "mt_2018_higgs_Mu_Pi"},
         {4, "mt_2018_higgs_Mu_A1"},
         {5, "mt_2018_higgs_Mu_Rho_Mixed"},
-        //{6, "mt_2018_higgs_Mu_Rho_Ip"},
+        //{6, "mt_2018_higgs_Mu_Rho_Ip"},*/
+
+//Merijn 2019 11 29: here specify the categories for mt
+      {1, "mt_ggH_mupi_IP"},
+      {2, "mt_qqH_mupi_IP"},
+      {3, "mt_Ztt_mupi_IP"},
+      {4, "mt_W_mupi_IP"},
+      {5, "mt_tt_mupi_IP"},
+      {6, "mt_QCD_mupi_IP"},
+
       };
     }
     
@@ -667,6 +698,8 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
      writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
      writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
+
+/*
      writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
      writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
      writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
@@ -675,7 +708,8 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
      writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
      writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
-        
+  */      
+     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}));
     cb.PrintAll();
     cout << " done\n";
     
