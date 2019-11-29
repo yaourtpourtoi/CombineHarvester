@@ -283,7 +283,6 @@ int main(int argc, char** argv) {
         bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
         bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
       }
-
     }
 
 
@@ -339,6 +338,13 @@ int main(int argc, char** argv) {
       {4, "mt_W_mupi_IP"},
       {5, "mt_tt_mupi_IP"},
       {6, "mt_QCD_mupi_IP"},
+      {7, "mt_ggH_murho_DP"},
+      {8, "mt_qqH_murho_DP"},
+      {9, "mt_Ztt_murho_DP"},
+      {10, "mt_W_murho_DP"},
+      {11, "mt_tt_murho_DP"},
+      {12, "mt_QCD_murho_DP"},
+
         //{6, "mt_2017_higgs_Mu_Rho_Ip"},
       };
     }
@@ -710,6 +716,8 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
   */      
      writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}));
+     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9,10,11,12}));
+     writer.WriteCards("htt_mt_Cmbined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9,10,11,12}));
     cb.PrintAll();
     cout << " done\n";
     
