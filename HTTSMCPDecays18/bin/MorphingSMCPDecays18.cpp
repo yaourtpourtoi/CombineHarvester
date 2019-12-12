@@ -244,10 +244,17 @@ int main(int argc, char** argv) {
     // source the input files containing the datacard shapes
     //    string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/CombineTools/bin/AllROOT_20fb/";
     std::map<string, string> input_dir;
+    /*
     input_dir["em"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";
     input_dir["mt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_mt+"/";
     input_dir["et"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_et+"/";
     input_dir["tt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_tt+"/";
+    input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
+    */
+    input_dir["em"]  = "./shapes/"+input_folder_em;
+    input_dir["mt"]  = "./shapes/"+input_folder_mt;
+    input_dir["et"]  = "./shapes/"+input_folder_et;
+    input_dir["tt"]  = "./shapes/"+input_folder_tt;
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
@@ -258,7 +265,7 @@ int main(int argc, char** argv) {
     map<string, VString> bkg_procs;
     bkg_procs["et"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
 //    bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-    bkg_procs["mt"] = {"Ztt","Zll","W","VV","TT","QCD"}; //Merijn 2019 11 29: adjust for mt case..
+    bkg_procs["mt"] = {"Ztt","Zll","W","VV","ST","TT","QCD"}; //Merijn 2019 11 29: adjust for mt case..
 
 
     bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
@@ -267,7 +274,7 @@ int main(int argc, char** argv) {
     
     if(do_embedding){
       bkg_procs["et"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "W", "EWKZ"};
-      bkg_procs["mt"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT", "VVJ", "W", "EWKZ"};
+      bkg_procs["mt"] = {"EMB","Zll","W","VV","ST","TT","QCD"};
       bkg_procs["tt"] = {"EmbedZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
       bkg_procs["em"] = {"EmbedZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
       bkg_procs["ttbar"] = {"EmbedZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
@@ -275,12 +282,12 @@ int main(int argc, char** argv) {
 
     if(do_jetfakes){
       bkg_procs["et"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-      bkg_procs["mt"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
+      bkg_procs["mt"] = {"Ztt","Zll","W","VV","ST","TT","fakes"};
       bkg_procs["tt"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
 
       if(do_embedding){
         bkg_procs["et"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-        bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
+        bkg_procs["mt"] = {"EMB","Zll","W","VV","ST","TT","fakes"};
         bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
       }
     }
@@ -300,12 +307,14 @@ int main(int argc, char** argv) {
   //      {2, "mt_2016_jetFakes"}
 
 //Merijn 2019 11 29: here specify the categories for mt
-      {1, "mt_ggH_mupi_IP"},
-      {2, "mt_qqH_mupi_IP"},
-      {3, "mt_Ztt_mupi_IP"},
-      {4, "mt_W_mupi_IP"},
-      {5, "mt_tt_mupi_IP"},
-      {6, "mt_QCD_mupi_IP"}
+	{1, "mt_2016_higgs_mupi_IP"},
+	{2, "mt_2016_ztt_mupi_IP"},
+	{3, "mt_2016_top_mupi_IP"},
+	{4, "mt_2016_fakes_mupi_IP"},
+	{5, "mt_2016_higgs_murho_DP"},
+	{6, "mt_2016_ztt_murho_DP"},
+	{7, "mt_2016_top_murho_DP"},
+	{8, "mt_2016_fakes_murho_DP"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -332,20 +341,16 @@ int main(int argc, char** argv) {
         {5, "mt_2017_higgs_Mu_Rho_Mixed"},*/
 
 //Merijn 2019 11 29: here specify the categories for mt
-      {1, "mt_ggH_mupi_IP"},
-      {2, "mt_qqH_mupi_IP"},
-      {3, "mt_Ztt_mupi_IP"},
-      {4, "mt_W_mupi_IP"},
-      {5, "mt_tt_mupi_IP"},
-      {6, "mt_QCD_mupi_IP"},
-      {7, "mt_ggH_murho_DP"},
-      {8, "mt_qqH_murho_DP"},
-      {9, "mt_Ztt_murho_DP"},
-      {10, "mt_W_murho_DP"},
-      {11, "mt_tt_murho_DP"},
-      {12, "mt_QCD_murho_DP"},
-
-        //{6, "mt_2017_higgs_Mu_Rho_Ip"},
+	{1, "mt_2017_higgs_mupi_IP"},
+	{2, "mt_2017_ztt_mupi_IP"},
+	{3, "mt_2017_top_mupi_IP"},
+	{4, "mt_2017_fakes_mupi_IP"},
+	{5, "mt_2017_higgs_murho_DP"},
+	{6, "mt_2017_ztt_murho_DP"},
+	{7, "mt_2017_top_murho_DP"},
+	{8, "mt_2017_fakes_murho_DP"},
+	
+	//{6, "mt_2017_higgs_Mu_Rho_Ip"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -372,12 +377,14 @@ int main(int argc, char** argv) {
         //{6, "mt_2018_higgs_Mu_Rho_Ip"},*/
 
 //Merijn 2019 11 29: here specify the categories for mt
-      {1, "mt_ggH_mupi_IP"},
-      {2, "mt_qqH_mupi_IP"},
-      {3, "mt_Ztt_mupi_IP"},
-      {4, "mt_W_mupi_IP"},
-      {5, "mt_tt_mupi_IP"},
-      {6, "mt_QCD_mupi_IP"},
+	{1, "mt_2018_higgs_mupi_IP"},
+	{2, "mt_2018_ztt_mupi_IP"},
+	{3, "mt_2018_top_mupi_IP"},
+	{4, "mt_2018_fakes_mupi_IP"},
+	{5, "mt_2018_higgs_murho_DP"},
+	{6, "mt_2018_ztt_murho_DP"},
+	{7, "mt_2018_top_murho_DP"},
+	{8, "mt_2018_fakes_murho_DP"},
 
       };
     }
@@ -715,9 +722,9 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
      writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
   */      
-     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}));
-     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9,10,11,12}));
-     writer.WriteCards("htt_mt_Cmbined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9,10,11,12}));
+     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4}));
+     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5,6,7,8}));
+     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8}));
     cb.PrintAll();
     cout << " done\n";
     
