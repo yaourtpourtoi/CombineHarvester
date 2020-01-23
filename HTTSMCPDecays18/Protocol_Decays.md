@@ -26,3 +26,21 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 To plot alpha:
 
     python scripts/plot1DScan.py --main=output/test_cp/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha --no-numbers --no-box --x_title="#alpha (#circ)" --y-max=0.7
+
+# perform ZTT validation
+
+Morphing step
+
+    ZTTValidation
+
+T2W
+
+    combineTool.py -M T2W  -i output/ztt_validation/*/* -o ws.root --parallel 8
+
+run fits
+
+    combineTool.py -m 125 -M MultiDimFit  -d output/ztt_validation/htt_tt_3_13TeV/125/ws.root  --there -n .r_ztt --saveFitResult
+
+make plots
+
+do GOF
