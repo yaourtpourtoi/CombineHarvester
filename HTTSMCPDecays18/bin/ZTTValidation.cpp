@@ -341,6 +341,17 @@ int main(int argc, char** argv) {
      cb.FilterSysts([&](ch::Systematic *s){
         return s->name().find("eff_b") != std::string::npos || s->name().find("scale_j") != std::string::npos || s->name().find("unclustered") != std::string::npos || s->name().find("ZLShape") != std::string::npos;
       });
+
+      // filter dm=0 syst for now as it appears to be broken - replace with lnN's
+      cb.FilterSysts([&](ch::Systematic *s){
+        return s->name().find("CMS_eff_t_DM0_13TeV") != std::string::npos;
+      });
+      using ch::syst::SystMap;
+      cb.cp().process({"ZTT","EmbedZTT"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({7,9}).AddSyst(cb,
+                                           "CMS_eff_t_DM0_13TeV", "lnN", SystMap<>::init(1.07));
+      cb.cp().process({"ZTT","EmbedZTT"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({8}).AddSyst(cb,
+                                           "CMS_eff_t_DM0_13TeV", "lnN", SystMap<>::init(1.014));
+
  
     if(no_shape_systs==1){
       cb.FilterSysts([&](ch::Systematic *s){
