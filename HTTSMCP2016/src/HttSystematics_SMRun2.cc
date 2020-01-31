@@ -90,7 +90,6 @@ namespace ch {
                                              "CMS_eff_trigger_em_13TeV", "lnN", SystMap<>::init(1.02)); 
 
 
-        // use lN uncertainty for tt trigger until the differential ones are fixed
 
 //        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
 //                                             "CMS_eff_trigger_tt_13TeV", "lnN", SystMap<>::init(1.1));
@@ -117,7 +116,7 @@ namespace ch {
         //##############################################################################
         
         cb.cp().AddSyst(cb, "CMS_eff_m", "lnN", SystMap<channel, process>::init
-                        ({"mt","mt_2016","mt_2017","mt_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}, JoinStr({sig_procs, all_mc_bkgs,embed}),  1.02));
+                        ({"mt","mt_2016","mt_2017","mt_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}, JoinStr({sig_procs, all_mc_bkgs,embed}),  1.01));
         
         // embedded selection efficiency
         cb.cp().AddSyst(cb, "CMS_eff_m_embedsel", "lnN", SystMap<channel, process>::init
@@ -127,7 +126,6 @@ namespace ch {
                         ({"et","et_2016","et_2017","et_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}, JoinStr({sig_procs, all_mc_bkgs,embed}),       1.02));
 
 
-//CMS_eff_m, CMS_eff_e, CMS_eff_t_mt_13TeV, CMS_eff_t_et_13TeV, CMS_eff_t_tt_13TeV
 
         // due to different treatments of embedding and MC uncertainties for the tau ID they are included seperatly for now
 
@@ -151,21 +149,20 @@ namespace ch {
         // the uncorrelated part by channel is due to anti-electron and anti-muon disctiminant, it is the same for MC and embedding so decorrelated in the Morphing       
  
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-                                             "CMS_eff_t_mt_13TeV", "lnN", SystMap<>::init(1.01));
+                                             "CMS_eff_t_mt_13TeV", "lnN", SystMap<>::init(1.03));
 
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
-                                             "CMS_eff_t_et_13TeV", "lnN", SystMap<>::init(1.01));
+                                             "CMS_eff_t_et_13TeV", "lnN", SystMap<>::init(1.03));
 
         // 2 real taus
         cb.cp().process(JoinStr({sig_procs, {"ZTT","VVT","TTT","EWKZ"}, embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                             "CMS_eff_t_tt_13TeV", "lnN", SystMap<>::init(1.02));
+                                             "CMS_eff_t_tt_13TeV", "lnN", SystMap<>::init(1.06));
 
         // 1 real tau
         cb.cp().process(JoinStr({{"TTJ","ZJ","VVJ","W","Wfakes","TTfakes"}})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                             "CMS_eff_t_tt_13TeV", "lnN", SystMap<>::init(1.01));
+                                             "CMS_eff_t_tt_13TeV", "lnN", SystMap<>::init(1.03));
 
 
-//CMS_eff_t_DM_13TeV
         
         //##############################################################################
         //  b tag and mistag rate  efficiencies 
@@ -427,15 +424,15 @@ namespace ch {
                                         "CMS_htt_vvXsec_13TeV", "lnN", SystMap<>::init(1.05));
 
         cb.cp().process({"ZTT","ZJ","ZL","ZLL"}).AddSyst(cb,
-                                        "CMS_htt_zjXsec_13TeV", "lnN", SystMap<>::init(1.04));        
+                                        "CMS_htt_zjXsec_13TeV", "lnN", SystMap<>::init(1.02));        
  
         cb.cp().process({"EWKZ"}).AddSyst(cb,
-                                        "CMS_htt_ewkzXsec_13TeV", "lnN", SystMap<>::init(1.04));
+                                        "CMS_htt_ewkzXsec_13TeV", "lnN", SystMap<>::init(1.05));
 
         //if (! ttbar_fit){
         //   ttbar Normalisation - fully correlated
 	    cb.cp().process({"TT","TTT","TTJ"}).AddSyst(cb,
-					  "CMS_htt_tjXsec_13TeV", "lnN", SystMap<>::init(1.06));
+					  "CMS_htt_tjXsec_13TeV", "lnN", SystMap<>::init(1.042));
         //}
 
         // W norm, just for em, tt and the mm region where MC norm is from MC
@@ -522,24 +519,16 @@ namespace ch {
        //                                                  "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
        
         // weighted avarages of recommended tau POG uncertainties provided in bins of eta
-        cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016"}).AddSyst(cb,
-                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.27));
-        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).AddSyst(cb,
-                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.27));
-        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).AddSyst(cb,
-                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.27));
-        cb.cp().process({"ZL","EWKZ"}).channel({"et","et_2016"}).AddSyst(cb,
-                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.11));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.2));
+        cb.cp().process({"ZL","EWKZ"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.15));
         cb.cp().process({"ZL","EWKZ"}).channel({"tt","tt_2016"}).AddSyst(cb,
                                                         "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.11));
-        cb.cp().process({"ZL","EWKZ"}).channel({"et_2017"}).AddSyst(cb,
-                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.11));
-        cb.cp().process({"ZL","EWKZ"}).channel({"et_2018"}).AddSyst(cb,
-                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.11));
         cb.cp().process({"ZL","EWKZ"}).channel({"tt_2017"}).AddSyst(cb,
-                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.23));
+                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.10));
         cb.cp().process({"ZL","EWKZ"}).channel({"tt_2018"}).AddSyst(cb,
-                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.23));
+                                                        "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.02));
         
         //##############################################################################
         // Theoretical Uncertainties on signal (update me)
