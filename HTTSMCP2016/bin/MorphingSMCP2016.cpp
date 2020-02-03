@@ -1265,6 +1265,20 @@ int main(int argc, char** argv) {
       }
   });
 
+  // convert systematics to lnN here
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_scale_gg_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_FiniteQuarkMass_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_UE_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
+
+  // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
+  cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
+  cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
+  cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+
   // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
 
   // partially decorrelate the energy scale uncertainties
