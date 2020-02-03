@@ -590,11 +590,8 @@ namespace ch {
         cb.cp().process(ggH_sig_procs).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_PS_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process(ggH_sig_procs).channel({"et_2017","et_2018","mt_2017","mt_2018","tt_2017","tt_2018","em_2017","em_2018"}).AddSyst(cb,
+        cb.cp().process(ggH_sig_procs).channel({"et","et_2016","mt","mt_2016","tt","tt_2016","em","em_2016","et_2017","et_2018","mt_2017","mt_2018","tt_2017","tt_2018","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_UE_ggH_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().process(ggH_sig_procs).channel({"et","et_2016","mt","mt_2016","tt","tt_2016","em","em_2016"}).AddSyst(cb,
-                                             "CMS_UE_ggH_13TeV", "shape", SystMap<>::init(1.00)); // needs to be uncorrelated for 2016!
         
         //    Uncertainty on BR for HTT @ 125 GeV
         cb.cp().process(sig_procs).AddSyst(cb,"BR_htt_THU", "lnN", SystMap<>::init(1.017));

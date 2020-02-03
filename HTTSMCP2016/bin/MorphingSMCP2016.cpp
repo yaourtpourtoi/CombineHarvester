@@ -412,6 +412,126 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
   }
 }
 
+void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::vector<double> correlations, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
+  auto cb_syst = cb.cp().syst_name({name});
+  double val2016 = sqrt(1. - correlations[0]);
+  double val2017 = sqrt(1. - correlations[1]);
+  double val2018 = sqrt(1. - correlations[2]);
+  // clone 2016 systs
+  if(correlations[0] < 1.) {
+    std::cout << "test1" << std::endl;
+    ch::CloneSysts(cb.cp().channel(chans_2016).syst_name({name}), cb, [&](ch::Systematic *s) {
+        s->set_name(s->name()+"_2016");
+        if (s->type().find("shape") != std::string::npos) {
+          s->set_scale(s->scale() * val2016);
+        }
+        if (s->type().find("lnN") != std::string::npos) {
+          s->set_value_u((s->value_u() - 1.) * val2016 + 1.);
+          if (s->asymm()){
+            s->set_value_d((s->value_d() - 1.) * val2016 + 1.);
+          }
+        }
+    });
+
+    if(correlations[0]>0.) {
+      // re-scale un-correlated part
+      double val = sqrt(correlations[0]);
+      cb_syst.channel(chans_2017).ForEachSyst([val](ch::Systematic *syst) {
+        if (syst->type().find("shape") != std::string::npos) {
+          syst->set_scale(syst->scale() * val);
+        }
+        if (syst->type().find("lnN") != std::string::npos) {
+          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
+          if (syst->asymm()){
+            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
+          }
+        }
+      });
+    } else {
+      // remove uncorrelated part if systs are 100% un-correlated
+      cb_syst.channel(chans_2016).FilterSysts([&](ch::Systematic *s){
+          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+      });
+    }
+
+  }
+  // clone 2017 systs
+  if(correlations[1] < 1.) {
+    ch::CloneSysts(cb.cp().channel(chans_2017).syst_name({name}), cb, [&](ch::Systematic *s) {
+        s->set_name(s->name()+"_2017");
+        if (s->type().find("shape") != std::string::npos) {
+          s->set_scale(s->scale() * val2017);
+        }
+        if (s->type().find("lnN") != std::string::npos) {
+          s->set_value_u((s->value_u() - 1.) * val2017 + 1.);
+          if (s->asymm()){
+            s->set_value_d((s->value_d() - 1.) * val2017 + 1.);
+          }
+        }
+    });
+
+    if(correlations[1]>0.) {
+      // re-scale un-correlated part
+      double val = sqrt(correlations[1]);
+      cb_syst.channel(chans_2017).ForEachSyst([val](ch::Systematic *syst) {
+        if (syst->type().find("shape") != std::string::npos) {
+          syst->set_scale(syst->scale() * val);
+        }
+        if (syst->type().find("lnN") != std::string::npos) {
+          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
+          if (syst->asymm()){
+            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
+          }
+        }
+      });
+    } else {
+      // remove uncorrelated part if systs are 100% un-correlated
+      cb_syst.channel(chans_2017).FilterSysts([&](ch::Systematic *s){
+          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+      });
+    }
+  }
+  // clone 2018 systs
+  if(correlations[2] < 1.) {
+    ch::CloneSysts(cb.cp().channel(chans_2018).syst_name({name}), cb, [&](ch::Systematic *s) {
+        s->set_name(s->name()+"_2018");
+        if (s->type().find("shape") != std::string::npos) {
+          s->set_scale(s->scale() * val2018);
+        }
+        if (s->type().find("lnN") != std::string::npos) {
+          s->set_value_u((s->value_u() - 1.) * val2018 + 1.);
+          if (s->asymm()){
+            s->set_value_d((s->value_d() - 1.) * val2018 + 1.);
+          }
+        }
+    });
+
+    if(correlations[2]>0.) {
+      // re-scale un-correlated part
+      double val = sqrt(correlations[2]);
+      cb_syst.channel(chans_2018).ForEachSyst([val](ch::Systematic *syst) {
+        if (syst->type().find("shape") != std::string::npos) {
+          syst->set_scale(syst->scale() * val);
+        }
+        if (syst->type().find("lnN") != std::string::npos) {
+          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
+          if (syst->asymm()){
+            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
+          }
+        }
+      });
+    } else {
+      // remove uncorrelated part if systs are 100% un-correlated
+      cb_syst.channel(chans_2018).FilterSysts([&](ch::Systematic *s){
+          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+      });
+    }
+  }
+
+}
+
+
+
 int main(int argc, char** argv) {
 
     string output_folder = "sm_run2";
@@ -1287,7 +1407,7 @@ int main(int argc, char** argv) {
 //    }
 
     // de-correlate systematics for 2016 and 2017, ADD 2018 
-    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
+    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos || true){
       std::cout << "Partially Decorrelating systematics for 2016/2017/2018" << std::endl;
       Json::Value js;
       string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/scripts/correlations.json";
@@ -1301,53 +1421,22 @@ int main(int argc, char** argv) {
         std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
         DecorrelateSyst (cb, name, value, chans_2016, chans_2017, chans_2018);
       }
+
+      // now take care of cases where correlations are different for the 3 years
+      string json_file_byyear = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/scripts/correlations_byyear.json";
+      js = ch::ExtractJsonFromFile(json_file_byyear);
+      keys = js.getMemberNames();
+      for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it){
+        string name = *it;
+        std::vector<double> values = {js[*it]["2016"].asDouble(),js[*it]["2017"].asDouble(), js[*it]["2018"].asDouble()};
+        std::vector<string> chans_2016 = {"em","em_2016","et","et_2016","mt","mt_2016","tt","tt_2016","ttbar","ttbar_2016"};
+        std::vector<string> chans_2017 = {"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"};
+        std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
+        DecorrelateSystSeperateYears (cb, name, values, chans_2016, chans_2017, chans_2018);
+      }
+
     }
 
-
-//    // split FF systematics into lnN part and pure shape part as recomended 
-//    std::vector<string> ff_systs = {
-//      "ff_qcd_dm0_njet0_et_stat",
-//      "ff_qcd_dm0_njet1_et_stat",
-//      "ff_qcd_dm1_njet0_et_stat",
-//      "ff_qcd_dm1_njet1_et_stat",
-//      "ff_w_dm0_njet0_et_stat",
-//      "ff_w_dm0_njet1_et_stat",
-//      "ff_w_dm1_njet0_et_stat",
-//      "ff_w_dm1_njet1_et_stat",
-//      "ff_tt_dm0_njet0_et_stat",
-//      "ff_tt_dm1_njet0_et_stat",
-//      "ff_qcd_dm0_njet0_mt_stat",
-//      "ff_qcd_dm0_njet1_mt_stat",
-//      "ff_qcd_dm1_njet0_mt_stat",
-//      "ff_qcd_dm1_njet1_mt_stat",
-//      "ff_w_dm0_njet0_mt_stat",
-//      "ff_w_dm0_njet1_mt_stat",
-//      "ff_w_dm1_njet0_mt_stat",
-//      "ff_w_dm1_njet1_mt_stat",
-//      "ff_tt_dm0_njet0_mt_stat",
-//      "ff_tt_dm1_njet0_mt_stat",
-//      "ff_qcd_dm0_njet0_tt_stat",
-//      "ff_qcd_dm0_njet1_tt_stat",
-//      "ff_qcd_dm1_njet0_tt_stat",
-//      "ff_qcd_dm1_njet1_tt_stat",
-//      "ff_w_syst",
-//      "ff_tt_syst",
-//      "ff_w_tt_syst",
-//      "ff_tt_tt_syst",
-//      "ff_qcd_et_syst",
-//      "ff_qcd_mt_syst",
-//      "ff_qcd_tt_syst",
-//      "ff_dy_frac_tt_syst",
-//      "ff_w_frac_tt_syst",
-//      "ff_tt_frac_tt_syst"
-//    };
-//
-//    for (auto name: ff_systs) {
-//      FakeFactorSystsSplitNorm(cb, name);
-//      FakeFactorSystsSplitNorm(cb, name+"_2016");
-//      FakeFactorSystsSplitNorm(cb, name+"_2017");
-//      FakeFactorSystsSplitNorm(cb, name+"_2018");
-//    }
 
     // add line to group theory systematics so they can be frozen together
     // cb.AddDatacardLineAtEnd("theory group = CMS_scale_gg_13TeV CMS_FiniteQuarkMass_13TeV CMS_PS_ggH_13TeV CMS_UE_ggH_13TeV BR_htt_THU BR_htt_PU_mq BR_htt_PU_alphas QCDScale_ggH QCDScale_qqH QCDScale_WH QCDScale_ZH pdf_Higgs_WH pdf_Higgs_ZH pdf_Higgs_gg pdf_Higgs_qq CMS_ggH_mig01 CMS_ggH_mig12");
