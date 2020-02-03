@@ -322,7 +322,19 @@ namespace ch {
         //##############################################################################
         // Theoretical Uncertainties on signal (shape/acceptance uncerts needs to be added!)
         //##############################################################################
-        
+       
+        //scale_gg on signal
+//        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+//                                             "CMS_scale_gg_13TeV", "shape", SystMap<>::init(1.00));
+
+
+//        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+//                                             "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+
+//        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+//                                             "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+
+ 
         //    Uncertainty on BR for HTT @ 125 GeV
         cb.cp().process(sig_procs).AddSyst(cb,"BR_htt_THU", "lnN", SystMap<>::init(1.017));
         cb.cp().process(sig_procs).AddSyst(cb,"BR_htt_PU_mq", "lnN", SystMap<>::init(1.0099));

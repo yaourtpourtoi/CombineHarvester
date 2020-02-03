@@ -606,6 +606,9 @@ int main(int argc, char** argv) {
   });
 
   // convert systematics to lnN here
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_scale_gg_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
 
  
@@ -688,6 +691,11 @@ int main(int argc, char** argv) {
 
     }
 
+    // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
+    cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
+    cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
+    cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
   
     // partially decorrelate the energy scale uncertainties
@@ -722,7 +730,7 @@ int main(int argc, char** argv) {
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
     // de-correlate systematics for 2016 and 2017, ADD 2018 
-    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
+    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos || true){
       std::cout << "Partially Decorrelating systematics for 2016/2017/2018" << std::endl;
       Json::Value js;
       string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/scripts/correlations.json";

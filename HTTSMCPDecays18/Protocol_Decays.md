@@ -67,6 +67,13 @@ Collect output and make plots:
       python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 "$i"_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS'
     done
 
+When just using the combined category:
+
+    combineTool.py -M CollectGoodnessOfFit --input output/ztt_validation/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/ztt_validation/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json
+
+   python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS'
+
+
 Saturated model:
 
 For saturated model we always run seperatly for each category
@@ -84,7 +91,7 @@ Collect output and make plots:
 
     for i in "${bins[@]}"
     do
-      combineTool.py -M CollectGoodnessOfFit --input output/ztt_validation/htt_"$i"_13TeV/125/higgsCombine.saturated.GoodnessOfFit.mH125.root output/ztt_validation/htt_"$i"_13TeV/125/higgsCombine.saturated.toys.GoodnessOfFit.mH125.*.root --there -o "$i"_saturated.json
+      combineTool.py -M CollectGoodnessOfFit --input output/gof/htt_"$i"_13TeV/125/higgsCombine.saturated.GoodnessOfFit.mH125.root output/gof/htt_"$i"_13TeV/125/higgsCombine.saturated.toys.GoodnessOfFit.mH125.*.root --there -o "$i"_saturated.json
       python ../CombineTools/scripts/plotGof.py --statistic saturated --mass 125.0 "$i"_saturated.json --title-right="60 fb^{-1} (13 TeV)" --output="$i"'-saturated'
     done
 
