@@ -700,6 +700,7 @@ int main(int argc, char** argv) {
   
     // partially decorrelate the energy scale uncertainties
     DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_scale_mu_13TeV","CMS_scale_embedded_mu_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
@@ -709,6 +710,17 @@ int main(int argc, char** argv) {
     DecorrelateMCAndEMB(cb,"CMS_eff_t_mt_13TeV","CMS_eff_embedded_t_mt_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_eff_t_et_13TeV","CMS_eff_embedded_t_et_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_eff_t_tt_13TeV","CMS_eff_embedded_t_tt_13TeV",0.5);
+
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM0_13TeV","CMS_eff_embedded_t_DM0_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM1_13TeV","CMS_eff_embedded_t_DM1_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM10_13TeV","CMS_eff_embedded_t_DM10_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM11_13TeV","CMS_eff_embedded_t_DM11_13TeV",0.5);
+  
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin1_13TeV","CMS_eff_embedded_t_bin1_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin2_13TeV","CMS_eff_embedded_t_bin2_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin3_13TeV","CMS_eff_embedded_t_bin3_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin4_13TeV","CMS_eff_embedded_t_bin4_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin5_13TeV","CMS_eff_embedded_t_bin5_13TeV",0.5);
   
     // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
@@ -718,16 +730,31 @@ int main(int argc, char** argv) {
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM0_13TeV","CMS_eff_embedded_Xtrigger_et_DM0_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM1_13TeV","CMS_eff_embedded_Xtrigger_et_DM1_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM10_13TeV","CMS_eff_embedded_Xtrigger_et_DM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV");
-  
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV"); 
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM0_13TeV","CMS_eff_embedded_t_trg_DM0_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM1_13TeV","CMS_eff_embedded_t_trg_DM1_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM10_13TeV","CMS_eff_embedded_t_trg_DM10_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM11_13TeV","CMS_eff_embedded_t_trg_DM11_13TeV");
+
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM0_13TeV" ,"CMS_eff_embedded_Xtrigger_mt_MVADM0_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM1_13TeV" ,"CMS_eff_embedded_Xtrigger_mt_MVADM1_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM2_13TeV" ,"CMS_eff_embedded_Xtrigger_mt_MVADM2_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM10_13TeV","CMS_eff_embedded_Xtrigger_mt_MVADM10_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM11_13TeV","CMS_eff_embedded_Xtrigger_mt_MVADM11_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM0_13TeV" ,"CMS_eff_embedded_Xtrigger_et_MVADM0_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM1_13TeV" ,"CMS_eff_embedded_Xtrigger_et_MVADM1_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM2_13TeV" ,"CMS_eff_embedded_Xtrigger_et_MVADM2_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM10_13TeV","CMS_eff_embedded_Xtrigger_et_MVADM10_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM11_13TeV","CMS_eff_embedded_Xtrigger_et_MVADM11_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM0_13TeV"       ,"CMS_eff_embedded_t_trg_MVADM0_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM1_13TeV"       ,"CMS_eff_embedded_t_trg_MVADM1_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM2_13TeV"       ,"CMS_eff_embedded_t_trg_MVADM2_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM10_13TeV"      ,"CMS_eff_embedded_t_trg_MVADM10_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM11_13TeV"      ,"CMS_eff_embedded_t_trg_MVADM11_13TeV");
   
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_mt_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_et_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_et_13TeV","CMS_eff_embedded_trigger_et_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_em_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
     // de-correlate systematics for 2016 and 2017, ADD 2018 
     if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos || true){
