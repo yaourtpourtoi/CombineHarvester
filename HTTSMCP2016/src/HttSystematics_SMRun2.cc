@@ -297,6 +297,55 @@ namespace ch {
         cb.cp().process({"jetFakes"}).AddSyst(cb,
                                                        "CMS_$CHANNEL_FF_$BIN_13TeV", "lnN", SystMap<>::init(1.15));
 
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_closure_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_osss_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_et_qcd_stat_njets0_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_et_qcd_stat_njets1_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_et_qcd_stat_njets1_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_qcd_stat_njets2_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_qcd_stat_njets2_unc2", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_closure_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_mt_syst_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_mt_syst_unc2", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_et_wjets_stat_njets0_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_et_wjets_stat_njets1_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_et_wjets_stat_njets1_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_stat_njets2_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_stat_njets2_unc2", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_closure_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_stat_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_stat_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_sub_syst", "shape", SystMap<>::init(1.00));
+//
+//
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_qcd_closure_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_qcd_osss_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_qcd_stat_njets0_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_mt_qcd_stat_njets0_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_mt_qcd_stat_njets1_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_mt_qcd_stat_njets1_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_qcd_stat_njets2_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_qcd_stat_njets2_unc2", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_wjets_closure_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_wjets_mt_syst_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_wjets_mt_syst_unc2", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({2,3,4,5,6},false).AddSyst(cb, "ff_mt_wjets_stat_njets0_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_mt_wjets_stat_njets1_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,4,5,6},false).AddSyst(cb, "ff_mt_wjets_stat_njets1_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_stat_njets2_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_stat_njets2_unc2", "shape", SystMap<>::init(1.00));
+//
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_closure_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_stat_unc1", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_stat_unc2", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_sub_syst", "shape", SystMap<>::init(1.00));
+
         //##############################################################################
         //  DY LO->NLO reweighting, Between no and twice the correction.
         //##############################################################################
