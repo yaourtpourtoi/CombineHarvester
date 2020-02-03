@@ -180,17 +180,9 @@ namespace ch {
         //##############################################################################
         //  b tag and mistag rate  efficiencies 
         //##############################################################################
- 
-        // place holders for now, needs to be dertemined properly in future
-        cb.cp().AddSyst(cb,
-          "CMS_eff_b_13TeV", "lnN", SystMapAsymm<channel,process>::init
-          ({"et","et_2016","et_2017","et_2018"}, {"TTT"}, 1.050,0.95)
-          ({"mt","mt_2016","mt_2017","mt_2018"}, {"TTT"}, 1.05,0.95)
-          ({"em","em_2016","em_2017","em_2018"}, {"TT"}, 1.05,0.95)
-          ({"et","et_2016","et_2017","et_2018"}, {"VVT"}, 1.02, 0.98)
-          ({"mt","mt_2016","mt_2017","mt_2018"}, {"VVT"}, 1.02, 0.98)
-          ({"em","em_2016","em_2017","em_2018"}, {"VV"}, 1.02, 0.98)
-        );
+
+        //cb.cp().process({"TTT","TT","VVT","VV"}).AddSyst(cb,
+        //                                     "CMS_eff_b_13TeV", "shape", SystMap<>::init(1.00)); 
         
         //##############################################################################
         //  Electron, muon and tau energy Scale
@@ -208,6 +200,9 @@ namespace ch {
                                                 "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
 
         // Muon 
         // ES Add back after!

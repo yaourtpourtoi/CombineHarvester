@@ -605,6 +605,9 @@ int main(int argc, char** argv) {
       }
   });
 
+  // convert systematics to lnN here
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
+
  
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
