@@ -1273,6 +1273,8 @@ int main(int argc, char** argv) {
   ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp(), "CMS_PreFire_13TeV", 0.);
+
 
   // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
   cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
