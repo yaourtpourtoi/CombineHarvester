@@ -257,21 +257,21 @@ int main(int argc, char** argv) {
     map<string,Categories> cats;
     
     if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
-      cats["tt_2016"] = {
-        {2, "tt_2016_jetFakes"}
-      };
-      cats["mt_2016"] = {
-        {2, "mt_2016_jetFakes"}
-      };
+     // cats["tt_2016"] = {
+       // {2, "tt_2016_jetFakes"}
+     // };
+     // cats["mt_2016"] = {
+      //  {2, "mt_2016_jetFakes"}
+     // };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
-      cats["tt_2017"] = {
-        {3, "tt_2017_ztt_Rho_Rho"},
-      };
+      //cats["tt_2017"] = {
+       // {3, "tt_2017_ztt_Rho_Rho"},
+      //};
 
-      cats["mt_2017"] = {
+      //cats["mt_2017"] = {
         //{1, "mt_2018_zttEmbed"},
-      };
+     // };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["zmm"] = {
@@ -279,15 +279,15 @@ int main(int argc, char** argv) {
       };
       cats["mt"] = {
         {1, "mt_2018_MVADM0_Pt20to40"},
-       // {2, "mt_2018_MVADM1_Pt20to40"},
-       // {3, "mt_2018_MVADM2_Pt20to40"},
-       // {4, "mt_2018_MVADM10_Pt20to40"},
-       // {5, "mt_2018_MVADM11_Pt20to40"},
-       // {6, "mt_2018_MVADM0_PtMoreThan40"},
-       // {7, "mt_2018_MVADM1_PtMoreThan40"},
-       // {8, "mt_2018_MVADM2_PtMoreThan40"},
-       // {9, "mt_2018_MVADM10_PtMoreThan40"},
-       // {10, "mt_2018_MVADM11_PtMoreThan40"},
+        {2, "mt_2018_MVADM1_Pt20to40"},
+        {3, "mt_2018_MVADM2_Pt20to40"},
+        {4, "mt_2018_MVADM10_Pt20to40"},
+        {5, "mt_2018_MVADM11_Pt20to40"},
+        {6, "mt_2018_MVADM0_PtMoreThan40"},
+        {7, "mt_2018_MVADM1_PtMoreThan40"},
+        {8, "mt_2018_MVADM2_PtMoreThan40"},
+        {9, "mt_2018_MVADM10_PtMoreThan40"},
+        {10, "mt_2018_MVADM11_PtMoreThan40"},
       };
     }
     
@@ -317,14 +317,127 @@ int main(int argc, char** argv) {
     // Add systematics here  
       std::vector<std::string> all_mc = {"ZL","ZJ","ZTT","TTJ","TTT","TT","W","VV","VVT","VVJ"};
       std::vector<std::string> all_mc_noW = {"ZL","ZJ","ZTT","TTJ","TTT","TT","VV","VVT","VVJ"};
+      std::vector<std::string> all_mc_T = {"ZTT","TTT","VVT"};
+      std::vector<std::string> embed_proc = {"EmbedZL","EmbedZTT"};
+      
       using ch::syst::SystMap;
+      using ch::syst::process;
+      using ch::syst::channel;
+      using ch::JoinStr;
+
       cb.cp().process(all_mc_noW).AddSyst(cb,
                                             "lumi_13TeV", "lnN", SystMap<>::init(1.025));
 
 
       if (embed) cb.cp().process({"EmbedZL","EmbedZTT"}).AddSyst(cb, "rate_Z", "rateParam", SystMap<>::init(1.00));   
       else cb.cp().process({"ZTT","ZL","ZJ"}).AddSyst(cb, "rate_Z", "rateParam", SystMap<>::init(1.00));
-            
+           
+
+        //##############################################################################
+        //  trigger   
+        //##############################################################################
+        
+        cb.cp().process(JoinStr({embed_proc,all_mc_noW})).AddSyst(cb,
+                                             "CMS_eff_trigger_mt_13TeV", "lnN", SystMap<>::init(1.02));
+
+
+        //##############################################################################
+        //  Electron, muon and tau Id  efficiencies
+        //##############################################################################
+
+        cb.cp().AddSyst(cb, "CMS_eff_m", "lnN", SystMap<channel, process>::init
+                        ({"mt"}, JoinStr({all_mc_noW,embed_proc}),  1.01)
+                        ({"zmm"}, JoinStr({all_mc_noW,embed_proc}),  1.02));
+
+        // embedded selection efficiency
+        cb.cp().process(embed_proc).AddSyst(cb,
+                                             "CMS_eff_m_embedsel", "lnN", SystMap<>::init(1.04));
+
+        //##############################################################################
+        //   muon and tau energy Scale
+        //##############################################################################
+
+       // // Decay Mode based TES Settings
+        cb.cp().process(JoinStr({all_mc_T,{"EmbedZTT"}})).channel({"mt"}).AddSyst(cb,
+                                      "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({all_mc_T,{"EmbedZTT"}})).channel({"mt"}).AddSyst(cb,
+                                      "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({all_mc_T,{"EmbedZTT"}})).channel({"mt"}).AddSyst(cb,
+                                      "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({all_mc_T,{"EmbedZTT"}})).channel({"mt"}).AddSyst(cb,
+                                      "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+
+        // Muon 
+        cb.cp().process(JoinStr({ all_mc,embed_proc})).channel({"mt","zmm"}).AddSyst(cb,
+                                             "CMS_scale_mu_13TeV", "shape", SystMap<>::init(1.00));       
+ 
+
+
+
+
+        //##############################################################################
+        //  jet and met energy Scale
+        //##############################################################################
+ 
+
+         cb.cp().process({"ZTT","ZL","ZJ"}).channel({"mt"}).AddSyst(cb,
+                                                   "CMS_htt_boson_reso_met_13TeV", "shape", SystMap<>::init(1.00));  
+         cb.cp().process({"ZTT","ZL","ZJ"}).channel({"mt"}).AddSyst(cb,
+                                                   "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      
+
+
+
+        //##############################################################################
+        //  Background normalization uncertainties
+        //##############################################################################
+        
+        //   Diboson  Normalisation - fully correlated
+        cb.cp().process({"VV","VVT","VVJ"}).AddSyst(cb,
+                                        "CMS_htt_vvXsec_13TeV", "lnN", SystMap<>::init(1.05));
+
+        cb.cp().process({"ZTT","ZJ","ZL","ZLL"}).AddSyst(cb,
+                                        "CMS_htt_zjXsec_13TeV", "lnN", SystMap<>::init(1.02));        
+ 
+        //   ttbar Normalisation - fully correlated
+	    cb.cp().process({"TT","TTT","TTJ"}).AddSyst(cb,
+					  "CMS_htt_tjXsec_13TeV", "lnN", SystMap<>::init(1.042));
+
+
+        //##############################################################################
+        //  DY LO->NLO reweighting, Between no and twice the correction.
+        //##############################################################################
+        
+        cb.cp().process( {"ZTT","ZJ","ZL","ZLL"}).AddSyst(cb,
+                                             "CMS_htt_dyShape_13TeV", "shape", SystMap<>::init(0.1));
+        
+        
+        //##############################################################################
+        // Ttbar shape reweighting, Between no and twice the correction
+        //##############################################################################
+        
+        cb.cp().process( {"TTJ","TTT","TT"}).AddSyst(cb,
+                                        "CMS_htt_ttbarShape_13TeV", "shape", SystMap<>::init(1.00));
+
+
+        // weighted avarages of recommended tau POG uncertainties provided in bins of eta (update later!)
+        cb.cp().process({"ZL"}).channel({"mt"}).AddSyst(cb,
+                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.2));
+
+
+        cb.cp().process({"VVJ","TTJ"}).channel({"mt"}).AddSyst(cb,
+                                                        "CMS_htt_JFakeTau_13TeV", "lnN", SystMap<>::init(1.2));
+    
+    
+        cb.cp().process({"W"}).channel({"mt"}).AddSyst(cb,
+                                                        "CMS_htt_WYield_13TeV", "lnN", SystMap<>::init(1.1));
+    
+        cb.cp().process({"QCD"}).channel({"mt"}).AddSyst(cb,
+                                                        "CMS_htt_QCDYield_13TeV", "lnN", SystMap<>::init(1.1));
+    
+    
+        if (embed) cb.cp().process({"TTT","VVT"}).channel({"mt"}).AddSyst(cb, "CMS_htt_TauID_13TeV", "lnN", SystMap<>::init(1.15));
+
+
     //! [part7]
     for(auto year: years) {
       for (string chn : chns){
@@ -344,6 +457,11 @@ int main(int argc, char** argv) {
       }
     }    
 
+//convert shape to lnN
+        cb.cp().channel({"zmm"}).syst_type({"shape"}).ForEachSyst([](ch::Systematic *sys) {sys->set_type("lnN"); });
+
+        ConvertShapesToLnN(cb.cp().process({"ZTT","ZL","ZJ"}), "CMS_htt_boson_reso_met_13TeV", 0.);
+        ConvertShapesToLnN(cb.cp().process({"ZTT","ZL","ZJ"}), "CMS_htt_boson_scale_met_13TeV", 0.);
     
     //Now delete processes with 0 yield
     cb.FilterProcs([&](ch::Process *p) {
@@ -409,52 +527,15 @@ int main(int argc, char** argv) {
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
   
     // partially decorrelate the energy scale uncertainties
-    DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong1pizero_13TeV","CMS_scale_embedded_t_3prong1pi0_13TeV",0.5);
     // partially decorrelate the ID uncertainties uncertainties
     DecorrelateMCAndEMB(cb,"CMS_eff_m","CMS_eff_embedded_m",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_e","CMS_eff_embedded_e",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_mt_13TeV","CMS_eff_embedded_t_mt_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_et_13TeV","CMS_eff_embedded_t_et_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_tt_13TeV","CMS_eff_embedded_t_tt_13TeV",0.5);
-  
-    // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM1_13TeV","CMS_eff_embedded_Xtrigger_mt_DM1_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM10_13TeV","CMS_eff_embedded_Xtrigger_mt_DM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM11_13TeV","CMS_eff_embedded_Xtrigger_mt_DM11_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM0_13TeV","CMS_eff_embedded_Xtrigger_et_DM0_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM1_13TeV","CMS_eff_embedded_Xtrigger_et_DM1_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM10_13TeV","CMS_eff_embedded_Xtrigger_et_DM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV");
-  
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM0_13TeV","CMS_eff_embedded_t_trg_DM0_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM1_13TeV","CMS_eff_embedded_t_trg_DM1_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM10_13TeV","CMS_eff_embedded_t_trg_DM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM11_13TeV","CMS_eff_embedded_t_trg_DM11_13TeV");
   
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_mt_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_et_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
-    // de-correlate systematics for 2016 and 2017, ADD 2018 
-    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
-      std::cout << "Partially Decorrelating systematics for 2016/2017/2018" << std::endl;
-      Json::Value js;
-      string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/scripts/correlations.json";
-      js = ch::ExtractJsonFromFile(json_file);
-      std::vector<std::string> keys = js.getMemberNames();
-      for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it){
-        string name = *it;
-        double value = js[*it].asDouble();
-        std::vector<string> chans_2016 = {"em","em_2016","et","et_2016","mt","mt_2016","tt","tt_2016","ttbar","ttbar_2016"};
-        std::vector<string> chans_2017 = {"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"};
-        std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
-        DecorrelateSyst (cb, name, value, chans_2016, chans_2017, chans_2018);
-      }
-    }
 
      ch::SetStandardBinNames(cb);
 	//! [part8]
@@ -467,13 +548,18 @@ int main(int argc, char** argv) {
      cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
 
      // define categories 
-    cb.cp().channel({"zmm"}).ForEachObj([&](ch::Object *obj){
-      obj->set_attribute("cat","zmm_cat");
-    }); 
+    cb.cp().channel({"zmm"}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","zmm_cat");}); 
     // copy the line below and add cati for every mt category
-    cb.cp().channel({"mt"}).bin_id({1}).ForEachObj([&](ch::Object *obj){
-      obj->set_attribute("cat","cat1");
-    });
+    cb.cp().channel({"mt"}).bin_id({1}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat1");});
+    cb.cp().channel({"mt"}).bin_id({2}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat2");});
+    cb.cp().channel({"mt"}).bin_id({3}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat3");});
+    cb.cp().channel({"mt"}).bin_id({4}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat4");});
+    cb.cp().channel({"mt"}).bin_id({5}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat5");});
+    cb.cp().channel({"mt"}).bin_id({6}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat6");});
+    cb.cp().channel({"mt"}).bin_id({7}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat7");});
+    cb.cp().channel({"mt"}).bin_id({8}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat8");});
+    cb.cp().channel({"mt"}).bin_id({9}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat9");});
+    cb.cp().channel({"mt"}).bin_id({10}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat10");});
 
      //! [part9]
      // First we generate a set of bin names:
@@ -490,6 +576,15 @@ int main(int argc, char** argv) {
       
      //writer.WriteCards("cmb", cb);
      writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat1","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat2","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat3","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat4","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat5","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat6","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_7_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat7","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_8_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat8","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_9_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat9","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_10_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat10","zmm_cat"},"cat"));
      
      //writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
      //writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
