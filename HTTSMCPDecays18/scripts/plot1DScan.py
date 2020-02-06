@@ -503,9 +503,9 @@ plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsT
 
 #if not args.no_input_label: plot.DrawTitle(pads[0], '#bf{Input:} %s' % collab, 3)
 # plot.DrawTitle(pads[0], '35.9 fb^{-1} (13 TeV)', 3) # 16
-# plot.DrawTitle(pads[0], '41.9 fb^{-1} (13 TeV)', 3) # 17
+plot.DrawTitle(pads[0], '41.9 fb^{-1} (13 TeV)', 3) # 17
 # plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3) # 16+17
-plot.DrawTitle(pads[0], '59.7 fb^{-1} (13 TeV)', 3) # 18
+# plot.DrawTitle(pads[0], '59.7 fb^{-1} (13 TeV)', 3) # 18
 # plot.DrawTitle(pads[0], '101.3 fb^{-1} (13 TeV)', 3) # 17+18
 # plot.DrawTitle(pads[0], '101.3 fb^{-1} extrap. to 137.2 fb^{-1} (13 TeV)', 3) # 17+18 extrap. to RunII
 # plot.DrawTitle(pads[0], '137.2 fb^{-1} (13 TeV)', 3) # 16+17+18
