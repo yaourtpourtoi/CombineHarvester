@@ -191,171 +191,47 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
   }
 }
 
-void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::vector<double> correlations, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
-  auto cb_syst = cb.cp().syst_name({name});
-  double val2016 = sqrt(1. - correlations[0]);
-  double val2017 = sqrt(1. - correlations[1]);
-  double val2018 = sqrt(1. - correlations[2]);
-  // clone 2016 systs
-  if(correlations[0] < 1.) {
-    std::cout << "test1" << std::endl;
-    ch::CloneSysts(cb.cp().channel(chans_2016).syst_name({name}), cb, [&](ch::Systematic *s) {
-        s->set_name(s->name()+"_2016");
-        if (s->type().find("shape") != std::string::npos) {
-          s->set_scale(s->scale() * val2016);
-        }
-        if (s->type().find("lnN") != std::string::npos) {
-          s->set_value_u((s->value_u() - 1.) * val2016 + 1.);
-          if (s->asymm()){
-            s->set_value_d((s->value_d() - 1.) * val2016 + 1.);
-          }
-        }
-    });
-
-    if(correlations[0]>0.) {
-      // re-scale un-correlated part
-      double val = sqrt(correlations[0]);
-      cb_syst.channel(chans_2017).ForEachSyst([val](ch::Systematic *syst) {
-        if (syst->type().find("shape") != std::string::npos) {
-          syst->set_scale(syst->scale() * val);
-        }
-        if (syst->type().find("lnN") != std::string::npos) {
-          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
-          if (syst->asymm()){
-            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
-          }
-        }
-      });
-    } else {
-      // remove uncorrelated part if systs are 100% un-correlated
-      cb_syst.channel(chans_2016).FilterSysts([&](ch::Systematic *s){
-          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
-      });
-    }
-
-  }
-  // clone 2017 systs
-  if(correlations[1] < 1.) {
-    ch::CloneSysts(cb.cp().channel(chans_2017).syst_name({name}), cb, [&](ch::Systematic *s) {
-        s->set_name(s->name()+"_2017");
-        if (s->type().find("shape") != std::string::npos) {
-          s->set_scale(s->scale() * val2017);
-        }
-        if (s->type().find("lnN") != std::string::npos) {
-          s->set_value_u((s->value_u() - 1.) * val2017 + 1.);
-          if (s->asymm()){
-            s->set_value_d((s->value_d() - 1.) * val2017 + 1.);
-          }
-        }
-    });
-
-    if(correlations[1]>0.) {
-      // re-scale un-correlated part
-      double val = sqrt(correlations[1]);
-      cb_syst.channel(chans_2017).ForEachSyst([val](ch::Systematic *syst) {
-        if (syst->type().find("shape") != std::string::npos) {
-          syst->set_scale(syst->scale() * val);
-        }
-        if (syst->type().find("lnN") != std::string::npos) {
-          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
-          if (syst->asymm()){
-            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
-          }
-        }
-      });
-    } else {
-      // remove uncorrelated part if systs are 100% un-correlated
-      cb_syst.channel(chans_2017).FilterSysts([&](ch::Systematic *s){
-          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
-      });
-    }
-  }
-  // clone 2018 systs
-  if(correlations[2] < 1.) {
-    ch::CloneSysts(cb.cp().channel(chans_2018).syst_name({name}), cb, [&](ch::Systematic *s) {
-        s->set_name(s->name()+"_2018");
-        if (s->type().find("shape") != std::string::npos) {
-          s->set_scale(s->scale() * val2018);
-        }
-        if (s->type().find("lnN") != std::string::npos) {
-          s->set_value_u((s->value_u() - 1.) * val2018 + 1.);
-          if (s->asymm()){
-            s->set_value_d((s->value_d() - 1.) * val2018 + 1.);
-          }
-        }
-    });
-
-    if(correlations[2]>0.) {
-      // re-scale un-correlated part
-      double val = sqrt(correlations[2]);
-      cb_syst.channel(chans_2018).ForEachSyst([val](ch::Systematic *syst) {
-        if (syst->type().find("shape") != std::string::npos) {
-          syst->set_scale(syst->scale() * val);
-        }
-        if (syst->type().find("lnN") != std::string::npos) {
-          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
-          if (syst->asymm()){
-            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
-          }
-        }
-      });
-    } else {
-      // remove uncorrelated part if systs are 100% un-correlated
-      cb_syst.channel(chans_2018).FilterSysts([&](ch::Systematic *s){
-          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
-      });
-    }
-  }
-
-}
 
 int main(int argc, char** argv) {
 
-    string output_folder = "sm_run2";
-    string input_folder_em="IC/";
-    string input_folder_et="IC/";
-    string input_folder_mt="IC/";
-    string input_folder_tt="IC/";
-    string input_folder_mm="USCMS/";
+    string output_folder = "ztt_validation";
+    string input_folder_em="IC/ZTT/";
+    string input_folder_et="IC/ZTT/";
+    string input_folder_mt="IC/ZTT/";
+    string input_folder_tt="IC/ZTT/";
     string scale_sig_procs="";
-    string postfix="";
-    bool ttbar_fit = false;
+    string postfix="-2D";
     unsigned no_shape_systs = 0;
-    bool do_embedding = true;
     bool auto_rebin = false;
-    bool do_jetfakes = true;
-    bool mergeXbbb = false; 
+    bool mergeXbbb = false;
 
     string era;
     po::variables_map vm;
     po::options_description config("configuration");
     config.add_options()
-    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("IC/"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("IC/"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("IC/"))
-    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/"))
-    ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
+    ("input_folder_em", po::value<string>(&input_folder_em)->default_value("IC/ZTT/"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("IC/ZTT/"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("IC/ZTT/"))
+    ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/ZTT/"))
     ("postfix", po::value<string>(&postfix)->default_value(postfix))
-    ("output_folder", po::value<string>(&output_folder)->default_value("sm_run2"))
+    ("output_folder", po::value<string>(&output_folder)->default_value("ztt_validation"))
     ("no_shape_systs", po::value<unsigned>(&no_shape_systs)->default_value(no_shape_systs))
-    ("do_embedding", po::value<bool>(&do_embedding)->default_value(true))
-    ("do_jetfakes", po::value<bool>(&do_jetfakes)->default_value(true))
     ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
-    ("era", po::value<string>(&era)->default_value("2017"))
-    ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
+    ("era", po::value<string>(&era)->default_value("2018"))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
     typedef vector<string> VString;
- 
+
     VString years;
     if ( era.find("2016") != std::string::npos ) years.push_back("2016");
     if ( era.find("2017") != std::string::npos ) years.push_back("2017");
     if ( era.find("2018") != std::string::npos ) years.push_back("2018");
     if ( era=="all" ) years = {"2016","2017","2018"};
- 
+
     typedef vector<pair<int, string>> Categories;
+
     //! [part1]
     // First define the location of the "auxiliaries" directory where we can
     // source the input files containing the datacard shapes
@@ -369,35 +245,12 @@ int main(int argc, char** argv) {
     
     
     VString chns = {"tt","mt"};
-    if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
-    bkg_procs["et"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-    bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-    bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
-    bkg_procs["em"] = {"ZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-    bkg_procs["ttbar"] = {"ZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-    
-    if(do_embedding){
-      bkg_procs["et"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "W", "EWKZ"};
-      bkg_procs["mt"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT", "VVJ", "W", "EWKZ"};
-      bkg_procs["tt"] = {"EmbedZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
-      bkg_procs["em"] = {"EmbedZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-      bkg_procs["ttbar"] = {"EmbedZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-    }
 
-    if(do_jetfakes){
-      bkg_procs["et"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-      bkg_procs["mt"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-      bkg_procs["tt"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-
-      if(do_embedding){
-        bkg_procs["et"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-        bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-      }
-
-    }
+    bkg_procs["et"] = {"ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
+    bkg_procs["mt"] = {"ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
+    bkg_procs["tt"] = {"ZL", "TTT", "VVT", "EWKZ", "jetFakes","Wfakes","TTfakes"};
 
 
     ch::CombineHarvester cb;
@@ -416,55 +269,51 @@ int main(int argc, char** argv) {
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2017"] = {
-        {1, "tt_2017_zttEmbed"},
-        {2, "tt_2017_jetFakes"},
-        {3, "tt_2017_higgs_Rho_Rho"},
-        {4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2017_higgs_A1_Rho_angle1"},
-        {6, "tt_2017_higgs_A1_A1_angle1"},
-        {7, "tt_2017_higgs_Pi_Rho_Mixed"},
-        {8, "tt_2017_higgs_Pi_Pi"},
-        {9, "tt_2017_higgs_Pi_A1_Mixed"},
-        {10, "tt_2017_higgs_Pi_0A1_Mixed"},
-        {11, "tt_2017_higgs_other"},
+        {3, "tt_2017_ztt_Rho_Rho"},
+        //{4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
+        {5, "tt_2017_ztt_A1_Rho"},
+        {6, "tt_2017_ztt_A1_A1"},
+        {7, "tt_2017_ztt_Pi_Rho"},
+        {8, "tt_2017_ztt_Pi_Pi"},        
+        {9, "tt_2017_ztt_Pi_A1"}, 
+        //{10, "tt_2017_higgs_Pi_0A1_Mixed"}, 
+
       };
 
       cats["mt_2017"] = {
-        {1, "mt_2017_zttEmbed"},
-        {2, "mt_2017_jetFakes"},
-        {3, "mt_2017_higgs_Mu_Pi"},
-        {4, "mt_2017_higgs_Mu_A1"},
-        {5, "mt_2017_higgs_Mu_Rho_Mixed"},
-        //{6, "mt_2017_higgs_Mu_Rho_Ip"},
+        //{1, "mt_2018_zttEmbed"},
+        //{2, "mt_2018_jetFakes"},
+        {3, "mt_2018_ztt_Mu_Pi"},
+        {4, "mt_2018_ztt_Mu_A1"},
+        {5, "mt_2018_ztt_Mu_Rho"},
+        //{6, "mt_2018_higgs_Mu_Rho_Ip"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2018"] = {
-        {1, "tt_2018_zttEmbed"},
-        {2, "tt_2018_jetFakes"},
-        {3, "tt_2018_higgs_Rho_Rho"},
-        {4, "tt_2018_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2018_higgs_A1_Rho_angle1"},
-        {6, "tt_2018_higgs_A1_A1_angle1"},
-        {7, "tt_2018_higgs_Pi_Rho_Mixed"},
-        {8, "tt_2018_higgs_Pi_Pi"},
-        {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
-        {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
-        {11, "tt_2018_higgs_other"},
+        {3, "tt_2018_ztt_Rho_Rho"},
+        //{4, "tt_2018_higgs_0A1_Rho_and_0A1_0A1"},
+        {5, "tt_2018_ztt_A1_Rho"},
+        {6, "tt_2018_ztt_A1_A1"},
+        {7, "tt_2018_ztt_Pi_Rho"},
+        {8, "tt_2018_ztt_Pi_Pi"},
+        {9, "tt_2018_ztt_Pi_A1"}, 
+        //{10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
+
       };
       cats["mt_2018"] = {
-        {1, "mt_2018_zttEmbed"},
-        {2, "mt_2018_jetFakes"},
-        {3, "mt_2018_higgs_Mu_Pi"},
-        {4, "mt_2018_higgs_Mu_A1"},
-        {5, "mt_2018_higgs_Mu_Rho_Mixed"},
+        //{1, "mt_2018_zttEmbed"},
+        //{2, "mt_2018_jetFakes"},
+        {3, "mt_2018_ztt_Mu_Pi"},
+        {4, "mt_2018_ztt_Mu_A1"},
+        {5, "mt_2018_ztt_Mu_Rho"},
         //{6, "mt_2018_higgs_Mu_Rho_Ip"},
+        //
       };
     }
     
     map<string, VString> sig_procs;
-    sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
-    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"};   
+    sig_procs["ZTT"] = {"ZTT"};
  
     vector<string> masses = {"125"};    
     
@@ -478,17 +327,32 @@ int main(int argc, char** argv) {
           cb.AddProcesses(   {"*"}, {"htt"}, {"13TeV"}, {chn+"_"+year}, bkg_procs[chn], cats[chn+"_"+year], false);
 
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
-            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats[chn+"_"+year], true); // SM VBF/VH are added as signal
 
-            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ggH"], cats[chn+"_"+year], true);
+            cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ZTT"], cats[chn+"_"+year], true);
           }
       }
     } 
     //! [part4]
     
     
-    ch::AddSMRun2Systematics(cb, 0, ttbar_fit, false);
-    
+    ch::AddSMRun2Systematics(cb, 0, false, false);
+   
+    // remove all systematics not relevant for cross check (some could be included in the future for completeness) 
+     cb.FilterSysts([&](ch::Systematic *s){
+        return s->name().find("eff_b") != std::string::npos || s->name().find("scale_j") != std::string::npos || s->name().find("unclustered") != std::string::npos || s->name().find("ZLShape") != std::string::npos;
+      });
+
+      // filter dm=0 syst for now as it appears to be broken - replace with lnN's
+      cb.FilterSysts([&](ch::Systematic *s){
+        return s->name().find("CMS_eff_t_DM0_13TeV") != std::string::npos;
+      });
+      using ch::syst::SystMap;
+      cb.cp().process({"ZTT","EmbedZTT"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({7,9}).AddSyst(cb,
+                                           "CMS_eff_t_DM0_13TeV", "lnN", SystMap<>::init(1.07));
+      cb.cp().process({"ZTT","EmbedZTT"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({8}).AddSyst(cb,
+                                           "CMS_eff_t_DM0_13TeV", "lnN", SystMap<>::init(1.014));
+
+ 
     if(no_shape_systs==1){
       cb.FilterSysts([&](ch::Systematic *s){
         return s->type().find("shape") != std::string::npos;
@@ -499,6 +363,8 @@ int main(int argc, char** argv) {
         return s->name().find("scale_t") != std::string::npos || s->name().find("scale_e") != std::string::npos || s->name().find("scale_j") != std::string::npos || s->name().find("_met_") != std::string::npos || s->name().find("ZLShape") != std::string::npos;
       });
     }
+
+    
             
     //! [part7]
     for(auto year: years) {
@@ -506,20 +372,15 @@ int main(int argc, char** argv) {
           string channel = chn;
           string extra = "";
           extra = "/"+year+"/";
-          if(chn == "ttbar") channel = "em"; 
           cb.cp().channel({chn+"_"+year}).backgrounds().ExtractShapes(
                                                              input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
                                                              "$BIN/$PROCESS",
                                                              "$BIN/$PROCESS_$SYSTEMATIC");
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
-            cb.cp().channel({chn+"_"+year}).process(sig_procs["ggH"]).ExtractShapes(
+            cb.cp().channel({chn+"_"+year}).process(sig_procs["ZTT"]).ExtractShapes(
                                                                     input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                                                                    "$BIN/$PROCESS$MASS",
-                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
-            cb.cp().channel({chn+"_"+year}).process(sig_procs["qqH"]).ExtractShapes(
-                                                                    input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                                                                    "$BIN/$PROCESS$MASS",
-                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
+                                                                    "$BIN/$PROCESS",
+                                                                    "$BIN/$PROCESS_$SYSTEMATIC");
           }
       }
     }    
@@ -539,16 +400,6 @@ int main(int argc, char** argv) {
         return null_yield;
     });   
     
-    
-    // And convert any shapes in the ttbar CRs to lnN:
-    // Convert all shapes to lnN at this stage
-
-    cb.cp().channel({"ttbar_2016","ttbar_2017"}).syst_type({"shape"}).ForEachSyst([](ch::Systematic *sys) {
-        sys->set_type("lnN");
-        if(sys->value_d() <0.001) {sys->set_value_d(0.001);};
-        if(sys->value_u() <0.001) {sys->set_value_u(0.001);};
-    });
-
     
     
     // can auto-merge the bins with bbb uncertainty > 90% - may be better to merge these bins by hand though!
@@ -604,12 +455,6 @@ int main(int argc, char** argv) {
          s->set_type("lnN");
       }
   });
-
-  // convert systematics to lnN here
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_scale_gg_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
 
  
     if(mergeXbbb) {
@@ -691,16 +536,10 @@ int main(int argc, char** argv) {
 
     }
 
-    // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
-    cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
-    cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
-    cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
-
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
   
     // partially decorrelate the energy scale uncertainties
     DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_scale_mu_13TeV","CMS_scale_embedded_mu_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
@@ -710,17 +549,6 @@ int main(int argc, char** argv) {
     DecorrelateMCAndEMB(cb,"CMS_eff_t_mt_13TeV","CMS_eff_embedded_t_mt_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_eff_t_et_13TeV","CMS_eff_embedded_t_et_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_eff_t_tt_13TeV","CMS_eff_embedded_t_tt_13TeV",0.5);
-
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM0_13TeV","CMS_eff_embedded_t_DM0_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM1_13TeV","CMS_eff_embedded_t_DM1_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM10_13TeV","CMS_eff_embedded_t_DM10_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_DM11_13TeV","CMS_eff_embedded_t_DM11_13TeV",0.5);
-  
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin1_13TeV","CMS_eff_embedded_t_bin1_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin2_13TeV","CMS_eff_embedded_t_bin2_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin3_13TeV","CMS_eff_embedded_t_bin3_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin4_13TeV","CMS_eff_embedded_t_bin4_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_eff_t_bin5_13TeV","CMS_eff_embedded_t_bin5_13TeV",0.5);
   
     // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
@@ -730,34 +558,19 @@ int main(int argc, char** argv) {
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM0_13TeV","CMS_eff_embedded_Xtrigger_et_DM0_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM1_13TeV","CMS_eff_embedded_Xtrigger_et_DM1_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM10_13TeV","CMS_eff_embedded_Xtrigger_et_DM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV"); 
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_DM11_13TeV","CMS_eff_embedded_Xtrigger_et_DM11_13TeV");
+  
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM0_13TeV","CMS_eff_embedded_t_trg_DM0_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM1_13TeV","CMS_eff_embedded_t_trg_DM1_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM10_13TeV","CMS_eff_embedded_t_trg_DM10_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_DM11_13TeV","CMS_eff_embedded_t_trg_DM11_13TeV");
-
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM0_13TeV" ,"CMS_eff_embedded_Xtrigger_mt_MVADM0_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM1_13TeV" ,"CMS_eff_embedded_Xtrigger_mt_MVADM1_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM2_13TeV" ,"CMS_eff_embedded_Xtrigger_mt_MVADM2_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM10_13TeV","CMS_eff_embedded_Xtrigger_mt_MVADM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_MVADM11_13TeV","CMS_eff_embedded_Xtrigger_mt_MVADM11_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM0_13TeV" ,"CMS_eff_embedded_Xtrigger_et_MVADM0_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM1_13TeV" ,"CMS_eff_embedded_Xtrigger_et_MVADM1_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM2_13TeV" ,"CMS_eff_embedded_Xtrigger_et_MVADM2_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM10_13TeV","CMS_eff_embedded_Xtrigger_et_MVADM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_et_MVADM11_13TeV","CMS_eff_embedded_Xtrigger_et_MVADM11_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM0_13TeV"       ,"CMS_eff_embedded_t_trg_MVADM0_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM1_13TeV"       ,"CMS_eff_embedded_t_trg_MVADM1_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM2_13TeV"       ,"CMS_eff_embedded_t_trg_MVADM2_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM10_13TeV"      ,"CMS_eff_embedded_t_trg_MVADM10_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_t_trg_MVADM11_13TeV"      ,"CMS_eff_embedded_t_trg_MVADM11_13TeV");
   
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_mt_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_et_13TeV","CMS_eff_embedded_trigger_et_13TeV");
-    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_em_13TeV","CMS_eff_embedded_trigger_em_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_et_13TeV");
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
     // de-correlate systematics for 2016 and 2017, ADD 2018 
-    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos || true){
+    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
       std::cout << "Partially Decorrelating systematics for 2016/2017/2018" << std::endl;
       Json::Value js;
       string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/scripts/correlations.json";
@@ -771,20 +584,6 @@ int main(int argc, char** argv) {
         std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
         DecorrelateSyst (cb, name, value, chans_2016, chans_2017, chans_2018);
       }
-
-      // now take care of cases where correlations are different for the 3 years
-      string json_file_byyear = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/scripts/correlations_byyear.json";
-      js = ch::ExtractJsonFromFile(json_file_byyear);
-      keys = js.getMemberNames();
-      for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it){
-        string name = *it;
-        std::vector<double> values = {js[*it]["2016"].asDouble(),js[*it]["2017"].asDouble(), js[*it]["2018"].asDouble()};
-        std::vector<string> chans_2016 = {"em","em_2016","et","et_2016","mt","mt_2016","tt","tt_2016","ttbar","ttbar_2016"};
-        std::vector<string> chans_2017 = {"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"};
-        std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
-        DecorrelateSystSeperateYears (cb, name, values, chans_2016, chans_2017, chans_2018);
-      }
-
     }
 
      ch::SetStandardBinNames(cb);
@@ -816,8 +615,6 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
      writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
      writer.WriteCards("htt_2018", cb.cp().channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"}));
-
-     writer.WriteCards("htt_tt", cb.cp().channel({"tt_2018","tt_2017"}));
      
      for (auto chn : cb.channel_set()) {
      
@@ -825,32 +622,23 @@ int main(int argc, char** argv) {
        writer.WriteCards(chn, cb.cp().channel({chn}));
        // And per-channel-category
      }
-     writer.WriteCards("htt_tt_1_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}));
-     writer.WriteCards("htt_tt_2_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}));
+     //writer.WriteCards("htt_tt_1_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}));
+     //writer.WriteCards("htt_tt_2_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}));
      writer.WriteCards("htt_tt_3_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_tt_4_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4}));
+     //writer.WriteCards("htt_tt_4_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4}));
      writer.WriteCards("htt_tt_5_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5}));
      writer.WriteCards("htt_tt_6_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,6}));
      writer.WriteCards("htt_tt_7_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7}));
      writer.WriteCards("htt_tt_8_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,8}));
      writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
-     writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
-     writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
-     writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
-     writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
+     //writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
+     //writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
+     //writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
+     //writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
      writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
      writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
      writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
-     writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
-     writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
-     writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
-
-     writer.WriteCards("htt_mt_2017_3_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_mt_2017_4_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_mt_2017_5_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,5}));
-     writer.WriteCards("htt_mt_2018_3_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_mt_2018_4_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_mt_2018_5_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,5}));
+     //writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
         
     cb.PrintAll();
     cout << " done\n";
