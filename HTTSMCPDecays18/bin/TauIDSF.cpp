@@ -288,13 +288,22 @@ int main(int argc, char** argv) {
         {8, "mt_2018_MVADM2_PtMoreThan40"},
         {9, "mt_2018_MVADM10_PtMoreThan40"},
         {10, "mt_2018_MVADM11_PtMoreThan40"},
+        
+        {11, "mt_2018_HPSDM0_Pt20to40"},
+        {12, "mt_2018_HPSDM1_Pt20to40"},
+        {13, "mt_2018_HPSDM10_Pt20to40"},
+        {14, "mt_2018_HPSDM11_Pt20to40"},
+        {15, "mt_2018_HPSDM0_PtMoreThan40"},
+        {16, "mt_2018_HPSDM1_PtMoreThan40"},
+        {17, "mt_2018_HPSDM10_PtMoreThan40"},
+        {18, "mt_2018_HPSDM11_PtMoreThan40"},
       };
     }
     
     map<string, VString> sig_procs;
     
-    if (embed) sig_procs["ZTT"] = {"EmbedZTT"};
-    else sig_procs["ZTT"] = {"ZTT","TTT", "VVT"};
+    if (embed) sig_procs["mt"] = {"EmbedZTT"};
+    else sig_procs["mt"] = {"ZTT","TTT", "VVT"};
     
     vector<string> masses = {"125"};    
     
@@ -395,7 +404,7 @@ int main(int argc, char** argv) {
         cb.cp().process({"VV","VVT","VVJ"}).AddSyst(cb,
                                         "CMS_htt_vvXsec_13TeV", "lnN", SystMap<>::init(1.05));
 
-        cb.cp().process({"ZTT","ZJ","ZL","ZLL"}).AddSyst(cb,
+        cb.cp().process({"ZTT","ZJ","ZL"}).AddSyst(cb,
                                         "CMS_htt_zjXsec_13TeV", "lnN", SystMap<>::init(1.02));        
  
         //   ttbar Normalisation - fully correlated
@@ -407,7 +416,7 @@ int main(int argc, char** argv) {
         //  DY LO->NLO reweighting, Between no and twice the correction.
         //##############################################################################
         
-        cb.cp().process( {"ZTT","ZJ","ZL","ZLL"}).AddSyst(cb,
+        cb.cp().process( {"ZTT","ZJ","ZL"}).AddSyst(cb,
                                              "CMS_htt_dyShape_13TeV", "shape", SystMap<>::init(0.1));
         
         
@@ -561,7 +570,16 @@ int main(int argc, char** argv) {
     cb.cp().channel({"mt"}).bin_id({9}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat9");});
     cb.cp().channel({"mt"}).bin_id({10}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat10");});
 
-     //! [part9]
+    cb.cp().channel({"mt"}).bin_id({11}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat11");});
+    cb.cp().channel({"mt"}).bin_id({12}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat12");});
+    cb.cp().channel({"mt"}).bin_id({13}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat13");});
+    cb.cp().channel({"mt"}).bin_id({14}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat14");});
+    cb.cp().channel({"mt"}).bin_id({15}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat15");});
+    cb.cp().channel({"mt"}).bin_id({16}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat16");});
+    cb.cp().channel({"mt"}).bin_id({17}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat17");});
+    cb.cp().channel({"mt"}).bin_id({18}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat18");});
+    
+    //! [part9]
      // First we generate a set of bin names:
      
      
@@ -585,6 +603,15 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_8_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat8","zmm_cat"},"cat"));
      writer.WriteCards("htt_mt_9_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat9","zmm_cat"},"cat"));
      writer.WriteCards("htt_mt_10_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat10","zmm_cat"},"cat"));
+
+     writer.WriteCards("htt_mt_11_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat11","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_12_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat12","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_13_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat13","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_14_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat14","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_15_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat15","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_16_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat16","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_17_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat17","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_18_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat18","zmm_cat"},"cat"));
      
      //writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
      //writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 

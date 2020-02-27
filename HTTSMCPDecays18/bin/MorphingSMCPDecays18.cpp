@@ -606,9 +606,9 @@ int main(int argc, char** argv) {
   });
 
   // convert systematics to lnN here
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_scale_gg_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_scale_gg_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
 
  
