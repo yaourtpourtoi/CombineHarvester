@@ -194,8 +194,8 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
 
 int main(int argc, char** argv) {
 
-    string output_folder = "tauIDSF_output";
-    string input_folder_mt="IC/tauIDSF_datacards";
+    string output_folder = "tauIDSF_output/";
+    string input_folder_mt="IC/tauIDSF_datacards/";
     string input_folder_zmm="IC/tauIDSF_datacards/";
     string scale_sig_procs="";
     string postfix="-2D";
@@ -230,6 +230,15 @@ int main(int argc, char** argv) {
 
     typedef vector<pair<int, string>> Categories;
 
+    if (embed){
+        input_folder_zmm+="/embed/";
+        input_folder_mt+="/embed/";
+    } else{
+        input_folder_zmm+="/MC/";
+        input_folder_mt+="/MC/";
+    }
+
+
     //! [part1]
     // First define the location of the "auxiliaries" directory where we can
     // source the input files containing the datacard shapes
@@ -247,7 +256,8 @@ int main(int argc, char** argv) {
         bkg_procs["mt"] = {"ZL","ZJ","TTJ", "TTT","VVJ","VVT","W","QCD"};
         bkg_procs["zmm"] = {"EmbedZL"};
     }
-    else{ bkg_procs["mt"] = {"ZL","ZJ","TTJ", "VVJ","W","QCD"};
+    else{ 
+        bkg_procs["mt"] = {"ZL","ZJ","TTJ", "VVJ","W","QCD"};
         bkg_procs["zmm"] = {"ZL", "TT", "VV","W", "ZJ"};
     }
 
@@ -317,7 +327,7 @@ int main(int argc, char** argv) {
 
         if( chn == "mt"){
 
-          cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn}, sig_procs["ZTT"], cats[chn], true);
+          cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn}, sig_procs["mt"], cats[chn], true);
         }
     }
     //! [part4]
@@ -345,22 +355,43 @@ int main(int argc, char** argv) {
         //##############################################################################
         //  trigger   
         //##############################################################################
-        
-        cb.cp().process(JoinStr({embed_proc,all_mc_noW})).AddSyst(cb,
-                                             "CMS_eff_trigger_mt_13TeV", "lnN", SystMap<>::init(1.02));
+
+        if(embed) {
+          cb.cp().AddSyst(cb, "CMS_eff_trigger_mt_13TeV", "lnN", SystMap<channel, process>::init
+                          ({"mt"}, {"TTT","VVT","ZL","ZJ","TTJ","VVJ"},  1.02)
+                          );
+        } else {
+
+          cb.cp().AddSyst(cb, "CMS_eff_trigger_mt_13TeV", "lnN", SystMap<channel, process>::init
+                          ({"mt"}, {"TTT","VVT","TTJ","VVJ"},  1.02)
+                          ({"zmm"}, {"TT","VV"},  1.02)
+                          );
+
+        }
 
 
         //##############################################################################
         //  Electron, muon and tau Id  efficiencies
         //##############################################################################
 
-        cb.cp().AddSyst(cb, "CMS_eff_m", "lnN", SystMap<channel, process>::init
-                        ({"mt"}, JoinStr({all_mc_noW,embed_proc}),  1.01)
-                        ({"zmm"}, JoinStr({all_mc_noW,embed_proc}),  1.02));
+        if(embed) { 
+          cb.cp().AddSyst(cb, "CMS_eff_m", "lnN", SystMap<channel, process>::init
+                          ({"mt"}, {embed_proc},  0.99)
+                          ({"mt"}, {"TTT","VVT","ZL","ZJ","TTJ","VVJ"},  1.01)
+                          );
+        } else {
+
+          cb.cp().AddSyst(cb, "CMS_eff_m", "lnN", SystMap<channel, process>::init
+                          ({"mt"}, {"ZTT","ZL","ZJ"},  0.99)
+                          ({"mt"}, {"TTT","VVT","TTJ","VVJ"},  1.01)
+                          ({"zmm"}, {"TT","VV"},  1.02)
+                          );
+
+        }
 
         // embedded selection efficiency
-        cb.cp().process(embed_proc).AddSyst(cb,
-                                             "CMS_eff_m_embedsel", "lnN", SystMap<>::init(1.04));
+        //cb.cp().process(embed_proc).AddSyst(cb,
+        //                                     "CMS_eff_m_embedsel", "lnN", SystMap<>::init(1.04));
 
         //##############################################################################
         //   muon and tau energy Scale
@@ -458,7 +489,7 @@ int main(int argc, char** argv) {
                                                              "$BIN/$PROCESS",
                                                              "$BIN/$PROCESS_$SYSTEMATIC");
           if(chn == "mt"){
-            cb.cp().channel({chn}).process(sig_procs["ZTT"]).ExtractShapes(
+            cb.cp().channel({chn}).process(sig_procs["mt"]).ExtractShapes(
                                                                     input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
                                                                     "$BIN/$PROCESS",
                                                                     "$BIN/$PROCESS_$SYSTEMATIC");
@@ -589,10 +620,11 @@ int main(int argc, char** argv) {
      //note that it's also possible to write out the full combined card with CH
      string output_prefix = "output/";
      if(output_folder.compare(0,1,"/") == 0) output_prefix="";
+     std::cout<<"out_dir="<<output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt"<<std::endl;
      ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
          	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
       
-     //writer.WriteCards("cmb", cb);
+     writer.WriteCards("cmb", cb);
      writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat1","zmm_cat"},"cat"));
      writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat2","zmm_cat"},"cat"));
      writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat3","zmm_cat"},"cat"));
@@ -613,9 +645,6 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_17_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat17","zmm_cat"},"cat"));
      writer.WriteCards("htt_mt_18_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat18","zmm_cat"},"cat"));
      
-     //writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
-     //writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
-     //writer.WriteCards("htt_2018", cb.cp().channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"}));
      
      //for (auto chn : cb.channel_set()) {
      //
