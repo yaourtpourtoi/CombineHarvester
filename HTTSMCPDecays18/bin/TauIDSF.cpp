@@ -194,9 +194,14 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
 
 int main(int argc, char** argv) {
 
-    string output_folder = "tauIDSF_output/";
-    string input_folder_mt="IC/tauIDSF_datacards/";
-    string input_folder_zmm="IC/tauIDSF_datacards/";
+    //for tight deeptauVsEle
+    string output_folder = "et_tauIDSF_output/";
+    string input_folder_mt="IC/et_tauIDSF_datacards/";
+    string input_folder_zmm="IC/et_tauIDSF_datacards/";
+    //for VVLoose deeptauVsEle
+    //string output_folder = "tauIDSF_output/";
+    //string input_folder_mt="IC/tauIDSF_datacards/";
+    //string input_folder_zmm="IC/tauIDSF_datacards/"; 
     string scale_sig_procs="";
     string postfix="-2D";
     unsigned no_shape_systs = 0;
@@ -283,6 +288,64 @@ int main(int argc, char** argv) {
         //{1, "mt_2018_zttEmbed"},
      // };
     }
+   
+
+    if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
+      cats["zmm"] = {
+        {1, "zmm_2016_ZMM_inclusive"},
+      };
+      cats["mt"] = {
+        {1, "mt_2016_MVADM0_Pt20to40"},
+        {2, "mt_2016_MVADM1_Pt20to40"},
+        {3, "mt_2016_MVADM2_Pt20to40"},
+        {4, "mt_2016_MVADM10_Pt20to40"},
+        {5, "mt_2016_MVADM11_Pt20to40"},
+        {6, "mt_2016_MVADM0_PtMoreThan40"},
+        {7, "mt_2016_MVADM1_PtMoreThan40"},
+        {8, "mt_2016_MVADM2_PtMoreThan40"},
+        {9, "mt_2016_MVADM10_PtMoreThan40"},
+        {10, "mt_2016_MVADM11_PtMoreThan40"},
+        
+        {11, "mt_2016_HPSDM0_Pt20to40"},
+        {12, "mt_2016_HPSDM1_Pt20to40"},
+        {13, "mt_2016_HPSDM10_Pt20to40"},
+        {14, "mt_2016_HPSDM11_Pt20to40"},
+        {15, "mt_2016_HPSDM0_PtMoreThan40"},
+        {16, "mt_2016_HPSDM1_PtMoreThan40"},
+        {17, "mt_2016_HPSDM10_PtMoreThan40"},
+        {18, "mt_2016_HPSDM11_PtMoreThan40"},
+      };
+    }
+
+
+    if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
+      cats["zmm"] = {
+        {1, "zmm_2017_ZMM_inclusive"},
+      };
+      cats["mt"] = {
+        {1, "mt_2017_MVADM0_Pt20to40"},
+        {2, "mt_2017_MVADM1_Pt20to40"},
+        {3, "mt_2017_MVADM2_Pt20to40"},
+        {4, "mt_2017_MVADM10_Pt20to40"},
+        {5, "mt_2017_MVADM11_Pt20to40"},
+        {6, "mt_2017_MVADM0_PtMoreThan40"},
+        {7, "mt_2017_MVADM1_PtMoreThan40"},
+        {8, "mt_2017_MVADM2_PtMoreThan40"},
+        {9, "mt_2017_MVADM10_PtMoreThan40"},
+        {10, "mt_2017_MVADM11_PtMoreThan40"},
+        
+        {11, "mt_2017_HPSDM0_Pt20to40"},
+        {12, "mt_2017_HPSDM1_Pt20to40"},
+        {13, "mt_2017_HPSDM10_Pt20to40"},
+        {14, "mt_2017_HPSDM11_Pt20to40"},
+        {15, "mt_2017_HPSDM0_PtMoreThan40"},
+        {16, "mt_2017_HPSDM1_PtMoreThan40"},
+        {17, "mt_2017_HPSDM10_PtMoreThan40"},
+        {18, "mt_2017_HPSDM11_PtMoreThan40"},
+      };
+    }
+
+
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["zmm"] = {
         {1, "zmm_2018_ZMM_inclusive"},
@@ -309,7 +372,8 @@ int main(int argc, char** argv) {
         {18, "mt_2018_HPSDM11_PtMoreThan40"},
       };
     }
-    
+
+
     map<string, VString> sig_procs;
     
     if (embed) sig_procs["mt"] = {"EmbedZTT"};
