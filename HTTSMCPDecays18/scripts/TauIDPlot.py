@@ -94,8 +94,8 @@ parser.add_argument('--empty_bin_error',action='store_true',default=False, help=
 parser.add_argument('--channel_label',default='#mu#tau_{h} no b-tag',help='Channel - category label')
 parser.add_argument('--ratio', default=False,action='store_true',help='Draw ratio plot')
 parser.add_argument('--custom_x_range', help='Fix x axis range', action='store_true', default=False)
-parser.add_argument('--x_axis_min',  help='Fix x axis minimum', default=0.0)
-parser.add_argument('--x_axis_max',  help='Fix x axis maximum', default=1000.0)
+parser.add_argument('--x_axis_min',  help='Fix x axis minimum', default=50.0)
+parser.add_argument('--x_axis_max',  help='Fix x axis maximum', default=150.0)
 parser.add_argument('--custom_y_range', help='Fix y axis range', action='store_true', default=False)
 parser.add_argument('--y_axis_min',  help='Fix y axis minimum', default=0.001)
 parser.add_argument('--y_axis_max',  help='Fix y axis maximum', default=100.0)
@@ -103,6 +103,7 @@ parser.add_argument('--log_y', action='store_true',help='Use log for y axis')
 parser.add_argument('--log_x', action='store_true',help='Use log for x axis')
 parser.add_argument('--extra_pad', help='Fraction of extra whitespace at top of plot',default=0.0)
 parser.add_argument('--outname',default='',help='Optional string for start of output filename')
+parser.add_argument('--out',default='',help='Optional string for old of plot name')
 parser.add_argument('--bkg_fractions', default=False, action='store_true', help='Instead of yields for each process plot fraction of total bkg in each bin')
 parser.add_argument('--ratio_range',  help='y-axis range for ratio plot in format MIN,MAX', default="0.7,1.3")
 parser.add_argument('--no_signal', action='store_true',help='Do not draw signal')
@@ -474,7 +475,8 @@ pads[0].RedrawAxis()
 #Save as png and pdf with some semi sensible filename
 shape_file_name = shape_file_name.replace(".root","_%(mode)s"%vars())
 shape_file_name = shape_file_name.replace("_shapes","")
-outname += shape_file_name
+outname += shape_file_name.split('/')[-1]
+outname+=args.out
 if soverb_plot : outname+="_soverb"
 if(log_y): outname+="_logy"
 if(log_x): outname+="_logx"
