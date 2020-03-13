@@ -239,21 +239,21 @@ namespace ch {
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_FlavorQCD_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_HF_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_RelativeBal_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_Absolute_2016_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_Absolute_2017_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_Absolute_2018_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_BBEC1_2016_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_BBEC1_2017_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_BBEC1_2018_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_EC2_2016_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_EC2_2017_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_EC2_2018_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_HF_2016_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_HF_2017_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_HF_2018_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_RelativeSample_2016_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_RelativeSample_2017_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_RelativeSample_2018_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","em","em_2016","et","et_2016","mt","mt_2016"}).AddSyst(cb,"CMS_scale_j_Absolute_2016_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","em_2017","et_2017","mt_2017"}).AddSyst(cb,"CMS_scale_j_Absolute_2017_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_Absolute_2018_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","em","em_2016","et","et_2016","mt","mt_2016"}).AddSyst(cb,"CMS_scale_j_BBEC1_2016_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","em_2017","et_2017","mt_2017"}).AddSyst(cb,"CMS_scale_j_BBEC1_2017_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_BBEC1_2018_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","em","em_2016","et","et_2016","mt","mt_2016"}).AddSyst(cb,"CMS_scale_j_EC2_2016_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","em_2017","et_2017","mt_2017"}).AddSyst(cb,"CMS_scale_j_EC2_2017_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_EC2_2018_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","em","em_2016","et","et_2016","mt","mt_2016"}).AddSyst(cb,"CMS_scale_j_HF_2016_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","em_2017","et_2017","mt_2017"}).AddSyst(cb,"CMS_scale_j_HF_2017_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_HF_2018_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","em","em_2016","et","et_2016","mt","mt_2016"}).AddSyst(cb,"CMS_scale_j_RelativeSample_2016_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","em_2017","et_2017","mt_2017"}).AddSyst(cb,"CMS_scale_j_RelativeSample_2017_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_RelativeSample_2018_13TeV", "shape", SystMap<>::init(1.00));
 
         //##############################################################################
         //  Background normalization uncertainties
