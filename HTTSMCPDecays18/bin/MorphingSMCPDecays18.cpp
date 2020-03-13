@@ -341,7 +341,7 @@ int main(int argc, char** argv) {
     ("do_embedding", po::value<bool>(&do_embedding)->default_value(true))
     ("do_jetfakes", po::value<bool>(&do_jetfakes)->default_value(true))
     ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
-    ("era", po::value<string>(&era)->default_value("2017"))
+    ("era", po::value<string>(&era)->default_value("2018"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
 
@@ -394,7 +394,7 @@ int main(int argc, char** argv) {
       if(do_embedding){
         bkg_procs["et"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
         bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
+        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "Wfakes", "EWKZ"};
       }
 
     }
@@ -420,8 +420,8 @@ int main(int argc, char** argv) {
         {2, "tt_2017_jetFakes"},
         {3, "tt_2017_higgs_Rho_Rho"},
         {4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2017_higgs_A1_Rho_angle1"},
-        {6, "tt_2017_higgs_A1_A1_angle1"},
+        {5, "tt_2017_higgs_A1_Rho"},
+        {6, "tt_2017_higgs_A1_A1"},
         {7, "tt_2017_higgs_Pi_Rho_Mixed"},
         {8, "tt_2017_higgs_Pi_Pi"},
         {9, "tt_2017_higgs_Pi_A1_Mixed"},
@@ -444,8 +444,8 @@ int main(int argc, char** argv) {
         {2, "tt_2018_jetFakes"},
         {3, "tt_2018_higgs_Rho_Rho"},
         {4, "tt_2018_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2018_higgs_A1_Rho_angle1"},
-        {6, "tt_2018_higgs_A1_A1_angle1"},
+        {5, "tt_2018_higgs_A1_Rho"},
+        {6, "tt_2018_higgs_A1_A1"},
         {7, "tt_2018_higgs_Pi_Rho_Mixed"},
         {8, "tt_2018_higgs_Pi_Pi"},
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
@@ -464,7 +464,7 @@ int main(int argc, char** argv) {
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
-    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"};   
+    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"};   
  
     vector<string> masses = {"125"};    
     
@@ -606,9 +606,9 @@ int main(int argc, char** argv) {
   });
 
   // convert systematics to lnN here
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_scale_gg_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bins({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_scale_gg_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
 
  
