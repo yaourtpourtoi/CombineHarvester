@@ -119,10 +119,10 @@ namespace ch {
         cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
 
         // additional uncertainties due to tau SF on cross-triggers (check problem with nan values is fixed!)
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM11_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM1_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM10_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_DM11_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_DM0_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_DM1_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_DM10_13TeV", "shape", SystMap<>::init(1.00));
@@ -180,8 +180,8 @@ namespace ch {
         //  b tag and mistag rate  efficiencies 
         //##############################################################################
 
-        cb.cp().channel({"tt","tt_2016","tt_2017","tt_2018"}, false).process({"TTT","TT","VVT","VV"}).AddSyst(cb,
-                                             "CMS_eff_b_13TeV", "shape", SystMap<>::init(1.00)); 
+        //cb.cp().channel({"tt","tt_2016","tt_2017","tt_2018"}, false).process({"TTT","TT","VVT","VV"}).AddSyst(cb,
+        //                                     "CMS_eff_b_13TeV", "shape", SystMap<>::init(1.00)); 
         
         //##############################################################################
         //  Electron, muon and tau energy Scale
@@ -199,9 +199,9 @@ namespace ch {
                                                 "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+	//CHANGE found
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
 
         // Muon 
         // ES Add back after!
@@ -229,11 +229,10 @@ namespace ch {
          cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
                                                    "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      
  
- 
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_13TeV", "shape", SystMap<>::init(1.00));
+	 //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_scale_j_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
-        
+	 cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
+
         //##############################################################################
         //  Background normalization uncertainties
         //##############################################################################
@@ -413,8 +412,8 @@ namespace ch {
         // Ttbar shape reweighting, Between no and twice the correction
         //##############################################################################
         
-        cb.cp().process( {"TTJ","TTT","TT"}).AddSyst(cb,
-                                        "CMS_htt_ttbarShape_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process( {"TTJ","TTT","TT"}).AddSyst(cb,
+        //                                "CMS_htt_ttbarShape_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         // ZL shape  and electron/muon  to tau fake only in  mt and et channels (updated March 22)
@@ -426,11 +425,16 @@ namespace ch {
                                                          "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
                                                          "CMS_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-
+	/*
         cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                          "CMS_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                          "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+	*/ ////CHANGE Found
+        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+                                                         "CMS_htt_ZLShape_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+                                                         "CMS_htt_ZLShape_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
        
         // weighted avarages of recommended tau POG uncertainties provided in bins of eta (update later!)
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
@@ -450,12 +454,12 @@ namespace ch {
         cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_scale_gg_13TeV", "shape", SystMap<>::init(1.00));
 
+	//TODO re-add once available
+        //cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+        //                                     "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
-                                             "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
-                                             "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+        //                                     "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
  
         //    Uncertainty on BR for HTT @ 125 GeV
