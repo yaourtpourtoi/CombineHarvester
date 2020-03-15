@@ -871,10 +871,7 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
      writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
      writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
-    
-     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4}));
-     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5,6,7,8}));
-     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8}));
+
     cb.PrintAll();
     cout << " done\n";
     
