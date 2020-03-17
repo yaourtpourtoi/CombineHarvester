@@ -194,14 +194,17 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
 
 int main(int argc, char** argv) {
 
-    //for tight deeptauVsEle
-    string output_folder = "et_tauIDSF_output/";
-    string input_folder_mt="IC/et_tauIDSF_datacards/";
-    string input_folder_zmm="IC/et_tauIDSF_datacards/";
-    //for VVLoose deeptauVsEle
-    //string output_folder = "tauIDSF_output/";
-    //string input_folder_mt="IC/tauIDSF_datacards/";
-    //string input_folder_zmm="IC/tauIDSF_datacards/"; 
+    //for tight deeptauVsEle (et channel)
+    string output_folder = "et_datacards_output/"; //easier to use output option though
+    string input_folder_mt="IC/et_datacards/";
+    string input_folder_zmm="IC/et_datacards/";
+    
+    //for VVLoose deeptauVsEle (mt&tt channel)
+    //string output_folder = "ttAndmt_datacards_output/";//easier to use output option though
+    //string input_folder_mt="IC/ttAndmt_datacards/";
+    //string input_folder_zmm="IC/ttAndmt_datacards/"; 
+
+    
     string scale_sig_procs="";
     string postfix="-2D";
     unsigned no_shape_systs = 0;
@@ -314,7 +317,13 @@ int main(int argc, char** argv) {
         {16, "mt_2016_HPSDM1_PtMoreThan40"},
         {17, "mt_2016_HPSDM10_PtMoreThan40"},
         {18, "mt_2016_HPSDM11_PtMoreThan40"},
+        
+        {19, "mt_2016_MVADM1_NoHPS0_Pt20to40"},
+        {20, "mt_2016_MVADM2_NoHPS0_Pt20to40"},
+        {21, "mt_2016_MVADM1_NoHPS0_PtMoreThan40"},
+        {22, "mt_2016_MVADM2_NoHPS0_PtMoreThan40"},
       };
+      
     }
 
 
@@ -342,6 +351,11 @@ int main(int argc, char** argv) {
         {16, "mt_2017_HPSDM1_PtMoreThan40"},
         {17, "mt_2017_HPSDM10_PtMoreThan40"},
         {18, "mt_2017_HPSDM11_PtMoreThan40"},
+        
+        {19, "mt_2017_MVADM1_NoHPS0_Pt20to40"},
+        {20, "mt_2017_MVADM2_NoHPS0_Pt20to40"},
+        {21, "mt_2017_MVADM1_NoHPS0_PtMoreThan40"},
+        {22, "mt_2017_MVADM2_NoHPS0_PtMoreThan40"},
       };
     }
 
@@ -370,6 +384,11 @@ int main(int argc, char** argv) {
         {16, "mt_2018_HPSDM1_PtMoreThan40"},
         {17, "mt_2018_HPSDM10_PtMoreThan40"},
         {18, "mt_2018_HPSDM11_PtMoreThan40"},
+        
+        {19, "mt_2018_MVADM1_NoHPS0_Pt20to40"},
+        {20, "mt_2018_MVADM2_NoHPS0_Pt20to40"},
+        {21, "mt_2018_MVADM1_NoHPS0_PtMoreThan40"},
+        {22, "mt_2018_MVADM2_NoHPS0_PtMoreThan40"},
       };
     }
 
@@ -408,8 +427,8 @@ int main(int argc, char** argv) {
       using ch::syst::channel;
       using ch::JoinStr;
 
-      cb.cp().process(all_mc_noW).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.025));
+      if (embed) cb.cp().process({"ZL","ZJ","ZTT","TTJ","TTT","TT","VV","VVT","VVJ"}).AddSyst(cb, "lumi_13TeV", "lnN", SystMap<>::init(1.025));
+      else cb.cp().process({"TTJ","TTT","TT","VV","VVT","VVJ"}).AddSyst(cb, "lumi_13TeV", "lnN", SystMap<>::init(1.025));
 
 
       if (embed) cb.cp().process({"EmbedZL","EmbedZTT"}).AddSyst(cb, "rate_Z", "rateParam", SystMap<>::init(1.00));   
@@ -499,9 +518,11 @@ int main(int argc, char** argv) {
         cb.cp().process({"VV","VVT","VVJ"}).AddSyst(cb,
                                         "CMS_htt_vvXsec_13TeV", "lnN", SystMap<>::init(1.05));
 
-        cb.cp().process({"ZTT","ZJ","ZL"}).AddSyst(cb,
-                                        "CMS_htt_zjXsec_13TeV", "lnN", SystMap<>::init(1.02));        
- 
+        if(embed) {  
+          cb.cp().process({"ZTT","ZJ","ZL"}).AddSyst(cb,
+                                          "CMS_htt_zjXsec_13TeV", "lnN", SystMap<>::init(1.02));        
+        }
+
         //   ttbar Normalisation - fully correlated
 	    cb.cp().process({"TT","TTT","TTJ"}).AddSyst(cb,
 					  "CMS_htt_tjXsec_13TeV", "lnN", SystMap<>::init(1.042));
@@ -525,7 +546,7 @@ int main(int argc, char** argv) {
 
         // weighted avarages of recommended tau POG uncertainties provided in bins of eta (update later!)
         cb.cp().process({"ZL"}).channel({"mt"}).AddSyst(cb,
-                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.2));
+                                                        "CMS_htt_mFakeTau_13TeV", "lnN", SystMap<>::init(1.4));
 
 
         cb.cp().process({"VVJ","TTJ"}).channel({"mt"}).AddSyst(cb,
@@ -646,7 +667,8 @@ int main(int argc, char** argv) {
 
 	
      // add autoMCStats options
-     cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
+     //cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
+     cb.AddDatacardLineAtEnd("* autoMCStats 0 1");
      // add lumi_scale for projection scans
      cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
      cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
@@ -673,6 +695,11 @@ int main(int argc, char** argv) {
     cb.cp().channel({"mt"}).bin_id({16}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat16");});
     cb.cp().channel({"mt"}).bin_id({17}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat17");});
     cb.cp().channel({"mt"}).bin_id({18}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat18");});
+    
+    cb.cp().channel({"mt"}).bin_id({19}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat19");});
+    cb.cp().channel({"mt"}).bin_id({20}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat20");});
+    cb.cp().channel({"mt"}).bin_id({21}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat21");});
+    cb.cp().channel({"mt"}).bin_id({22}).ForEachObj([&](ch::Object *obj){obj->set_attribute("cat","cat22");});
     
     //! [part9]
      // First we generate a set of bin names:
@@ -709,6 +736,10 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_17_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat17","zmm_cat"},"cat"));
      writer.WriteCards("htt_mt_18_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat18","zmm_cat"},"cat"));
      
+     writer.WriteCards("htt_mt_19_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat19","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_20_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat20","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_21_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat21","zmm_cat"},"cat"));
+     writer.WriteCards("htt_mt_22_13TeV", cb.cp().channel({"mt","zmm"}).attr({"cat22","zmm_cat"},"cat"));
      
      //for (auto chn : cb.channel_set()) {
      //

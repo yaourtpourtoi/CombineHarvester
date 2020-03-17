@@ -12,12 +12,12 @@
 //fileNameStream >> fileName;
 //cout<<fileName<<endl;
 
-    stringstream fileNameStream;
-    fileNameStream <<"output/tauIDSF_output/MC/2017/htt_mt_"<<1<<"_13TeV/125/multidimfit.r.root"<<endl;
-    TString fileName;
-    fileNameStream >> fileName;
-    TFile f(fileName, "read");
-    result = f.Get("fit_mdf");
+    //stringstream fileNameStream;
+    //fileNameStream <<"output/tauIDSF_output/MC/2017/htt_mt_"<<1<<"_13TeV/125/multidimfit.r.root"<<endl;
+    //TString fileName;
+    //fileNameStream >> fileName;
+    //TFile f(fileName, "read");
+    //result = f.Get("fit_mdf");
 
 
 const Int_t n = 5; 
@@ -56,14 +56,18 @@ for (int year = 2018; year>2015; year--){
         cout<<"i= "<<i<<endl;
         
         stringstream fileNameStream;
-        fileNameStream <<"output/tauIDSF_output/MC/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        //pt>40:
+        fileNameStream <<"output/tauIDSF_output/embed/"<<to_string(year)<<"/htt_mt_"<<5+i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        
+        //20<pt<40:
+        //fileNameStream <<"output/tauIDSF_output/MC/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
         
         TString fileName;
         fileNameStream >> fileName;
         
         cout<<fileName<<endl;
         TFile *f= new TFile(fileName, "read");
-        result = f->Get("fit_mdf");
+        //result = f->Get("fit_mdf");
         
         RooRealVar *r_result = (RooRealVar*) fit_mdf->floatParsFinal().find("r");
         
@@ -130,19 +134,25 @@ mg->Add(gr_2017);
 mg->Add(gr_2016);
 
 
+leg= new TLegend(0.55,0.65,0.7,0.85);
+leg->AddEntry(gr_2016,"2016","lep");
+leg->AddEntry(gr_2017,"2017","lep");
+leg->AddEntry(gr_2018,"2018","lep");
+leg->SetFillColor(kWhite);
 
-//mg->GetXaxis()->SetBinLabel(gr_2018->GetXaxis()->FindBin(1),"DM0");
-//mg->GetXaxis()->SetBinLabel(gr_2018->GetXaxis()->FindBin(2),"DM1");
-//mg->GetXaxis()->SetBinLabel(gr_2018->GetXaxis()->FindBin(3),"DM2");
-//mg->GetXaxis()->SetBinLabel(gr_2018->GetXaxis()->FindBin(4),"DM10");
-//mg->GetXaxis()->SetBinLabel(gr_2018->GetXaxis()->FindBin(5),"DM11");
 
 
+mg->SetTitle("");
+gr_2018->SetTitle("MC - 40<pt - MVA DM");
 
 gr_2018->Draw("AP");
 mg->Draw("P");
 
+leg->Draw();
 
+
+
+c1->Print("output_result/VVLoose_MC_pt40_MVADM.pdf");
 
 
 
