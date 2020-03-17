@@ -252,6 +252,7 @@ namespace ch {
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","em_2017","et_2017","mt_2017"}).AddSyst(cb,"CMS_scale_j_RelativeSample_2017_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_RelativeSample_2018_13TeV", "shape", SystMap<>::init(1.00));
 
+
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################

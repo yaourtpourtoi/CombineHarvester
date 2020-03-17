@@ -408,7 +408,16 @@ int main(int argc, char** argv) {
     if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2016"] = {
         {1, "tt_2016_zttEmbed"},
-        {2, "tt_2016_jetFakes"}
+        {2, "tt_2016_jetFakes"},
+        {3, "tt_2016_higgs_Rho_Rho"},
+        {4, "tt_2016_higgs_0A1_Rho_and_0A1_0A1"},
+        {5, "tt_2016_higgs_A1_Rho"},
+        {6, "tt_2016_higgs_A1_A1"},
+        {7, "tt_2016_higgs_Pi_Rho_Mixed"},
+        {8, "tt_2016_higgs_Pi_Pi"},
+        {9, "tt_2016_higgs_Pi_A1_Mixed"},
+        {10, "tt_2016_higgs_Pi_0A1_Mixed"},
+        {11, "tt_2016_higgs_other"},
       };
       cats["mt_2016"] = {
         {1, "mt_2016_zttEmbed"},
@@ -465,7 +474,7 @@ int main(int argc, char** argv) {
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
-    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"};   
+    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"/*, "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"*/};   
  
     vector<string> masses = {"125"};    
     
