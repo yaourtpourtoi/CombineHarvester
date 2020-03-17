@@ -368,7 +368,6 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    //VString chns = {"tt","mt"};
     VString chns = {"tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     
@@ -826,6 +825,8 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
      writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
      writer.WriteCards("htt_2018", cb.cp().channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"}));
+
+     writer.WriteCards("htt_tt", cb.cp().channel({"tt_2018","tt_2017"}));
      
      for (auto chn : cb.channel_set()) {
      
@@ -852,6 +853,13 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
      writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
      writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
+
+     writer.WriteCards("htt_mt_2017_3_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,3}));
+     writer.WriteCards("htt_mt_2017_4_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,4}));
+     writer.WriteCards("htt_mt_2017_5_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,5}));
+     writer.WriteCards("htt_mt_2018_3_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,3}));
+     writer.WriteCards("htt_mt_2018_4_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,4}));
+     writer.WriteCards("htt_mt_2018_5_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,5}));
         
     cb.PrintAll();
     cout << " done\n";
