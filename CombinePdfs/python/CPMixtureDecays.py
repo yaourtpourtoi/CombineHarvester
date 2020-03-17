@@ -47,9 +47,6 @@ class CPMixtureDecays(PhysicsModel):
             scalings.append('muggH')
         if 'qqH' in process or 'ZH' in process or 'WH' in process: 
             scalings.append('muV')
-        
-        if 'ZH' in process or 'WH' in process:
-            scalings.append('mutautau')
 
         if ('ggH' in process or 'qqH' in process or 'WH' in process or 'ZH' in process) and 'hww' not in process:
             if "sm" in process:
