@@ -473,7 +473,7 @@ int main(int argc, char** argv) {
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
-    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"/*, "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"*/};   
+    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"};   
  
     vector<string> masses = {"125"};    
     
@@ -615,11 +615,6 @@ int main(int argc, char** argv) {
   });
 
   // convert systematics to lnN here
-  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_scale_gg_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
-  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
-
  
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
@@ -701,9 +696,30 @@ int main(int argc, char** argv) {
     }
 
     // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
-    cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
     cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
     cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+
+    // scale up/down QCD scale uncertainties to ensure they do not change the inclusive yields only the shapes/acceptance
+
+    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*1.16021);
+        syst->set_value_d(syst->value_d()*0.847445);
+    });
+    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.993322);
+        syst->set_value_d(syst->value_d()*1.00631);
+    });
+
+    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*1.15977);
+        syst->set_value_d(syst->value_d()*0.848289);
+    });
+    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.994640);
+        syst->set_value_d(syst->value_d()*1.00565);
+    });
+
 
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
   
