@@ -17,7 +17,7 @@ observation  29987.0
 bin                                                htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV htt_mt_2016_8_13TeV 
 process                                            EmbedZTT        ZL              TTT             VVT             jetFakes        qqH_sm_htt      qqH_ps_htt      qqH_mm_htt      ggH_sm_htt      ggH_ps_htt      ggH_mm_htt      
 process                                            1               2               3               4               5               -5              -4              -3              -2              -1              0               
-rate                                               26532.5         123.996         27.3119         19.396          6295.01         1.4356          1.43489         1.43929         49.0102         49.0093         48.9812         
+rate                                               24587.9         123.996         27.3119         19.396          6296.67         1.4356          1.43489         1.43929         49.0102         49.0093         48.9812         
 --------------------------------------------------------------------------------
 BR_htt_PU_alphas                           lnN     -               -               -               -               -               1.0062          1.0062          1.0062          1.0062          1.0062          1.0062          
 BR_htt_PU_mq                               lnN     -               -               -               -               -               1.0099          1.0099          1.0099          1.0099          1.0099          1.0099          
