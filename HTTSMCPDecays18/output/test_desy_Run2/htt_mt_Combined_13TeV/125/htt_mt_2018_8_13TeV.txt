@@ -1,4 +1,4 @@
-# Datacard produced by CombineHarvester with git status: analysis-HIG-16-006-freeze-080416-1000-gcab6836-dirty
+# Datacard produced by CombineHarvester with git status: analysis-HIG-16-006-freeze-080416-1002-g6d84b1a-dirty
 imax    1 number of bins
 jmax    10 number of processes minus 1
 kmax    * number of nuisance parameters
@@ -12,12 +12,12 @@ shapes qqH_ps_htt htt_mt_2018_8_13TeV ../common/htt_input.root htt_mt_2018_8_13T
 shapes qqH_sm_htt htt_mt_2018_8_13TeV ../common/htt_input.root htt_mt_2018_8_13TeV/qqH_sm_htt$MASS htt_mt_2018_8_13TeV/qqH_sm_htt$MASS_$SYSTEMATIC
 --------------------------------------------------------------------------------
 bin          htt_mt_2018_8_13TeV 
-observation  51404.0         
+observation  50411.0         
 --------------------------------------------------------------------------------
 bin                                                htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV htt_mt_2018_8_13TeV 
 process                                            EmbedZTT        ZL              TTT             VVT             jetFakes        qqH_sm_htt      qqH_ps_htt      qqH_mm_htt      ggH_sm_htt      ggH_ps_htt      ggH_mm_htt      
 process                                            1               2               3               4               5               -5              -4              -3              -2              -1              0               
-rate                                               43208.9         217.236         49.5006         50.0081         11317.2         3.24819         3.26904         3.25219         97.4189         97.0118         97.2418         
+rate                                               42364.2         221.735         47.6535         47.4214         10982.3         3.20128         3.22917         3.2062          96.0217         95.2716         95.6314         
 --------------------------------------------------------------------------------
 BR_htt_PU_alphas                           lnN     -               -               -               -               -               1.0062          1.0062          1.0062          1.0062          1.0062          1.0062          
 BR_htt_PU_mq                               lnN     -               -               -               -               -               1.0099          1.0099          1.0099          1.0099          1.0099          1.0099          
@@ -83,7 +83,38 @@ CMS_scale_t_3prong_13TeV_2018              shape   0.5             -            
 CMS_ttbar_embeded_13TeV                    shape   1               -               -               -               -               -               -               -               -               -               -               
 QCDScale_ggH                               lnN     -               -               -               -               -               -               -               -               1.039           1.039           1.039           
 QCDScale_qqH                               lnN     -               -               -               -               -               1.004           1.004           1.004           -               -               -               
+ff_mt_qcd_l_pt_closure_syst                shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_met_closure_syst                 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets0_mvadm0_sig_gt_2018   shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets0_mvadm0_sig_lt_2018   shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets0_mvadm1_2018          shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets0_mvadm2_2018          shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets1_mvadm0_sig_gt_2018   shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets1_mvadm0_sig_lt_2018   shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets1_mvadm1_2018          shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets1_mvadm2_2018          shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets2_mvadm0_sig_gt_2018   shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets2_mvadm0_sig_lt_2018   shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets2_mvadm1_2018          shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_stat_njets2_mvadm2_2018          shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_qcd_syst                             shape   -               -               -               -               1               -               -               -               -               -               -               
 ff_mt_sub_syst_2018                        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_ttbar_syst                           shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_l_pt_closure_syst              shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_met_closure_syst               shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets0_mvadm0_sig_gt_2018 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets0_mvadm0_sig_lt_2018 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets0_mvadm1_2018        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets0_mvadm2_2018        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets1_mvadm0_sig_gt_2018 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets1_mvadm0_sig_lt_2018 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets1_mvadm1_2018        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets1_mvadm2_2018        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets2_mvadm0_sig_gt_2018 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets2_mvadm0_sig_lt_2018 shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets2_mvadm1_2018        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_stat_njets2_mvadm2_2018        shape   -               -               -               -               1               -               -               -               -               -               -               
+ff_mt_wjets_syst                           shape   -               -               -               -               1               -               -               -               -               -               -               
 lumi_13TeV                                 lnN     -               1.02            1.02            1.02            -               1.02            1.02            1.02            1.02            1.02            1.02            
 lumi_2018_13TeV                            lnN     -               1.015           1.015           1.015           -               1.015           1.015           1.015           1.015           1.015           1.015           
 pdf_Higgs_gg                               lnN     -               -               -               -               -               -               -               -               1.032           1.032           1.032           
