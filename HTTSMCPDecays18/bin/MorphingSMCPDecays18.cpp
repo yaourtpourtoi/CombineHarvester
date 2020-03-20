@@ -428,6 +428,9 @@ int main(int argc, char** argv) {
 	{7, "mt_mua1_sig_2016"},
 	{8, "mt_mua1_ztt_2016"},
 	{9, "mt_mua1_fakes_2016"},
+	{10, "mt_mu0a1_sig_2016"},
+	{11, "mt_mu0a1_ztt_2016"},
+	{12, "mt_mu0a1_fakes_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -455,6 +458,9 @@ int main(int argc, char** argv) {
 	{7, "mt_mua1_sig_2017"},
 	{8, "mt_mua1_ztt_2017"},
 	{9, "mt_mua1_fakes_2017"},
+	{10, "mt_mu0a1_sig_2017"},
+	{11, "mt_mu0a1_ztt_2017"},
+	{12, "mt_mu0a1_fakes_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -481,6 +487,9 @@ int main(int argc, char** argv) {
 	{7, "mt_mua1_sig_2018"},
 	{8, "mt_mua1_ztt_2018"},
 	{9, "mt_mua1_fakes_2018"},
+	{10, "mt_mu0a1_sig_2018"},
+	{11, "mt_mu0a1_ztt_2018"},
+	{12, "mt_mu0a1_fakes_2018"},
       };
     }
     
@@ -870,7 +879,8 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
      writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
      writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
-     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
+     writer.WriteCards("htt_mt_mu0a1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({10,11,12}));
+     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9,10,11,12}));
 
     cb.PrintAll();
     cout << " done\n";
