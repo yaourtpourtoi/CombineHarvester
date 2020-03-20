@@ -418,6 +418,7 @@ int main(int argc, char** argv) {
         {1, "tt_2016_zttEmbed"},
         {2, "tt_2016_jetFakes"}
       };
+      /*
       cats["mt_2016"] = {
 	{1, "mt_mupi_sig_2016"},
 	{2, "mt_mupi_ztt_2016"},
@@ -431,6 +432,14 @@ int main(int argc, char** argv) {
 	{10, "mt_mu0a1_sig_2016"},
 	{11, "mt_mu0a1_ztt_2016"},
 	{12, "mt_mu0a1_fakes_2016"},
+	};*/
+      cats["mt_2016"] = {
+	{1, "mt_mupi_sig_2016"},
+	{2, "mt_murho_sig_2016"},
+	{3, "mt_mua1_sig_2016"},
+	{4, "mt_mu0a1_sig_2016"},
+	{5, "mt_ztt_2016"},
+	{6, "mt_fakes_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -447,7 +456,7 @@ int main(int argc, char** argv) {
         {10, "tt_2017_higgs_Pi_0A1_Mixed"},
         {11, "tt_2017_higgs_other"},
       };
-
+      /*
       cats["mt_2017"] = {
 	{1, "mt_mupi_sig_2017"},
 	{2, "mt_mupi_ztt_2017"},
@@ -461,6 +470,14 @@ int main(int argc, char** argv) {
 	{10, "mt_mu0a1_sig_2017"},
 	{11, "mt_mu0a1_ztt_2017"},
 	{12, "mt_mu0a1_fakes_2017"},
+	};*/
+      cats["mt_2017"] = {
+	{1, "mt_mupi_sig_2017"},
+	{2, "mt_murho_sig_2017"},
+	{3, "mt_mua1_sig_2017"},
+	{4, "mt_mu0a1_sig_2017"},
+	{5, "mt_ztt_2017"},
+	{6, "mt_fakes_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -476,7 +493,7 @@ int main(int argc, char** argv) {
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
         {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
         {11, "tt_2018_higgs_other"},
-      };
+      };/*
       cats["mt_2018"] = {
 	{1, "mt_mupi_sig_2018"},
 	{2, "mt_mupi_ztt_2018"},
@@ -490,6 +507,14 @@ int main(int argc, char** argv) {
 	{10, "mt_mu0a1_sig_2018"},
 	{11, "mt_mu0a1_ztt_2018"},
 	{12, "mt_mu0a1_fakes_2018"},
+      };*/
+      cats["mt_2018"] = {
+	{1, "mt_mupi_sig_2018"},
+	{2, "mt_murho_sig_2018"},
+	{3, "mt_mua1_sig_2018"},
+	{4, "mt_mu0a1_sig_2018"},
+	{5, "mt_ztt_2018"},
+	{6, "mt_fakes_2018"},
       };
     }
     
@@ -876,11 +901,18 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
      writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
      */
+     /*
      writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
      writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
      writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
      writer.WriteCards("htt_mt_mu0a1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({10,11,12}));
      writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9,10,11,12}));
+     */
+     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,5,6}));
+     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2,5,6}));
+     writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({3,5,6}));
+     writer.WriteCards("htt_mt_mu0a1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
+     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}));
 
     cb.PrintAll();
     cout << " done\n";
