@@ -1,4 +1,4 @@
-# Datacard produced by CombineHarvester with git status: analysis-HIG-16-006-freeze-080416-1002-g6d84b1a-dirty
+# Datacard produced by CombineHarvester with git status: analysis-HIG-16-006-freeze-080416-1004-gd296505-dirty
 imax    1 number of bins
 jmax    10 number of processes minus 1
 kmax    * number of nuisance parameters
@@ -12,12 +12,12 @@ shapes qqH_ps_htt htt_mt_2016_4_13TeV ../common/htt_input.root htt_mt_2016_4_13T
 shapes qqH_sm_htt htt_mt_2016_4_13TeV ../common/htt_input.root htt_mt_2016_4_13TeV/qqH_sm_htt$MASS htt_mt_2016_4_13TeV/qqH_sm_htt$MASS_$SYSTEMATIC
 --------------------------------------------------------------------------------
 bin          htt_mt_2016_4_13TeV 
-observation  12205.0         
+observation  4608.0          
 --------------------------------------------------------------------------------
 bin                                                htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV htt_mt_2016_4_13TeV 
 process                                            EmbedZTT        ZL              TTT             VVT             jetFakes        qqH_sm_htt      qqH_ps_htt      qqH_mm_htt      ggH_sm_htt      ggH_ps_htt      ggH_mm_htt      
 process                                            1               2               3               4               5               -5              -4              -3              -2              -1              0               
-rate                                               8150.91         416.303         150.333         68.3414         3435.6          28.8351         28.885          28.8805         206.738         206.768         207.184         
+rate                                               2928.75         50.5669         45.8591         24.8144         1767.61         7.66337         7.66012         7.67094         61.0487         61.3061         61.1894         
 --------------------------------------------------------------------------------
 BR_htt_PU_alphas                           lnN     -               -               -               -               -               1.0062          1.0062          1.0062          1.0062          1.0062          1.0062          
 BR_htt_PU_mq                               lnN     -               -               -               -               -               1.0099          1.0099          1.0099          1.0099          1.0099          1.0099          
@@ -58,7 +58,7 @@ CMS_htt_mFakeTau_13TeV_2016                lnN     -               1.2          
 CMS_htt_tjXsec_13TeV                       lnN     -               -               1.042           -               -               -               -               -               -               -               -               
 CMS_htt_vvXsec_13TeV                       lnN     -               -               -               1.05            -               -               -               -               -               -               -               
 CMS_htt_zjXsec_13TeV                       lnN     -               1.02            -               -               -               -               -               -               -               -               -               
-CMS_mt_2016_FF_mt_murho_sig_2016_13TeV     lnN     -               -               -               -               1.15            -               -               -               -               -               -               
+CMS_mt_2016_FF_mt_mu0a1_sig_2016_13TeV     lnN     -               -               -               -               1.15            -               -               -               -               -               -               
 CMS_res_j_13TeV_2016                       shape   -               1               1               1               -               1               1               1               1               1               1               
 CMS_scale_VBF_13TeV                        shape   -               -               -               -               -               1               1               1               1               1               1               
 CMS_scale_embedded_mu_13TeV                shape   0.866025        -               -               -               -               -               -               -               -               -               -               

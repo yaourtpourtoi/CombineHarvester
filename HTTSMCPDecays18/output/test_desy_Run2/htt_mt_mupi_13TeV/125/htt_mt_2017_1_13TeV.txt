@@ -1,4 +1,4 @@
-# Datacard produced by CombineHarvester with git status: analysis-HIG-16-006-freeze-080416-1002-g6d84b1a-dirty
+# Datacard produced by CombineHarvester with git status: analysis-HIG-16-006-freeze-080416-1004-gd296505-dirty
 imax    1 number of bins
 jmax    10 number of processes minus 1
 kmax    * number of nuisance parameters
