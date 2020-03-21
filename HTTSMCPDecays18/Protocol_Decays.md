@@ -25,7 +25,8 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 1D scans can be plotted using scripts/plot1DScan.py script.
 To plot alpha:
 
-    python scripts/plot1DScan.py --main=output/test_cp/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha --no-numbers --no-box --x_title="#alpha (#circ)" --y-max=0.7
+   python scripts/plot1DScan.py --main=output/newnew_mt_bins/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha_cmb --no-numbers --no-box --x-min=-90 --x-max=90 --y-max=8
+
 
 # perform ZTT validation
 

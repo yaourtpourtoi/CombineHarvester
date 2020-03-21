@@ -416,18 +416,16 @@ int main(int argc, char** argv) {
         {8, "tt_2016_higgs_Pi_Pi"},
         {9, "tt_2016_higgs_Pi_A1_Mixed"},
         {10, "tt_2016_higgs_Pi_0A1_Mixed"},
-        {11, "tt_2016_higgs_other"},
+        {11, "tt_2016_higgs_A1_0A1"},
+        //{11, "tt_2016_higgs_other"},
       };
       cats["mt_2016"] = {
-	{1, "mt_mupi_sig_2016"},
-	{2, "mt_mupi_ztt_2016"},
-	{3, "mt_mupi_fakes_2016"},
-	{4, "mt_murho_sig_2016"},
-       	{5, "mt_murho_ztt_2016"},
-	{6, "mt_murho_fakes_2016"},
-	{7, "mt_mua1_sig_2016"},
-	{8, "mt_mua1_ztt_2016"},
-	{9, "mt_mua1_fakes_2016"},
+        {1, "mt_ztt_2016"},
+        {2, "mt_fakes_2016"},
+        {3, "mt_murho_sig_2016"},
+	{4, "mt_mupi_sig_2016"},
+	{5, "mt_mua1_sig_2016"},
+	{6, "mt_mu0a1_sig_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -442,18 +440,16 @@ int main(int argc, char** argv) {
         {8, "tt_2017_higgs_Pi_Pi"},
         {9, "tt_2017_higgs_Pi_A1_Mixed"},
         {10, "tt_2017_higgs_Pi_0A1_Mixed"},
-        {11, "tt_2017_higgs_other"},
+        {11, "tt_2017_higgs_A1_0A1"},
+        //{11, "tt_2017_higgs_other"},
       };
       cats["mt_2017"] = {
-	{1, "mt_mupi_sig_2017"},
-	{2, "mt_mupi_ztt_2017"},
-	{3, "mt_mupi_fakes_2017"},
-	{4, "mt_murho_sig_2017"},
-	{5, "mt_murho_ztt_2017"},
-	{6, "mt_murho_fakes_2017"},
-	{7, "mt_mua1_sig_2017"},
-	{8, "mt_mua1_ztt_2017"},
-	{9, "mt_mua1_fakes_2017"},
+        {1, "mt_ztt_2017"},
+        {2, "mt_fakes_2017"},
+        {3, "mt_murho_sig_2017"},
+        {4, "mt_mupi_sig_2017"},
+        {5, "mt_mua1_sig_2017"},
+        {6, "mt_mu0a1_sig_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -468,18 +464,16 @@ int main(int argc, char** argv) {
         {8, "tt_2018_higgs_Pi_Pi"},
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
         {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
-        {11, "tt_2018_higgs_other"},
+        {11, "tt_2018_higgs_A1_0A1"},
+        //{11, "tt_2018_higgs_other"},
       };
       cats["mt_2018"] = {
-	{1, "mt_mupi_sig_2018"},
-	{2, "mt_mupi_ztt_2018"},
-	{3, "mt_mupi_fakes_2018"},
-	{4, "mt_murho_sig_2018"},
-	{5, "mt_murho_ztt_2018"},
-	{6, "mt_murho_fakes_2018"},
-	{7, "mt_mua1_sig_2018"},
-	{8, "mt_mua1_ztt_2018"},
-	{9, "mt_mua1_fakes_2018"},
+        {1, "mt_ztt_2018"},
+        {2, "mt_fakes_2018"},
+        {3, "mt_murho_sig_2018"},
+        {4, "mt_mupi_sig_2018"},
+        {5, "mt_mua1_sig_2018"},
+        {6, "mt_mu0a1_sig_2018"},
       };
     }
     
