@@ -13,7 +13,7 @@ gROOT->SetBatch(1);
     for (int dm=0; dm<n; dm++){
         
         stringstream fileNameStream;
-        fileNameStream <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<dm+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        fileNameStream <<"../output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<dm+1<<"_13TeV/125/multidimfit.r.root"<<endl;
 
         TString path;
         fileNameStream >> path;
@@ -56,7 +56,7 @@ gROOT->SetBatch(1);
     c1->SetGridx();
 
 stringstream fileOutStream;
-fileOutStream<<"output_pulls/"<<channel<<"/"<<sample<<"/"<<to_string(year)<<"/pull_"<<dm+1<<".pdf"<<endl;
+fileOutStream<<"../output_pulls/"<<channel<<"/"<<sample<<"/"<<to_string(year)<<"/pull_"<<dm+1<<".pdf"<<endl;
 TString out_dir;
 fileOutStream>>out_dir;
 

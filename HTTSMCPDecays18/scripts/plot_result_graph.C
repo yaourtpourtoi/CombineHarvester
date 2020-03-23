@@ -44,12 +44,12 @@ for (int year = year_max; year>=year_min; year--){
     for (int i=0; i<n; i++){
         
         stringstream fileNameStream_lowpt;
-        fileNameStream_lowpt <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        fileNameStream_lowpt <<"../output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
         TString fileName_lowpt;
         fileNameStream_lowpt >> fileName_lowpt;
         
         stringstream fileNameStream_highpt;
-        fileNameStream_highpt <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<5+i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        fileNameStream_highpt <<"../output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<5+i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
         TString fileName_highpt;
         fileNameStream_highpt >> fileName_highpt;
         
@@ -134,7 +134,7 @@ mg_lowpt->Draw("P");
 leg1->Draw();
 
 stringstream outputstream_lowpt;
-outputstream_lowpt<<"output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_20pt40_MVADM.pdf"<<endl;
+outputstream_lowpt<<"../output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_20pt40_MVADM.pdf"<<endl;
 
 TString output_lowpt;
 outputstream_lowpt>>output_lowpt;
@@ -196,7 +196,7 @@ leg2->Draw();
 
 
 stringstream outputstream_highpt;
-outputstream_highpt<<"output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_40pt_MVADM.pdf"<<endl;
+outputstream_highpt<<"../output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_40pt_MVADM.pdf"<<endl;
 
 TString output_highpt;
 outputstream_highpt>>output_highpt;
