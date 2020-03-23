@@ -314,7 +314,7 @@ int main(int argc, char** argv) {
     string output_folder = "sm_run2";
     string input_folder_em="IC/";
     string input_folder_et="IC/";
-    string input_folder_mt="IC/";
+    string input_folder_mt="DESY/";
     string input_folder_tt="IC/";
     string input_folder_mm="USCMS/";
     string scale_sig_procs="";
@@ -332,7 +332,7 @@ int main(int argc, char** argv) {
     config.add_options()
     ("input_folder_em", po::value<string>(&input_folder_em)->default_value("IC/"))
     ("input_folder_et", po::value<string>(&input_folder_et)->default_value("IC/"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("IC/"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("DESY/"))
     ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("postfix", po::value<string>(&postfix)->default_value(postfix))
@@ -341,7 +341,7 @@ int main(int argc, char** argv) {
     ("do_embedding", po::value<bool>(&do_embedding)->default_value(true))
     ("do_jetfakes", po::value<bool>(&do_jetfakes)->default_value(true))
     ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
-    ("era", po::value<string>(&era)->default_value("2017"))
+    ("era", po::value<string>(&era)->default_value("2018"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
 
@@ -372,29 +372,29 @@ int main(int argc, char** argv) {
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
-    bkg_procs["et"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-    bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "EWKZ", "W"};
-    bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
-    bkg_procs["em"] = {"ZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-    bkg_procs["ttbar"] = {"ZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
+    bkg_procs["et"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ"/*, "EWKZ"*/, "W"};
+    bkg_procs["mt"] = {"ZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ"/*, "EWKZ"*/, "W"};
+    bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ"/*, "EWKZ"*/};
+    bkg_procs["em"] = {"ZTT","W", "QCD", "ZLL", "TT", "VV"/*, "EWKZ"*/};
+    bkg_procs["ttbar"] = {"ZTT", "W", "QCD", "ZLL", "TT", "VV"/*, "EWKZ"*/};
     
     if(do_embedding){
-      bkg_procs["et"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "W", "EWKZ"};
-      bkg_procs["mt"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT", "VVJ", "W", "EWKZ"};
-      bkg_procs["tt"] = {"EmbedZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ", "EWKZ"};
-      bkg_procs["em"] = {"EmbedZTT","W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
-      bkg_procs["ttbar"] = {"EmbedZTT", "W", "QCD", "ZLL", "TT", "VV", "EWKZ"};
+      bkg_procs["et"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ", "VVT", "VVJ", "W"/*, "EWKZ"*/};
+      bkg_procs["mt"] = {"EmbedZTT", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT", "VVJ", "W"/*, "EWKZ"*/};
+      bkg_procs["tt"] = {"EmbedZTT", "W", "QCD", "ZL", "ZJ","TTT","TTJ",  "VVT","VVJ"/*, "EWKZ"*/};
+      bkg_procs["em"] = {"EmbedZTT","W", "QCD", "ZLL", "TT", "VV"/*, "EWKZ"*/};
+      bkg_procs["ttbar"] = {"EmbedZTT", "W", "QCD", "ZLL", "TT", "VV"/*, "EWKZ"*/};
     }
 
     if(do_jetfakes){
-      bkg_procs["et"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-      bkg_procs["mt"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-      bkg_procs["tt"] = {"ZTT", "ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
+      bkg_procs["et"] = {"ZTT", "ZL", "TTT", "VVT"/*, "EWKZ"*/, "jetFakes"};
+      bkg_procs["mt"] = {"ZTT", "ZL", "TTT", "VVT"/*, "EWKZ"*/, "jetFakes"};
+      bkg_procs["tt"] = {"ZTT", "ZL", "TTT", "VVT"/*, "EWKZ"*/, "jetFakes"};
 
       if(do_embedding){
-        bkg_procs["et"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-        bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
-        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "EWKZ"};
+        bkg_procs["et"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/};
+        bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/};
+        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "Wfakes"/*"EWKZ"*/};
       }
 
     }
@@ -407,11 +407,25 @@ int main(int argc, char** argv) {
     if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2016"] = {
         {1, "tt_2016_zttEmbed"},
-        {2, "tt_2016_jetFakes"}
+        {2, "tt_2016_jetFakes"},
+        {3, "tt_2016_higgs_Rho_Rho"},
+        {4, "tt_2016_higgs_0A1_Rho_and_0A1_0A1"},
+        {5, "tt_2016_higgs_A1_Rho"},
+        {6, "tt_2016_higgs_A1_A1"},
+        {7, "tt_2016_higgs_Pi_Rho_Mixed"},
+        {8, "tt_2016_higgs_Pi_Pi"},
+        {9, "tt_2016_higgs_Pi_A1_Mixed"},
+        {10, "tt_2016_higgs_Pi_0A1_Mixed"},
+        {11, "tt_2016_higgs_A1_0A1"},
+        //{11, "tt_2016_higgs_other"},
       };
       cats["mt_2016"] = {
-        {1, "mt_2016_zttEmbed"},
-        {2, "mt_2016_jetFakes"}
+        {1, "mt_ztt_2016"},
+        {2, "mt_fakes_2016"},
+        {3, "mt_murho_sig_2016"},
+	{4, "mt_mupi_sig_2016"},
+	{5, "mt_mua1_sig_2016"},
+	{6, "mt_mu0a1_sig_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -420,22 +434,22 @@ int main(int argc, char** argv) {
         {2, "tt_2017_jetFakes"},
         {3, "tt_2017_higgs_Rho_Rho"},
         {4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2017_higgs_A1_Rho_angle1"},
-        {6, "tt_2017_higgs_A1_A1_angle1"},
+        {5, "tt_2017_higgs_A1_Rho"},
+        {6, "tt_2017_higgs_A1_A1"},
         {7, "tt_2017_higgs_Pi_Rho_Mixed"},
         {8, "tt_2017_higgs_Pi_Pi"},
         {9, "tt_2017_higgs_Pi_A1_Mixed"},
         {10, "tt_2017_higgs_Pi_0A1_Mixed"},
-        {11, "tt_2017_higgs_other"},
+        {11, "tt_2017_higgs_A1_0A1"},
+        //{11, "tt_2017_higgs_other"},
       };
-
       cats["mt_2017"] = {
-        {1, "mt_2017_zttEmbed"},
-        {2, "mt_2017_jetFakes"},
-        {3, "mt_2017_higgs_Mu_Pi"},
-        {4, "mt_2017_higgs_Mu_A1"},
-        {5, "mt_2017_higgs_Mu_Rho_Mixed"},
-        //{6, "mt_2017_higgs_Mu_Rho_Ip"},
+        {1, "mt_ztt_2017"},
+        {2, "mt_fakes_2017"},
+        {3, "mt_murho_sig_2017"},
+        {4, "mt_mupi_sig_2017"},
+        {5, "mt_mua1_sig_2017"},
+        {6, "mt_mu0a1_sig_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -444,27 +458,28 @@ int main(int argc, char** argv) {
         {2, "tt_2018_jetFakes"},
         {3, "tt_2018_higgs_Rho_Rho"},
         {4, "tt_2018_higgs_0A1_Rho_and_0A1_0A1"},
-        {5, "tt_2018_higgs_A1_Rho_angle1"},
-        {6, "tt_2018_higgs_A1_A1_angle1"},
+        {5, "tt_2018_higgs_A1_Rho"},
+        {6, "tt_2018_higgs_A1_A1"},
         {7, "tt_2018_higgs_Pi_Rho_Mixed"},
         {8, "tt_2018_higgs_Pi_Pi"},
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
         {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
-        {11, "tt_2018_higgs_other"},
+        {11, "tt_2018_higgs_A1_0A1"},
+        //{11, "tt_2018_higgs_other"},
       };
       cats["mt_2018"] = {
-        {1, "mt_2018_zttEmbed"},
-        {2, "mt_2018_jetFakes"},
-        {3, "mt_2018_higgs_Mu_Pi"},
-        {4, "mt_2018_higgs_Mu_A1"},
-        {5, "mt_2018_higgs_Mu_Rho_Mixed"},
-        //{6, "mt_2018_higgs_Mu_Rho_Ip"},
+        {1, "mt_ztt_2018"},
+        {2, "mt_fakes_2018"},
+        {3, "mt_murho_sig_2018"},
+        {4, "mt_mupi_sig_2018"},
+        {5, "mt_mua1_sig_2018"},
+        {6, "mt_mu0a1_sig_2018"},
       };
     }
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
-    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"};   
+    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"/*, "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"*/};   
  
     vector<string> masses = {"125"};    
     
@@ -611,7 +626,6 @@ int main(int argc, char** argv) {
   ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
 
- 
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
       auto bbb = ch::BinByBinFactory()
@@ -692,9 +706,30 @@ int main(int argc, char** argv) {
     }
 
     // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
-    cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
     cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
     cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+
+    // scale up/down QCD scale uncertainties to ensure they do not change the inclusive yields only the shapes/acceptance
+
+    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*1.16021);
+        syst->set_value_d(syst->value_d()*0.847445);
+    });
+    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.993322);
+        syst->set_value_d(syst->value_d()*1.00631);
+    });
+
+    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*1.15977);
+        syst->set_value_d(syst->value_d()*0.848289);
+    });
+    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.994640);
+        syst->set_value_d(syst->value_d()*1.00565);
+    });
+
 
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
   
@@ -816,6 +851,9 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
      writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
      writer.WriteCards("htt_2018", cb.cp().channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"}));
+
+     writer.WriteCards("htt_tt", cb.cp().channel({"tt_2016","tt_2018","tt_2017"}));
+     writer.WriteCards("htt_mt", cb.cp().channel({"mt_2016","mt_2018","mt_2017"}));
      
      for (auto chn : cb.channel_set()) {
      
@@ -834,14 +872,26 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
      writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
      writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
-     writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
-     writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
-     writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
-     writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
-     writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
-     writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
+     //writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
+     //writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
+     //writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
+     //writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
+     //writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
+     //writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
+     //writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
+     //writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
+
+     //writer.WriteCards("htt_mt_2017_3_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,3}));
+     //writer.WriteCards("htt_mt_2017_4_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,4}));
+     //writer.WriteCards("htt_mt_2017_5_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,5}));
+     //writer.WriteCards("htt_mt_2018_3_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,3}));
+     //writer.WriteCards("htt_mt_2018_4_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,4}));
+     //writer.WriteCards("htt_mt_2018_5_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,5}));
+
+     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
+     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
+     writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
+     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
         
     cb.PrintAll();
     cout << " done\n";

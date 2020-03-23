@@ -1,5 +1,4 @@
 <bin file="MorphingSMCPDecays18.cpp" name="MorphingSMCPDecays18"></bin>
-<bin file="MorphingSMCPDecays18_mt.cpp" name="MorphingSMCPDecays18_mt"></bin>
 <bin file="ZTTValidation.cpp" name="ZTTValidation"></bin>
 <bin file="TauIDSF.cpp" name="TauIDSF"></bin>
 <use name="root"/>
