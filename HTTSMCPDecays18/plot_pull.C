@@ -1,5 +1,11 @@
 {
 
+//-----------Only this part should be modified
+int year =2018;//2016 or 2017 or  2018
+TString sample = "MC"; //MC or embed
+TString channel = "et"; // "ttAndmt" or "et"
+//--------------------------------
+
 gROOT->SetBatch(1);
 
     const Int_t n = 18; 
@@ -7,8 +13,8 @@ gROOT->SetBatch(1);
     for (int dm=0; dm<n; dm++){
         
         stringstream fileNameStream;
-        fileNameStream <<"output/tauIDSF_output/MC/2016/htt_mt_"<<dm+1<<"_13TeV/125/multidimfit.r.root"<<endl;
-        
+        fileNameStream <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<dm+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+
         TString path;
         fileNameStream >> path;
 
@@ -50,7 +56,7 @@ gROOT->SetBatch(1);
     c1->SetGridx();
 
 stringstream fileOutStream;
-fileOutStream<<"output_pulls/VVLooseVsEle/MC/2016/pull_"<<dm+1<<".pdf"<<endl;
+fileOutStream<<"output_pulls/"<<channel<<"/"<<sample<<"/"<<to_string(year)<<"/pull_"<<dm+1<<".pdf"<<endl;
 TString out_dir;
 fileOutStream>>out_dir;
 

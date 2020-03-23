@@ -1,8 +1,12 @@
 {
-int year =2018;
-TString sample = "MC";
-TString channel = "et";
+//Specified for H->\tau\tau CP analysis: all HPS DM=0 events are excluded from MVA DM 1 and MVA DM 2
 
+
+//-----------Only this part should be modified
+int year =2018;//2016 or 2017 or  2018
+TString sample = "MC"; //MC or embed
+TString channel = "et"; // "ttAndmt" or "et"
+//--------------------------------
 
 
 
@@ -32,42 +36,34 @@ double eSF[22]={};
 
 
 
-TH1F *h_MVA_lowpt = new TH1F("h_MVA_lowpt","h_MVA_lowpt", 23, 0, 23);
+TH1F *h_MVA_lowpt = new TH1F("h_MVA_lowpt","h_MVA_lowpt", 12, 0, 12);
 
     h_MVA_lowpt->SetBinContent(1,  SF[0]);
-    h_MVA_lowpt->SetBinContent(2,  SF[1]);
-    h_MVA_lowpt->SetBinContent(3,  SF[2]);
+    h_MVA_lowpt->SetBinContent(2,  SF[18]);//MVADM==1 and HPSDM!=0
+    h_MVA_lowpt->SetBinContent(3,  SF[19]);//MVADM==2 and HPSDM!=0
     h_MVA_lowpt->SetBinContent(11, SF[3]);
     h_MVA_lowpt->SetBinContent(12, SF[4]);    
-    h_MVA_lowpt->SetBinContent(22, SF[18]);
-    h_MVA_lowpt->SetBinContent(23, SF[19]);
     
     h_MVA_lowpt->SetBinError(1,  eSF[0]);
-    h_MVA_lowpt->SetBinError(2,  eSF[1]);
-    h_MVA_lowpt->SetBinError(3,  eSF[2]);
+    h_MVA_lowpt->SetBinError(2,  eSF[18]);
+    h_MVA_lowpt->SetBinError(3,  eSF[19]);
     h_MVA_lowpt->SetBinError(11, eSF[3]);
     h_MVA_lowpt->SetBinError(12, eSF[4]);    
-    h_MVA_lowpt->SetBinError(22, eSF[18]);
-    h_MVA_lowpt->SetBinError(23, eSF[19]);
 
 
-TH1F *h_MVA_highpt = new TH1F("h_MVA_highpt","h_MVA_highpt", 23, 0, 23);
+TH1F *h_MVA_highpt = new TH1F("h_MVA_highpt","h_MVA_highpt", 12, 0, 12);
 
     h_MVA_highpt->SetBinContent(1,  SF[5]);
-    h_MVA_highpt->SetBinContent(2,  SF[6]);
-    h_MVA_highpt->SetBinContent(3,  SF[7]);
+    h_MVA_highpt->SetBinContent(2,  SF[20]);
+    h_MVA_highpt->SetBinContent(3,  SF[21]);
     h_MVA_highpt->SetBinContent(11, SF[8]);
     h_MVA_highpt->SetBinContent(12, SF[9]);    
-    h_MVA_highpt->SetBinContent(22, SF[20]);
-    h_MVA_highpt->SetBinContent(23, SF[21]);
     
     h_MVA_highpt->SetBinError(1,  eSF[5]);
-    h_MVA_highpt->SetBinError(2,  eSF[6]);
-    h_MVA_highpt->SetBinError(3,  eSF[7]);
+    h_MVA_highpt->SetBinError(2,  eSF[20]);
+    h_MVA_highpt->SetBinError(3,  eSF[21]);
     h_MVA_highpt->SetBinError(11, eSF[8]);
     h_MVA_highpt->SetBinError(12, eSF[9]);    
-    h_MVA_highpt->SetBinError(22, eSF[20]);
-    h_MVA_highpt->SetBinError(23, eSF[21]);
 
 
 TH1F *h_HPS_lowpt = new TH1F("h_HPS_lowpt","h_HPS_lowpt", 12, 0, 12);
@@ -98,7 +94,7 @@ TH1F *h_HPS_highpt = new TH1F("h_HPS_highpt","h_HPS_highpt", 12, 0, 12);
     h_HPS_highpt->SetBinError(12, eSF[17]);
 
 stringstream rootFileStream;
-rootFileStream <<"output_result/result_TauIDSF_"<<channel<<"_"<<sample<<"_"<<to_string(year)<<".root"<<endl;
+rootFileStream <<"output_TauIDresult_ForHiggsCP/result_TauIDSF_"<<channel<<"_"<<sample<<"_"<<to_string(year)<<".root"<<endl;
 TString rootFile;
 rootFileStream >> rootFile;
 cout<<rootFile<<endl;
