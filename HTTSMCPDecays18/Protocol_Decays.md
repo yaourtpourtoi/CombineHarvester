@@ -11,7 +11,7 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 
 # Run maximum liklihood scan
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 41 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --cminDefaultMinimizerStrategy=0 
 
     If want to scale to some lumi X, include the rate parameter lumi_scale=X in the --setParameters option (scaling 2017+2018 to full run2 = 1.35)
 
@@ -25,7 +25,8 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 1D scans can be plotted using scripts/plot1DScan.py script.
 To plot alpha:
 
-    python scripts/plot1DScan.py --main=output/test_cp/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha --no-numbers --no-box --x_title="#alpha (#circ)" --y-max=0.7
+   python scripts/plot1DScan.py --main=output/newnew_mt_bins/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha_cmb --no-numbers --no-box --x-min=-90 --x-max=90 --y-max=8
+
 
 # perform ZTT validation
 

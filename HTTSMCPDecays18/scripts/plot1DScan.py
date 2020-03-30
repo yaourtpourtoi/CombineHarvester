@@ -188,7 +188,7 @@ parser.add_argument('--breakdown', help='do quadratic error subtraction using --
 parser.add_argument('--meta', default='', help='Other metadata to save in format KEY:VAL,KEY:VAL')
 parser.add_argument('--logo', default='CMS')
 parser.add_argument('--logo_sub', default='Internal')
-parser.add_argument('--x_title', default=None)
+parser.add_argument('--x_title', default='#phi_{#tau} (#circ)')
 args = parser.parse_args()
 if args.pub: args.no_input_label = True
 
@@ -503,7 +503,7 @@ plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsT
 
 #if not args.no_input_label: plot.DrawTitle(pads[0], '#bf{Input:} %s' % collab, 3)
 # plot.DrawTitle(pads[0], '35.9 fb^{-1} (13 TeV)', 3) # 16
-plot.DrawTitle(pads[0], '41.9 fb^{-1} (13 TeV)', 3) # 17
+plot.DrawTitle(pads[0], '137.5 fb^{-1} (13 TeV)', 3) # 17
 # plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3) # 16+17
 # plot.DrawTitle(pads[0], '59.7 fb^{-1} (13 TeV)', 3) # 18
 # plot.DrawTitle(pads[0], '101.3 fb^{-1} (13 TeV)', 3) # 17+18
