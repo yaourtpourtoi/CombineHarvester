@@ -423,9 +423,9 @@ int main(int argc, char** argv) {
         {1, "mt_ztt_2016"},
         {2, "mt_fakes_2016"},
         {3, "mt_murho_sig_2016"},
-	{4, "mt_mupi_sig_2016"},
-	{5, "mt_mua1_sig_2016"},
-	{6, "mt_mu0a1_sig_2016"},
+	    {4, "mt_mupi_sig_2016"},
+	    {5, "mt_mua1_sig_2016"},
+	    {6, "mt_mu0a1_sig_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -621,7 +621,11 @@ int main(int argc, char** argv) {
   });
 
   // convert systematics to lnN here
- 
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_scale_gg_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_FSR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().signals().bin_id({1}), "CMS_PS_ISR_ggH_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
+
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
       auto bbb = ch::BinByBinFactory()
