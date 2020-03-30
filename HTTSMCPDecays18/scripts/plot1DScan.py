@@ -527,16 +527,17 @@ if len(other_scans) > 0:
 legend = ROOT.TLegend(0.15, legend_l, 0.55, 0.78, '', 'NBNDC')
 if len(other_scans) >= 3:
     if args.envelope:
-        legend = ROOT.TLegend(0.58, 0.79, 0.95, 0.93, '', 'NBNDC')
+        legend = ROOT.TLegend(0.58, 0.7, 0.95, 0.93, '', 'NBNDC')
         legend.SetNColumns(2)
     else:
-        legend = ROOT.TLegend(0.46, 0.83, 0.95, 0.93, '', 'NBNDC')
+        legend = ROOT.TLegend(0.46, 0.7, 0.95, 0.93, '', 'NBNDC')
         legend.SetNColumns(2)
 
 if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha = %.1f#circ{}^{#plus %.1f#circ}_{#minus %.1f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 else: legend.AddEntry(main_scan['func'], args.main_label + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 for i, other in enumerate(other_scans):
-    legend.AddEntry(other['func'], other_scans_opts[i][1] + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')
+    #legend.AddEntry(other['func'], other_scans_opts[i][1] + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')
+    legend.AddEntry(other['func'], other_scans_opts[i][1], 'L')
 # if len(args) >= 4: legend.AddEntry(syst_scan['func'], 'Stat. Only', 'L')
 legend.Draw()
 
