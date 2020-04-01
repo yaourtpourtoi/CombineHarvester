@@ -30,21 +30,22 @@ int main(int argc, char* argv[]) {
   // Need this to read combine workspaces
   gSystem->Load("libHiggsAnalysisCombinedLimit");
 
-  string datacard   = "";
-  string workspace  = "";
-  string fitresult  = "";
-  string mass       = "";
-  bool postfit      = false;
-  bool sampling     = false;
-  string output     = "";
-  bool factors      = false;
-  unsigned samples  = 500;
+  string datacard        = "";
+  string workspace       = "";
+  string fitresult       = "";
+  string mass            = "";
+  bool postfit           = false;
+  bool sampling          = false;
+  string output          = "";
+  bool factors           = false;
+  unsigned samples       = 500;
   std::string freeze_arg = "";
-  bool covariance   = false;
-  string data       = "data_obs";
-  bool skip_prefit  = false;
-  bool skip_proc_errs = false;
-  bool total_shapes = false;
+  bool covariance        = false;
+  string data            = "data_obs";
+  bool skip_prefit       = false;
+  bool skip_proc_errs    = false;
+  bool total_shapes      = false;
+  bool total_shapes_bin  = false;
   std::vector<std::string> reverse_bins_;
 
   po::options_description help_config("Help");
@@ -99,6 +100,9 @@ int main(int argc, char* argv[]) {
     ("total-shapes",
       po::value<bool>(&total_shapes)->default_value(total_shapes)->implicit_value(true),
       "Save signal- and background shapes added for all channels/categories")
+    ("total-shapes-bin",
+      po::value<bool>(&total_shapes_bin)->default_value(total_shapes_bin)->implicit_value(true),
+      "Save signal- and background shapes for each bin")
     ("reverse-bins", po::value<vector<string>>(&reverse_bins_)->multitoken(), "List of bins to reverse the order for");
 
   if (sampling && !postfit) {
@@ -246,16 +250,17 @@ int main(int argc, char* argv[]) {
       }
 
       // The fill total signal and total bkg hists
-      std::cout << ">> Doing prefit: " << bin << "," << "TotalBkg" << std::endl;
-      pre_shapes[bin]["TotalBkg"] =
-          cmb_bin.cp().backgrounds().GetShapeWithUncertainty();
-      std::cout << ">> Doing prefit: " << bin << "," << "TotalSig" << std::endl;
-      pre_shapes[bin]["TotalSig"] =
-          cmb_bin.cp().signals().GetShapeWithUncertainty();
-      std::cout << ">> Doing prefit: " << bin << "," << "TotalProcs" << std::endl;
-      pre_shapes[bin]["TotalProcs"] =
-          cmb_bin.cp().GetShapeWithUncertainty();
-
+      if (total_shapes_bin) {
+        std::cout << ">> Doing prefit: " << bin << "," << "TotalBkg" << std::endl;
+        pre_shapes[bin]["TotalBkg"] =
+            cmb_bin.cp().backgrounds().GetShapeWithUncertainty();
+        std::cout << ">> Doing prefit: " << bin << "," << "TotalSig" << std::endl;
+        pre_shapes[bin]["TotalSig"] =
+            cmb_bin.cp().signals().GetShapeWithUncertainty();
+        std::cout << ">> Doing prefit: " << bin << "," << "TotalProcs" << std::endl;
+        pre_shapes[bin]["TotalProcs"] =
+            cmb_bin.cp().GetShapeWithUncertainty();
+      } 
 
       if (datacard != "") {
         TH1F ref = cmb_card.cp().bin({bin}).GetObservedShape();
@@ -362,21 +367,24 @@ int main(int argc, char* argv[]) {
         post_yield_cov[bin] = cmb_bin.GetRateCovariance(res, samples);
         post_yield_cor[bin] = cmb_bin.GetRateCorrelation(res, samples);
       }
-      // Fill the total sig. and total bkg. hists
-      auto cmb_bkgs = cmb_bin.cp().backgrounds();
-      auto cmb_sigs = cmb_bin.cp().signals();
-      std::cout << ">> Doing postfit: " << bin << "," << "TotalBkg" << std::endl;
-      post_shapes[bin]["TotalBkg"] =
-          sampling ? cmb_bkgs.GetShapeWithUncertainty(res, samples)
-                   : cmb_bkgs.GetShapeWithUncertainty();
-      std::cout << ">> Doing postfit: " << bin << "," << "TotalSig" << std::endl;
-      post_shapes[bin]["TotalSig"] =
-          sampling ? cmb_sigs.GetShapeWithUncertainty(res, samples)
-                   : cmb_sigs.GetShapeWithUncertainty();
-      std::cout << ">> Doing postfit: " << bin << "," << "TotalProcs" << std::endl;
-      post_shapes[bin]["TotalProcs"] =
-          sampling ? cmb_bin.cp().GetShapeWithUncertainty(res, samples)
-                   : cmb_bin.cp().GetShapeWithUncertainty();
+      
+      if (total_shapes_bin) {
+        // Fill the total sig. and total bkg. hists
+        auto cmb_bkgs = cmb_bin.cp().backgrounds();
+        auto cmb_sigs = cmb_bin.cp().signals();
+        std::cout << ">> Doing postfit: " << bin << "," << "TotalBkg" << std::endl;
+        post_shapes[bin]["TotalBkg"] =
+            sampling ? cmb_bkgs.GetShapeWithUncertainty(res, samples)
+                     : cmb_bkgs.GetShapeWithUncertainty();
+        std::cout << ">> Doing postfit: " << bin << "," << "TotalSig" << std::endl;
+        post_shapes[bin]["TotalSig"] =
+            sampling ? cmb_sigs.GetShapeWithUncertainty(res, samples)
+                     : cmb_sigs.GetShapeWithUncertainty();
+        std::cout << ">> Doing postfit: " << bin << "," << "TotalProcs" << std::endl;
+        post_shapes[bin]["TotalProcs"] =
+            sampling ? cmb_bin.cp().GetShapeWithUncertainty(res, samples)
+                     : cmb_bin.cp().GetShapeWithUncertainty();
+      }
 
       if (datacard != "") {
         TH1F ref = cmb_card.cp().bin({bin}).GetObservedShape();
