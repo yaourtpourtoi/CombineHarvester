@@ -96,3 +96,21 @@ Collect output and make plots:
       python ../CombineTools/scripts/plotGof.py --statistic saturated --mass 125.0 "$i"_saturated.json --title-right="60 fb^{-1} (13 TeV)" --output="$i"'-saturated'
     done
 
+
+# Run impacts
+
+first perform initial fit:
+
+  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0'
+
+then run impact with:
+
+  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=1'
+
+Collect results:
+
+  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json`
+
+Make impact plot:
+
+  `plotImpacts.py -i impacts.json -o impacts`

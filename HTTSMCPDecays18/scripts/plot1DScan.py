@@ -189,6 +189,7 @@ parser.add_argument('--meta', default='', help='Other metadata to save in format
 parser.add_argument('--logo', default='CMS')
 parser.add_argument('--logo_sub', default='Internal')
 parser.add_argument('--x_title', default='#phi_{#tau} (#circ)')
+parser.add_argument('--no_title', action='store_true', help='do not draw the luminosity title')
 args = parser.parse_args()
 if args.pub: args.no_input_label = True
 
@@ -501,15 +502,7 @@ if 'atlas_' in args.output: collab = 'ATLAS'
 plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsTextSize = 1.)
 # plot.DrawCMSLogo(pads[0], '#it{ATLAS}#bf{ and }CMS', '#it{LHC Run 1 Preliminary}', 11, 0.025, 0.035, 1.1, cmsTextSize = 1.)
 
-#if not args.no_input_label: plot.DrawTitle(pads[0], '#bf{Input:} %s' % collab, 3)
-# plot.DrawTitle(pads[0], '35.9 fb^{-1} (13 TeV)', 3) # 16
-# plot.DrawTitle(pads[0], '41.5 fb^{-1} (13 TeV)', 3) # 17
-# plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3) # 16+17
-# plot.DrawTitle(pads[0], '59.7 fb^{-1} (13 TeV)', 3) # 18
-# plot.DrawTitle(pads[0], '101.3 fb^{-1} (13 TeV)', 3) # 17+18
-# plot.DrawTitle(pads[0], '101.3 fb^{-1} extrap. to 137.2 fb^{-1} (13 TeV)', 3) # 17+18 extrap. to RunII
-plot.DrawTitle(pads[0], '137 fb^{-1} (13 TeV)', 3) # 16+17+18
-#plot.DrawTitle(pads[0], 'm_{H} = 125 GeV', 1)
+if not args.no_title: plot.DrawTitle(pads[0], '137 fb^{-1} (13 TeV)', 3) # 16+17+18
 pads[0].SetTicks(1)
 
 #info = ROOT.TPaveText(0.59, 0.75, 0.95, 0.91, 'NDCNB')
