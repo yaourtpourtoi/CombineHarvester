@@ -50,8 +50,6 @@ def checkHistogram(infile,outfile,dirname,summary):
         histo1 = directory1.Get(key)
         histo2 = directory2.Get(key)
         if histo1.Integral() <=0: continue
-        if histo1.Integral() != histo2.Integral():
-          print 'WTF!', histo1.Integral(), histo2.Integral()
         ks_score = histo1.KolmogorovTest(histo2)
         print dirname, key, ks_score
         rhisto1 = histo1.Clone()
@@ -123,7 +121,7 @@ else:
 for key in original_file.GetListOfKeys():
     if isinstance(original_file.Get(key.GetName()),ROOT.TDirectory):
         dirname=key.GetName()
-        if 'other' in dirname or '_Pi_Pi' in dirname or '_mupi_' in dirname or 'fakes' in dirname or 'ztt' in dirname or 'Fake' in dirname: continue
+        if 'other' in dirname or 'fakes' in dirname or 'ztt' in dirname or 'Fake' in dirname: continue
 
         checkHistogram(original_file,output_file,dirname,summary)
 
@@ -136,6 +134,7 @@ summary.GetZaxis().SetTitle('KS-score')
 summary.GetZaxis().SetRangeUser(0,1)
 
 #ROOT.gStyle.SetPalette(1)
+summary.GetYaxis().SetTitleOffset(1.1)
 summary.GetYaxis().SetBinLabel(1,'EmbedZTT')
 summary.GetYaxis().SetBinLabel(2,'jetFakes')
 summary.GetYaxis().SetBinLabel(3,'TT')
@@ -145,4 +144,10 @@ summary.GetXaxis().CenterLabels()
 summary.GetYaxis().CenterLabels()
 canv2.SetRightMargin(0.2)
 summary.Draw('colz')
-canv2.Print('test.pdf')
+
+year='2018'
+if '2016' in filename: year='2016'
+if '2017' in filename: year='2017'
+chan='mt'
+if '_tt.' in filename: chan='tt'
+canv2.Print('mergeCheck_summary_%(chan)s_%(year)s.pdf' % vars())

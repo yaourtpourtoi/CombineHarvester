@@ -32,8 +32,34 @@ def MergeXBins(hist, nxbins):
     tot = hist.IntegralAndError(i,i+nxbins-1,tot_err)
     for j in range(i,i+nxbins):
       histnew.SetBinContent(j,tot/nxbins)
-      histnew.SetBinError(j,tot_error/nxbins)
+      histnew.SetBinError(j,tot_err/nxbins)
   return histnew
+
+def Symmetrise(hist,nxbins):
+  histnew=hist.Clone()
+  nbins = hist.GetNbinsX()
+  if nbins % 2:
+    print 'N X bins in 2D histogram is not even so cannot symmetrise!'
+    return
+  nybins = nbins/nxbins
+  for i in range(1,nxbins/2+1):
+    lo_bin = i
+    hi_bin = nxbins-i+1
+    for j in range(1,nybins+1):
+      lo_bin_ = lo_bin+(j-1)*nxbins
+      hi_bin_ = hi_bin+(j-1)*nxbins
+      c1 = hist.GetBinContent(lo_bin_)
+      c2 = hist.GetBinContent(hi_bin_)
+      e1 = hist.GetBinError(lo_bin_)
+      e2 = hist.GetBinError(hi_bin_)
+      cnew = (c1+c2)/2
+      enew = math.sqrt(e1**2 + e2**2)/2
+      histnew.SetBinContent(lo_bin_,cnew)
+      histnew.SetBinContent(hi_bin_,cnew)
+      histnew.SetBinError(lo_bin_,enew)
+      histnew.SetBinError(hi_bin_,enew)
+  return histnew
+
 
 def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
     directory = infile.Get(dirname)
@@ -49,6 +75,7 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
           if nxbins>1 and not skip:
             print 'rebinning for ', dirname, key.GetName()
             if '_mupi_' not in dirname and '_Pi_Pi' not in dirname: histo =  MergeXBins(histo,nxbins)
+            else: histo =  Symmetrise(histo,nxbins)
           outfile.cd()
           if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
           ROOT.gDirectory.cd(dirname)
