@@ -345,12 +345,13 @@ int main(int argc, char** argv) {
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
 
-    if(mergeXbbb) postfix+="-mergeXbins";
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
     typedef vector<string> VString;
  
+    if(mergeXbbb) postfix+="-mergeXbins";
+
     VString years;
     if ( era.find("2016") != std::string::npos ) years.push_back("2016");
     if ( era.find("2017") != std::string::npos ) years.push_back("2017");
@@ -425,9 +426,9 @@ int main(int argc, char** argv) {
         {1, "mt_ztt_2016"},
         {2, "mt_fakes_2016"},
         {3, "mt_murho_sig_2016"},
-	    {4, "mt_mupi_sig_2016"},
-	    {5, "mt_mua1_sig_2016"},
-	    //{6, "mt_mu0a1_sig_2016"},
+	{4, "mt_mupi_sig_2016"},
+	{5, "mt_mua1_sig_2016"},
+	{6, "mt_mu0a1_sig_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -451,7 +452,7 @@ int main(int argc, char** argv) {
         {3, "mt_murho_sig_2017"},
         {4, "mt_mupi_sig_2017"},
         {5, "mt_mua1_sig_2017"},
-        //{6, "mt_mu0a1_sig_2017"},
+        {6, "mt_mu0a1_sig_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -475,7 +476,7 @@ int main(int argc, char** argv) {
         {3, "mt_murho_sig_2018"},
         {4, "mt_mupi_sig_2018"},
         {5, "mt_mua1_sig_2018"},
-        //{6, "mt_mu0a1_sig_2018"},
+        {6, "mt_mu0a1_sig_2018"},
       };
     }
     
@@ -630,92 +631,187 @@ int main(int argc, char** argv) {
       auto bbb = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#") // this needs to have "_bbb_bin_" in the pattern for the mergeXbbb option to work
       .SetAddThreshold(0.)
-      .SetMergeThreshold(0.4)
+      .SetMergeThreshold(0.5)
       .SetFixNorm(false);
       bbb.MergeBinErrors(cb.cp().backgrounds());
       bbb.AddBinByBin(cb.cp().backgrounds(), cb);
 
 
-      // if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
-      // need to hardcode the bin number for the xbins
-      // Each vector element i corresponds to the number of xbins for bin i+1 
-      // if these numbers aren't set correctly the method won't work so be careful!
-     // std::vector<unsigned> mt_nxbins = {1,1,16,1,8,4}; // note setting element 3 to 1 because we dont want to merge bins for mu+pi channel!
-     // std::vector<unsigned> tt_nxbins = {1,1,16,4,8,4,16,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
-     // for (string ch: chns) {
-     //   std::vector<unsigned> bins = {};
-     //   if(ch == "tt" || ch == "tt_2016" || ch == "tt_2017" || ch == "tt_2018") bins = tt_nxbins;
-     //   else bins = mt_nxbins;
-     //   std::cout << bins.size() << std::endl;;
-     //   for (unsigned i=0; i<bins.size(); ++i) {
-     //     unsigned nxbins = bins[i];
-     //     if (nxbins <=1) continue; 
-     //     std::cout << "merging bins for " << ch << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl; 
-     //     cb.cp().backgrounds().channel({ch}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
-     //       TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
-     //       cb.cp().ForEachSyst([&](ch::Systematic *syst) {
-     //         auto old_name = syst->name();
-     //         std::string nonum_name = old_name;
-     //         bool match_proc = (MatchingProcess(*proc,*syst)); 
-     //         if (match_proc && old_name.find("_bbb_bin_") != std::string::npos) {
-     //           int bin_num = -1;
-     //           std::stringstream old_name_ss;
-     //           old_name_ss << old_name;
-     //           string temp;
-     //           int found;
-     //           while (std::getline(old_name_ss, temp, '_')) {
-     //             if (stringstream(temp) >> found) bin_num = found;
-     //           }
-     //           if((bin_num-1) % nxbins==0 ) {
-     //             nonum_name.erase (nonum_name.end()-std::to_string(bin_num).length(), nonum_name.end());
-     //             TH1D *shape_u_new = (TH1D*)syst->ClonedShapeU().get()->Clone();
-     //             TH1D *shape_d_new = (TH1D*)syst->ClonedShapeD().get()->Clone();
-     //             shape_u_new->Add(nominal,-1);
-     //             shape_d_new->Add(nominal,-1);
-     //             std::vector<std::string> names = {};
-     //             for(unsigned i = bin_num+1; i<(unsigned)bin_num+nxbins; ++i) names.push_back(nonum_name+std::to_string(i)); 
-     //             cb.cp().syst_name(names).ForEachSyst([&](ch::Systematic *s) {
-     //               TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
-     //               TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
-     //               shape_u_temp->Add(nominal,-1);
-     //               shape_d_temp->Add(nominal,-1);
-     //               shape_u_new->Add(shape_u_temp);
-     //               shape_d_new->Add(shape_d_temp);
-     //             });
-     //             shape_u_new->Add(nominal);
-     //             shape_d_new->Add(nominal);
-     //             syst->set_shapes(std::unique_ptr<TH1>(static_cast<TH1*>(shape_u_new)),std::unique_ptr<TH1>(static_cast<TH1*>(shape_d_new)),nullptr);
-     //             syst->set_value_u((syst->value_u()-1.)*nxbins + 1.);
-     //             syst->set_value_d((syst->value_d()-1.)*nxbins + 1.); 
-     //             for (auto n : names) {
-     //               cb.FilterSysts([&](ch::Systematic *s){
-     //                 return s->name() == n;
-     //               });
-     //             }
-     //           }  
-     //         }
-     //       });
-     //     });
-     //   }
-     // }
+     //  if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
+     //
+     //  First we will deal with the catogiries with flat background when all phi_CP bins are merged into 1 (i.e all categories except the mu+pi and pi+pi channels)
+     //  need to hardcode the bin number for the xbins
+     //  Each vector element i corresponds to the number of xbins for bin i+1 
+     //  if these numbers aren't set correctly the method won't work so be careful!
+     std::vector<unsigned> mt_nxbins = {1,1,16,1,8,4}; // note setting element 3 to 1 because we dont want to merge bins for mu+pi channel!
+     std::vector<unsigned> tt_nxbins = {1,1,16,4,8,4,16,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
+     for(auto year: years) {
+       for (string ch: chns) {
+         std::vector<unsigned> bins = {};
+         if(ch == "tt") bins = tt_nxbins;
+         else bins = mt_nxbins;
+         for (unsigned i=0; i<bins.size(); ++i) {
+           unsigned nxbins = bins[i];
+           if (nxbins <=1) continue; 
+           std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl; 
+           cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
+             TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
+             cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+               auto old_name = syst->name();
+               std::string nonum_name = old_name;
+               bool match_proc = (MatchingProcess(*proc,*syst)); 
+               if (match_proc && old_name.find("_bbb_bin_") != std::string::npos) {
+                 int bin_num = -1;
+                 std::stringstream old_name_ss;
+                 old_name_ss << old_name;
+                 string temp;
+                 int found;
+                 while (std::getline(old_name_ss, temp, '_')) {
+                   if (stringstream(temp) >> found) bin_num = found;
+                 }
+                 if((bin_num-1) % nxbins==0 ) {
+                   nonum_name.erase (nonum_name.end()-std::to_string(bin_num).length(), nonum_name.end());
+                   TH1D *shape_u_new = (TH1D*)syst->ClonedShapeU().get()->Clone();
+                   TH1D *shape_d_new = (TH1D*)syst->ClonedShapeD().get()->Clone();
+                   shape_u_new->Add(nominal,-1);
+                   shape_d_new->Add(nominal,-1);
+                   std::vector<std::string> names = {};
+                   for(unsigned j = bin_num+1; j<(unsigned)bin_num+nxbins; ++j) names.push_back(nonum_name+std::to_string(j)); 
+                   cb.cp().syst_name(names).ForEachSyst([&](ch::Systematic *s) {
+                     TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
+                     TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
+                     shape_u_temp->Add(nominal,-1);
+                     shape_d_temp->Add(nominal,-1);
+                     shape_u_new->Add(shape_u_temp);
+                     shape_d_new->Add(shape_d_temp);
+                   });
+                   shape_u_new->Add(nominal);
+                   shape_d_new->Add(nominal);
+                   syst->set_shapes(std::unique_ptr<TH1>(static_cast<TH1*>(shape_u_new)),std::unique_ptr<TH1>(static_cast<TH1*>(shape_d_new)),nullptr);
+                   syst->set_value_u((syst->value_u()-1.)*nxbins + 1.);
+                   syst->set_value_d((syst->value_d()-1.)*nxbins + 1.); 
+                   for (auto n : names) {
+                     cb.FilterSysts([&](ch::Systematic *s){
+                       return s->name() == n;
+                     });
+                   }
+                 }  
+               }
+             });
+           });
+         }
+       }
+     }
 
+     // Now we deal with the mu+pi and pi+pi channels where the backgrounds are not flat but the merging instead takes into account to symmetry about x=pi
 
-      // add bbb uncertainties for the signal but as we use reweighted histograms for sm, ps and mm these should be correlated. will need to do something for WH and ZH when we have the samples
-      //auto bbb_ggh = ch::BinByBinFactory()
-      //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ggH_bin_$#")
-      //.SetAddThreshold(0.0)
-      //.SetMergeThreshold(0.0)
-      //.SetFixNorm(false);
-      //bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
+     mt_nxbins = {1,1,1,12,1,1}; // note setting all elements except 3 to 1 because we only want to merge bins for the mu+pi channel!
+     tt_nxbins = {1,1,1,1,1,1,1,6,1,1,1}; // note setting all elements except 7 to 1 because we only want to merge bins for the pi+pi channel!
 
-      //auto bbb_qqh = ch::BinByBinFactory()
-      //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bin_$#")
-      //.SetAddThreshold(0.0)
-      //.SetMergeThreshold(0.0)
-      //.SetFixNorm(false);
-      //bbb_qqh.AddBinByBin(cb.cp().signals().process(sig_procs["qqH"]),cb);
+     for(auto year: years) {
+       for (string ch: chns) {
+         std::vector<unsigned> bins = {};
+         if(ch == "tt") bins = tt_nxbins;
+         else bins = mt_nxbins;
+         for (unsigned i=0; i<bins.size(); ++i) {
+           unsigned nxbins = bins[i];
+           if (nxbins <=1) continue;
+           std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl;
+           cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
+             TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
+             cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+               auto old_name = syst->name();
+               std::string nonum_name = old_name;
+               bool match_proc = (MatchingProcess(*proc,*syst));
+               if (match_proc && old_name.find("_bbb_bin_") != std::string::npos) {
+                 int bin_num = -1;
+                 std::stringstream old_name_ss;
+                 old_name_ss << old_name;
+                 string temp;
+                 int found;
+                 while (std::getline(old_name_ss, temp, '_')) {
+                   if (stringstream(temp) >> found) bin_num = found;
+                 }
+                 int bin_num_y =floor((double)(bin_num-1)/(double)nxbins);
+                 if((bin_num-bin_num_y*nxbins)<=nxbins/2) {
+                 int bin_num_hi = (bin_num_y+1)*nxbins - (bin_num-bin_num_y*nxbins) + 1;
+                   nonum_name.erase (nonum_name.end()-std::to_string(bin_num).length(), nonum_name.end());
+                   TH1D *shape_u_new = (TH1D*)syst->ClonedShapeU().get()->Clone();
+                   TH1D *shape_d_new = (TH1D*)syst->ClonedShapeD().get()->Clone();
+                   shape_u_new->Add(nominal,-1);
+                   shape_d_new->Add(nominal,-1);
+
+                   std::string to_add_name = nonum_name+std::to_string(bin_num_hi);
+                   cb.cp().syst_name({to_add_name}).ForEachSyst([&](ch::Systematic *s) {
+                     TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
+                     TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
+                     shape_u_temp->Add(nominal,-1);
+                     shape_d_temp->Add(nominal,-1);
+                     shape_u_new->Add(shape_u_temp);
+                     shape_d_new->Add(shape_d_temp);
+                   });
+                   shape_u_new->Add(nominal);
+                   shape_d_new->Add(nominal);
+                   syst->set_shapes(std::unique_ptr<TH1>(static_cast<TH1*>(shape_u_new)),std::unique_ptr<TH1>(static_cast<TH1*>(shape_d_new)),nullptr);
+                   syst->set_value_u((syst->value_u()-1.)*2 + 1.);
+                   syst->set_value_d((syst->value_d()-1.)*2 + 1.);
+                   std::cout << "removing" << "    " << to_add_name << std::endl;
+                   cb.FilterSysts([&](ch::Systematic *s){
+                     return s->name() == to_add_name;
+                   });
+                 }
+               }
+             });
+           });
+         }
+       }
+     }
+
+      //add bbb uncertainties for the signal but as we use reweighted histograms for sm, ps and mm these should be correlated. will need to do something for WH and ZH when we have the samples
+      auto bbb_ggh = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ggH_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(0.0)
+      .SetFixNorm(false);
+      bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
+
+      auto bbb_qqh = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(0.0)
+      .SetFixNorm(false);
+      bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
+
+      auto bbb_Wh = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(0.0)
+      .SetFixNorm(false);
+      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
+
+      auto bbb_Zh = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(0.0)
+      .SetFixNorm(false);
+      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
 
     }
+
+    cb.ForEachSyst([](ch::Systematic *s) {
+        if (s->type().find("shape") == std::string::npos) return;
+        if(!(s->value_d()<0.001 || s->value_u()<0.001)) return;
+        std::cout << "[Negative yield] Fixing negative yield for syst" << s->bin()
+                 << "," << s->process() << "," << s->name() << "\n";
+        if(s->value_u()<0.001){
+           s->set_value_u(0.001);
+           s->set_type("lnN");
+        }
+        if(s->value_d()<0.001){
+           s->set_value_d(0.001);
+           s->set_type("lnN");
+        }
+    });
 
     // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
     cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
@@ -842,8 +938,8 @@ int main(int argc, char** argv) {
      //if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
      if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 0 1");
      // add lumi_scale for projection scans
-     cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
-     cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
+     //cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
+     //cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
 
      //! [part9]
      // First we generate a set of bin names:

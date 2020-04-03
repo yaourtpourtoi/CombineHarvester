@@ -2,6 +2,8 @@ import ROOT
 import math
 import argparse
 ROOT.TH1.AddDirectory(False)
+ 
+# note that the merging of bins requires an even numnber of phi_CP bins, and this number must be set to the specific value used in the dictionary below otherwise the method will give incorrect results!
 
 cp_bins = {
 
