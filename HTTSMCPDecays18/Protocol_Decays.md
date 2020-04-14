@@ -1,3 +1,7 @@
+# Always do the following commend before running anything (it seems to prevent random seg faults )
+
+ulimit -s unlimited
+
 # Creating datacard
 
     MorphingSMCPDecays18 --output_folder="cpdecay2017" --postfix="-2D" 
@@ -10,7 +14,7 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 
 # Run maximum likelihood scan
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --cminDefaultMinimizerStrategy=0 
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --cminDefaultMinimizerStrategy=0 
 
     If want to scale to some lumi X, include the rate parameter lumi_scale=X in the --setParameters option (scaling 2017+2018 to full run2 = 1.35)
 
