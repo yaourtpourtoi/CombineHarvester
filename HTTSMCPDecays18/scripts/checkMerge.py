@@ -17,12 +17,42 @@ bins = {
         "tt_201$_higgs_Pi_A1_Mixed": 9,
         "tt_201$_higgs_Pi_0A1_Mixed": 10,
         "tt_201$_higgs_A1_0A1": 11,
+
+        "tt_201$_zttEmbed_Rho_Rho": 3,
+        "tt_201$_zttEmbed_0A1_Rho_and_0A1_0A1": 4,
+        "tt_201$_zttEmbed_A1_Rho": 5,
+        "tt_201$_zttEmbed_A1_A1": 6,
+        "tt_201$_zttEmbed_Pi_Rho_Mixed": 7,
+        "tt_201$_zttEmbed_Pi_Pi": 8,
+        "tt_201$_zttEmbed_Pi_A1_Mixed": 9,
+        "tt_201$_zttEmbed_Pi_0A1_Mixed": 10,
+        "tt_201$_zttEmbed_A1_0A1": 11,
+
+        "tt_201$_jetFakes_Rho_Rho": 3,
+        "tt_201$_jetFakes_0A1_Rho_and_0A1_0A1": 4,
+        "tt_201$_jetFakes_A1_Rho": 5,
+        "tt_201$_jetFakes_A1_A1": 6,
+        "tt_201$_jetFakes_Pi_Rho_Mixed": 7,
+        "tt_201$_jetFakes_Pi_Pi": 8,
+        "tt_201$_jetFakes_Pi_A1_Mixed": 9,
+        "tt_201$_jetFakes_Pi_0A1_Mixed": 10,
+        "tt_201$_jetFakes_A1_0A1": 11,
         "mt_ztt_201$": 1,
         "mt_fakes_201$": 2,
         "mt_murho_sig_201$": 3,
         "mt_mupi_sig_201$": 4,
         "mt_mua1_sig_201$": 5,
         "mt_mu0a1_sig_201$": 6,
+
+        "mt_murho_fakes_201$": 3,
+        "mt_mupi_fakes_201$": 4,
+        "mt_mua1_fakes_201$": 5,
+        "mt_mu0a1_fakes_201$": 6,
+
+        "mt_murho_ztt_201$": 3,
+        "mt_mupi_ztt_201$": 4,
+        "mt_mua1_ztt_201$": 5,
+        "mt_mu0a1_ztt_201$": 6,
 }
 
 def TwoPadSplit(split_point, gap_low, gap_high):
@@ -39,16 +69,20 @@ def TwoPadSplit(split_point, gap_low, gap_high):
     result = [upper, lower]
     return result
 
-def checkHistogram(infile,outfile,dirname,summary):
+def checkHistogram(infile,outfile,dirname,summary,summary_fakes,summary_ztt):
     directory1 = infile.Get(dirname)
     directory2 = outfile.Get(dirname)
-    count=1
+    count=0
     year='2018'
     if '2017' in dirname: year = '2017'
     if '2016' in dirname: year = '2016'
-    for key in ['EmbedZTT','jetFakes','TTT','VVT','ZL']:
+    for key in ['EmbedZTT','jetFakes','TTT','VVT','ZL','data_obs']:
+        count+=1
+        if key == 'data_obs' and 'ztt' not in dirname and 'fakes' not in dirname and 'Fakes' not in dirname: continue
         histo1 = directory1.Get(key)
-        histo2 = directory2.Get(key)
+        if key == 'data_obs': histo2 = directory2.Get(key+'_merged')
+        else: histo2 = directory2.Get(key)
+        if key == 'data_obs' and not (isinstance(histo2,ROOT.TH1D) or isinstance(histo2,ROOT.TH1F)): histo2 = directory2.Get(key)
         if histo1.Integral() <=0: continue
         ks_score = histo1.KolmogorovTest(histo2)
         print dirname, key, ks_score
@@ -100,8 +134,9 @@ def checkHistogram(infile,outfile,dirname,summary):
         rhisto1.Draw('same')
         canv1.Print('mergeCheck_%(dirname)s_%(key)s.pdf' % vars())
         xbin = bins[dirname.replace(year,'201$')]
-        summary.SetBinContent(xbin-2,count,ks_score)
-        count+=1
+        if 'jetFakes' in dirname or 'fakes' in dirname: summary_fakes.SetBinContent(xbin-2,count,ks_score)
+        elif 'ztt' in dirname: summary_ztt.SetBinContent(xbin-2,count,ks_score)
+        else: summary.SetBinContent(xbin-2,count,ks_score)
 pads=TwoPadSplit(0.29,0.01,0.01)
 
 parser = argparse.ArgumentParser()
@@ -114,18 +149,10 @@ original_file = ROOT.TFile(filename)
 output_file = ROOT.TFile(newfilename) 
 
 if '_mt.' in filename:
-  summary = ROOT.TH2D('summary','',4,3,7,5,0,5)
+  summary = ROOT.TH2D('summary','',4,3,7,6,0,6)
 else:
-  summary = ROOT.TH2D('summary','',9,3,12,5,0,5)
+  summary = ROOT.TH2D('summary','',9,3,12,6,0,6)
 
-for key in original_file.GetListOfKeys():
-    if isinstance(original_file.Get(key.GetName()),ROOT.TDirectory):
-        dirname=key.GetName()
-        if 'other' in dirname or 'fakes' in dirname or 'ztt' in dirname or 'Fake' in dirname: continue
-
-        checkHistogram(original_file,output_file,dirname,summary)
-
-canv2 = ROOT.TCanvas()
 summary.SetStats(0)
 summary.SetTitle('')
 summary.GetYaxis().SetTitle('Process')
@@ -140,14 +167,39 @@ summary.GetYaxis().SetBinLabel(2,'jetFakes')
 summary.GetYaxis().SetBinLabel(3,'TT')
 summary.GetYaxis().SetBinLabel(4,'VV')
 summary.GetYaxis().SetBinLabel(5,'ZL')
+summary.GetYaxis().SetBinLabel(6,'data')
 summary.GetXaxis().CenterLabels()
-summary.GetYaxis().CenterLabels()
-canv2.SetRightMargin(0.2)
-summary.Draw('colz')
+summary.GetXaxis().CenterLabels()
+summary.GetXaxis().SetNdivisions(summary.GetNbinsX()+1)
+
+summary_fakes=summary.Clone()
+summary_ztt=summary.Clone()
+
+for key in original_file.GetListOfKeys():
+    if isinstance(original_file.Get(key.GetName()),ROOT.TDirectory):
+        dirname=key.GetName()
+        #if 'other' in dirname or 'fakes' in dirname or 'ztt' in dirname or 'Fake' in dirname: continue
+        if 'other' in dirname: continue
+
+        checkHistogram(original_file,output_file,dirname,summary,summary_fakes,summary_ztt)
 
 year='2018'
 if '2016' in filename: year='2016'
 if '2017' in filename: year='2017'
 chan='mt'
 if '_tt.' in filename: chan='tt'
+
+canv2 = ROOT.TCanvas()
+canv2.SetRightMargin(0.2)
+summary.GetYaxis().SetRangeUser(0,summary.GetYaxis().GetBinLowEdge(summary.GetNbinsY()))
+summary.Draw('colz')
+
 canv2.Print('mergeCheck_summary_%(chan)s_%(year)s.pdf' % vars())
+
+summary_fakes.Draw('colz')
+
+canv2.Print('mergeCheck_summary_fakes_%(chan)s_%(year)s.pdf' % vars())
+
+summary_ztt.Draw('colz')
+
+canv2.Print('mergeCheck_summary_ztt_%(chan)s_%(year)s.pdf' % vars())

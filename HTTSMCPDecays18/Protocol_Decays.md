@@ -119,3 +119,25 @@ Collect results:
 Make impact plot:
 
   `plotImpacts.py -i impacts.json -o impacts`
+
+Perform fits of background only categories unrolled in phiCP bins
+
+first run morphing (use --backgroundOnly=1 for ZTT categories or =2 for jetFakes category) 
+'MorphingSMCPDecays18 --output_folder="ztt_checks" --mergeXbbb=true --backgroundOnly=1'
+
+run T2W:
+
+'combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/ztt_checks/cmb/* -o ws.root --parallel 8'
+
+perform KS test:
+
+   'combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS.toys" --freezeParameters muggH,alpha,muV --there --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 100 -s 0:5:1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1'
+
+Run observed
+   'combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS" --freezeParameters muggH,alpha,muV --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1'
+
+Collect outputs and make plots
+
+   ' combineTool.py -M CollectGoodnessOfFit --input output/ztt_checks/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/ztt_checks/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json'
+
+   'python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS''
