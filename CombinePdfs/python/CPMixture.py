@@ -87,7 +87,7 @@ class CPMixture(PhysicsModel):
 
         #self.modelBuilder.doVar('mutautau[1,0,10]')
         self.modelBuilder.doVar('mutautau[1]')
-        self.modelBuilder.doVar('muV[1,0,10]')
+        self.modelBuilder.doVar('muV[1,0,4]')
         if not self.useRate and not self.kappa:
            self.modelBuilder.doVar('muggH[1,0,10]')
         if not self.VBFangle: self.modelBuilder.doVar('f[0,-1,1]')
@@ -188,18 +188,18 @@ class CPMixture(PhysicsModel):
             elif '_mt_' in bin_: chan = 'mt'
             elif '_tt_' in bin_: chan = 'tt'
 
-            if "ggHsm" in process or "ggH2jsm" in process:
+            if "ggHsm" in process or "ggH2jsm" in process or 'reweighted_ggH_htt_0PM' == process:
                 scalings.append('sm_scaling')
-            elif "ggHps" in process or "ggH2jps" in process:
+            elif "ggHps" in process or "ggH2jps" in process or 'reweighted_ggH_htt_0M' == process:
                 scalings.append('ps_scaling')
-            elif "ggHmm" in process or "ggH2jmm" in process:
+            elif "ggHmm" in process or "ggH2jmm" in process or 'reweighted_ggH_htt_0Mf05ph0' == process:
                 scalings.append('mm_scaling')
             elif 'ggH_ph' in process:
                 scalings.append('muggH_mutautau')
 
             if self.ChannelCompatibility: scalings.append('%s' % chan)
 
-        if ('qqH' in process or 'WH' in process or 'ZH' in process) and 'hww' not in process:
+        if ('qqH' in process or 'WH' in process or 'ZH' in process or 'vbf125_powheg' in process or 'wh125_powheg' in process or 'zh125_powheg' in process) and 'hww' not in process:
             if "qqHsm" in process:
                 scalings.append('vbf_sm_scaling')
             elif "qqHps" in process:
@@ -227,7 +227,7 @@ class CPMixture(PhysicsModel):
             if self.sm_fix:
                 if "_1_13TeV" in bin_ or "_2_13TeV" in bin_:
                     # simply this by only take SM template for 0 and 1 jet categories
-                    if "ggHsm" in process: scaling = "muggH_mutautau"
+                    if "ggHsm" in process or 'reweighted_ggH_htt_0PM' in process: scaling = "muggH_mutautau"
                     else: scaling = "Zero"
 
                     #year = '2016'

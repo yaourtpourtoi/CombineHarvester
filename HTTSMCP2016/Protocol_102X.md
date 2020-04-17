@@ -39,6 +39,7 @@ To scan alpha:
     `combineTool.py -m 125 -M MultiDimFit --setParameters alpha=0 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/cp130219/cmb/125/ws.root --algo grid  --there -n .alpha --floatOtherPOIs 1 --points=37 --alignEdges 1 -t -1 --cminDefaultMinimizerStrategy 0`
 (Note we may want to change the --cminDefaultMinimizerStrategy 0 at some point but the fit does not always converget for --cminDefaultMinimizerStrategy 1 - could adjust the number of function calls and/or tolerance to get this to work)
 
+To free all systematics add '--freezeParameters allConstrainedNuisances'
 
 To scan mu:
 We need to freeze tautau BR to 1 as the fit has no sensitivity to muggH it only has sensitivity to muggH*mutautau so by setting mutautau to 1 we effecitivly just get one rate parameter that scales the XS*BR

@@ -28,9 +28,9 @@ namespace ch {
         //
         
         
-        std::vector<std::string> sig_procs = {"ggH_htt","qqH_htt","WH_htt","ZH_htt","ggHsm_htt", "ggHps_htt", "ggHmm_htt","qqHsm_htt", "qqHps_htt", "qqHmm_htt","qqH_htt125","qqHsm_htt125", "qqHps_htt", "qqHmm_htt","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125", "WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt", "ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt"};
-        std::vector<std::string> ggH_sig_procs = {"ggH_htt","ggHsm_htt", "ggHps_htt", "ggHmm_htt","ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt"};
-        std::vector<std::string> qqH_sig_procs = {"qqH_htt","qqHsm_htt", "qqHps_htt", "qqHmm_htt", "qqH_htt125","qqHsm_htt125", "qqHps_htt", "qqHmm_htt"};
+        std::vector<std::string> sig_procs = {"ggH_htt","qqH_htt","WH_htt","ZH_htt","reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0","qqHsm_htt", "qqHps_htt", "qqHmm_htt","vbf125_powheg","qqHsm_htt125", "qqHps_htt", "qqHmm_htt","wh125_powheg","zh125_powheg","WHsm_htt125","ZHsm_htt125", "WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt", "ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt"};
+        std::vector<std::string> ggH_sig_procs = {"ggH_htt","reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0","ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt"};
+        std::vector<std::string> qqH_sig_procs = {"qqH_htt","qqHsm_htt", "qqHps_htt", "qqHmm_htt", "vbf125_powheg","qqHsm_htt125", "qqHps_htt", "qqHmm_htt"};
         
         // N.B. when adding this list of backgrounds to a nuisance, only
         // the backgrounds that are included in the background process
@@ -435,13 +435,13 @@ namespace ch {
         
         cb.cp().process(JoinStr({ggH_sig_procs, {"ggH_hww125"}})).AddSyst(cb,"QCDScale_ggH", "lnN", SystMap<>::init(1.039));
         cb.cp().process(JoinStr({qqH_sig_procs, {"qqH_hww125"}})).AddSyst(cb,"QCDScale_qqH", "lnN", SystMap<>::init(1.004));
-        cb.cp().process({"WH_htt125","WH_htt","WHsm_htt125","WHps_htt","WHmm_htt","WHsm_htt","WHps_htt","WHmm_htt"}).AddSyst(cb,"QCDScale_WH", "lnN", SystMap<>::init(1.007));
-        cb.cp().process({"WH_htt125","ZH_htt","ZHsm_htt125","ZHps_htt","ZHmm_htt","ZHsm_htt","ZHps_htt","ZHmm_htt"}).AddSyst(cb,"QCDScale_ZH", "lnN", SystMap<>::init(1.038));
+        cb.cp().process({"wh125_powheg","WH_htt","WHsm_htt125","WHps_htt","WHmm_htt","WHsm_htt","WHps_htt","WHmm_htt"}).AddSyst(cb,"QCDScale_WH", "lnN", SystMap<>::init(1.007));
+        cb.cp().process({"wh125_powheg","ZH_htt","ZHsm_htt125","ZHps_htt","ZHmm_htt","ZHsm_htt","ZHps_htt","ZHmm_htt"}).AddSyst(cb,"QCDScale_ZH", "lnN", SystMap<>::init(1.038));
         
         cb.cp().process(JoinStr({ggH_sig_procs, {"ggH_hww125"}})).AddSyst(cb,"pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
         cb.cp().process(JoinStr({qqH_sig_procs, {"qqH_hww125"}})).AddSyst(cb,"pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));
-        cb.cp().process({"WH_htt125","WH_htt","WHsm_htt125","WHps_htt","WHmm_htt","WHsm_htt","WHps_htt","WHmm_htt"}).AddSyst(cb,"pdf_Higgs_WH", "lnN", SystMap<>::init(1.019));
-        cb.cp().process({"ZH_htt125","ZH_htt""ZHsm_htt125","ZHps_htt","ZHmm_htt","ZHsm_htt","ZHps_htt","ZHmm_htt"}).AddSyst(cb,"pdf_Higgs_ZH", "lnN", SystMap<>::init(1.016));
+        cb.cp().process({"wh125_powheg","WH_htt","WHsm_htt125","WHps_htt","WHmm_htt","WHsm_htt","WHps_htt","WHmm_htt"}).AddSyst(cb,"pdf_Higgs_WH", "lnN", SystMap<>::init(1.019));
+        cb.cp().process({"zh125_powheg","ZH_htt""ZHsm_htt125","ZHps_htt","ZHmm_htt","ZHsm_htt","ZHps_htt","ZHmm_htt"}).AddSyst(cb,"pdf_Higgs_ZH", "lnN", SystMap<>::init(1.016));
         
         // jet bin migration uncertainties from: https://arxiv.org/pdf/1610.07922.pdf#subsection.1.4.2.5 (Table 20)
         // For boosted category this is not exclusivly 1 jet events since events with > 1 jets and mjj<300 enter also. So take weighted average of Njets=1 and Njets>=1 uncertainties i.e sigma(boosted) = sigma(njets=1)*(# Njets=1 && boosted)/(# boosted) + sigma(njets>=1)*(#Njets>1 && boosted)/(# boosted)
