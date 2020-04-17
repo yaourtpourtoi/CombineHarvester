@@ -4,8 +4,6 @@ ulimit -s unlimited
 
 # Creating datacard
 
-
-
     MorphingSMCPDecays18 --output_folder="cpdecay2017" --postfix="-2D" 
 
 the option --no_shape_systs=true can be used as well to remove all shape uncertainties except for bbb's
@@ -14,7 +12,7 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
 
     combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/test_cp/cmb/* -o ws.root --parallel 8
 
-# Run maximum liklihood scan
+# Run maximum likelihood scan
 
     combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo grid -t -1 --there -n .alpha --alignEdges 1 --cminDefaultMinimizerStrategy=0 
 
@@ -32,6 +30,9 @@ To plot alpha:
 
    python scripts/plot1DScan.py --main=output/newnew_mt_bins/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI=alpha --output=alpha_cmb --no-numbers --no-box --x-min=-90 --x-max=90 --y-max=8
 
+## New scan plotting script
+
+Plot 1D scans using scripts/draw_nll_scans.py, see instructions below.
 
 # perform ZTT validation
 
@@ -141,3 +142,72 @@ Collect outputs and make plots
    ' combineTool.py -M CollectGoodnessOfFit --input output/ztt_checks/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/ztt_checks/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json'
 
    'python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS''
+
+# New (Apr 2020) plotting scripts using PostFitShapesFromWorkspace output and MultiDimFit result (1D scan)
+
+Run following set-up commands (after sourcing cmsenv as usual):
+
+    pip3 install --user --upgrade numpy
+    pip3 install --user dftools pysge oyaml uproot
+
+Alternatively, use your private python3 conda environment.
+
+Also create the output directory called `plots`:
+
+    mkdir plots
+
+## Scans of alpha
+To plot 1D scan of alpha using MultiDimFit output (ie. run fit first using above commands):
+
+    python3 scripts/draw_nll_scans.py --input-folder output/01042020/ --channel tt --mode single --plot-name alpha_cmb
+
+There are some options available to plot multiple by category and channel 
+(will add by year as well soon).
+
+## Prefit/postfit distributions
+First create workspace for category/merged category of interest using above command.
+Then run PostFitShapesFromWorkspace using the workspace.
+
+For prefit both of these steps need to be done with `alpha=0` and `alpha=90` as initial values
+such that we can plot both SM and PS distributions on prefit plots.
+To change these need to do (using vim or any other text editor):
+
+    vim ../CombinePdfs/python/CPMixtureDecays.py
+
+Change `alpha[0,-90,90] --> alpha[90,-90,90]` for PS and rerun command for workspace creation with different workspace name (`ws.root --> ws_ps.root`), eg:
+
+    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/test_cp/cmb/* -o ws_ps.root --parallel 8
+
+Otherwise, only using Asmiov of SM (`alpha=0`).
+
+### Prefit
+
+For `alpha=0` prefit:
+
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print -o shapes_eff_sm.root
+
+For `alpha=90` prefit:
+
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws_ps.root --print -o shapes_eff_ps.root
+
+For multiple channels, can accelerate prefit shapes by looping over folders and
+create workspace + PostFitShapes for separate bins.
+
+### Postfit
+
+Run MultiDimFit and save fit result:
+
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo none -t -1 --there -n .alpha --saveFitResult
+
+This will create multidimfit.alpha.root
+
+Add `--postfit --sampling -f <fit_result>` to PostFitShapesFromWorkspace command:
+
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root -o shapes_eff.root --print --postfit --sampling -f output/30032020_ps/cmb/125/multidimfit.alpha.root:fit_mdf 
+
+
+### Drawing distributions
+
+Use `scripts/run_draw1d_cpdecays.py`, eg:
+    
+    python3 scripts/run_draw1d_cpdecays.py --channel tt --year 2016 --signal-scale 50 --mode prefit --datacard shapes_eff_sm_prefitonly_tt_2016.root --alt-datacard shapes_eff_ps_prefitonly_tt_2016.root
