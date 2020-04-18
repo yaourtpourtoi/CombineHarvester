@@ -12,8 +12,6 @@ import uproot
 from tqdm.auto import tqdm
 mpl.use('pdf')
 plt.style.use('cms')
-from mpl_toolkits.axes_grid1 import Divider, Size
-from mpl_toolkits.axes_grid1.mpl_axes import Axes
 
 def create_df(
     datacard, directory, channel, processes, ch_kw={},
