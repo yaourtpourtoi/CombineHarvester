@@ -180,7 +180,7 @@ create workspace + PostFitShapes for separate bins.
 
 Run MultiDimFit and save fit result:
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo none -t -1 --there -n .alpha --saveFitResult
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo none -t -1 --there -n .alpha --saveFitResult
 
 This will create multidimfit.alpha.root
 

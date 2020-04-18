@@ -935,7 +935,10 @@ int main(int argc, char** argv) {
 
 	
      // add autoMCStats options
-     //if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
+     //if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 10 1"); 
+     //
+     // POISSON CUTOFF SHOULD BE 10 ?
+     //
      if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 0 1");
      // add lumi_scale for projection scans
      //cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
