@@ -32,7 +32,7 @@ To plot alpha:
 
 ## New scan plotting script
 
-Plot 1D scans using scripts/draw_nll_scans.py, see instructions below.
+Plot 1D scans using `scripts/draw_nll_scans.py`, see instructions below.
 
 # perform ZTT validation
 
@@ -130,6 +130,10 @@ Run following set-up commands (after sourcing cmsenv as usual):
     pip3 install --user dftools pysge oyaml uproot
 
 Alternatively, use your private python3 conda environment.
+
+For CMS plotting style (required) do:
+
+    export MPLCONFIGDIR=./scripts/mpl_configdir/
 
 Also create the output directory called `plots`:
 
