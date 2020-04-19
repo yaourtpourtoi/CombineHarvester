@@ -32,7 +32,7 @@ To plot alpha:
 
 ## New scan plotting script
 
-Plot 1D scans using scripts/draw_nll_scans.py, see instructions below.
+Plot 1D scans using `scripts/draw_nll_scans.py`, see instructions below.
 
 # perform ZTT validation
 
@@ -157,6 +157,10 @@ Run following set-up commands (after sourcing cmsenv as usual):
 
 Alternatively, use your private python3 conda environment.
 
+For CMS plotting style (required) do:
+
+    export MPLCONFIGDIR=./scripts/mpl_configdir/
+
 Also create the output directory called `plots`:
 
     mkdir plots
@@ -204,7 +208,7 @@ create workspace + PostFitShapes for separate bins.
 
 Run MultiDimFit and save fit result:
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1,lumi_scale=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo none -t -1 --there -n .alpha --saveFitResult
+    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo none -t -1 --there -n .alpha --saveFitResult
 
 This will create multidimfit.alpha.root
 
