@@ -677,13 +677,21 @@ int main(int argc, char** argv) {
 
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
-      auto bbb = ch::BinByBinFactory()
+      auto bbb_fakes = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#") // this needs to have "_bbb_bin_" in the pattern for the mergeXbbb option to work
       .SetAddThreshold(0.)
       .SetMergeThreshold(0.5)
       .SetFixNorm(false);
-      bbb.MergeBinErrors(cb.cp().backgrounds().process({"EmbedZTT"},false));
-      bbb.AddBinByBin(cb.cp().backgrounds(), cb);
+      bbb_fakes.MergeBinErrors(cb.cp().backgrounds().process({"jetFakes"}));
+      bbb_fakes.AddBinByBin(cb.cp().backgrounds().process({"jetFakes"}), cb);
+
+      auto bbb_real = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#") // this needs to have "_bbb_bin_" in the pattern for the mergeXbbb option to work
+      .SetAddThreshold(0.)
+      .SetMergeThreshold(0.5)
+      .SetFixNorm(false);
+      bbb_real.MergeBinErrors(cb.cp().backgrounds().process({"jetFakes"}, false));
+      bbb_real.AddBinByBin(cb.cp().backgrounds().process({"jetFakes"},false), cb);
 
 
      //  if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
@@ -704,7 +712,7 @@ int main(int argc, char** argv) {
            unsigned nxbins = bins[i];
            if (nxbins <=1) continue; 
            std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl; 
-           cb.cp().backgrounds().process({"EmbedZTT"}).channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
+           cb.cp().backgrounds().process({"jetFakes","Wfakes"}, false).channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
              TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
              cb.cp().ForEachSyst([&](ch::Systematic *syst) {
                auto old_name = syst->name();
@@ -769,8 +777,8 @@ int main(int argc, char** argv) {
            std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl;
 
            
-           auto procs = cb.cp().backgrounds().process({"EmbedZTT"},false).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all processes that aren't EmbedZTT
-           if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include EmbedZTT as well
+           auto procs = cb.cp().backgrounds().process({"jetFakes","Wfakes"}).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes
+           if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
 
            procs.ForEachProc([&](ch::Process *proc){
              TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();

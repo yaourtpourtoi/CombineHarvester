@@ -108,11 +108,11 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
             histo.Write()
           if nxbins>1 and not skip and not rename:
             print 'rebinning for ', dirname, key.GetName()
-            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname and key.GetName().startswith('EmbedZTT'): histo =  MergeXBins(histo,nxbins)
+            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname and not key.GetName().startswith('jetFakes'): histo =  MergeXBins(histo,nxbins)
             else: histo =  Symmetrise(histo,nxbins)
           if nxbins>1 and rename:
             print 'rebinning for ', dirname, key.GetName()
-            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname and key.GetName().startswith('EmbedZTT'): histo =  MergeXBins(histo,nxbins)
+            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname and not key.GetName().startswith('jetFakes'): histo =  MergeXBins(histo,nxbins)
             else: histo =  Symmetrise(histo,nxbins)
             histo.SetName(histo.GetName()+'_merged')
           outfile.cd()
