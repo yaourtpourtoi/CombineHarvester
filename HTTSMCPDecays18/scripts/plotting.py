@@ -70,7 +70,7 @@ def draw_1d(
         df["binwidth"] = df.reset_index().eval("binvar1-binvar0").values
         df["sum_w"] = df.eval("sum_w/binwidth")
         df["sum_ww"] = df.eval("sum_ww/(binwidth**2)")
-    
+
     with mpl.backends.backend_pdf.PdfPages(
         f"plots/{plot_var}_{nbins[3]}_{channel}_{year}.pdf",
         keep_empty=False,
@@ -83,19 +83,19 @@ def draw_1d(
         )
         if unrolled:
             fig.set_size_inches(5.3, 3.2)
-    
+
         if year == "2016":
             lumi = 35.9
         elif year == "2017": 
             lumi = 41.5
         elif year == "2018": 
             lumi = 59.7
-        
+
         if unrolled:
             dftools.draw.cms_label(ax[0], "Preliminary", lumi=lumi, extra_label=nbins[2])
         else:
             dftools.draw.cms_label(ax[0], "Preliminary", lumi=lumi)
-        
+
         # To fix when y axis is too large, scientific notation starts showing 
         # up in top left and overlaps with CMS logo
         scale_by_tenthou = False
@@ -106,7 +106,7 @@ def draw_1d(
 
 
         data_mask = df.index.get_level_values("parent") != "data_obs"
-        
+
         df_data = df.loc[~data_mask,:]
         df_mc = df.loc[data_mask,:]
         if norm_mc:
@@ -124,7 +124,7 @@ def draw_1d(
         ymc_max = max([
             df_mc["sum_w"].max(), 
         ])
-            
+
         if len(sigs) == 0:
             ymax *= 1.6
             leg_kw = {
@@ -150,12 +150,15 @@ def draw_1d(
         if signal_scale != 1.:
             process_kw["labels"]["H_sm"] = f'${signal_scale}\\times \\mathrm{{SM\ H}} \\rightarrow\\tau\\tau$'
             process_kw["labels"]["H_ps"] = f'${signal_scale}\\times \\mathrm{{PS\ H}} \\rightarrow\\tau\\tau$'
-         
-        # For MC use poisson errors by default
-        # If using Gaussian errors (like the one from CH PostFitShapes) use symmetric errors
-        # can use KW and set these only when using mcsyst
+
+        # For MC (stats) use poisson errors by default
+        # If using Gaussian errors (as we do for nuisance parameters) 
+        # use symmetric errors
+        mcsyst_kw = {}
         if mcsyst:
-            interval_func = lambda x, variance: (x-np.sqrt(variance), x+np.sqrt(variance))
+            interval_func_custom = lambda x, variance:\
+                (x-np.sqrt(variance), x+np.sqrt(variance))
+            mcsyst_kw["interval_func"] = interval_func_custom
 
         dftools.draw.data_mc(
             ax, df_data, df_mc, "binvar0", binning, 
@@ -166,9 +169,9 @@ def draw_1d(
             add_ratios=fractions, 
             mcstat=mcstat, 
             mcstat_top=mcstat,
-            interval_func=interval_func,
+            **mcsyst_kw,
         )
-        
+
         if not unrolled:
             ax[0].set_ylim(0., ymax)
             if blind:
@@ -179,18 +182,18 @@ def draw_1d(
         elif norm_bins:
             ax[0].set_ylabel(r'Events / bin')
         ax[1].set_ylabel(r'Ratio')
-        
+
         if unrolled:
             #ax[0].set_ylim(1e-1, 1e3)
             ax[0].set_ylim(1e-1, ymc_max*10)
             ax[1].set_ylim(0, 2)
             ax[1].set_yticks([0.5, 1., 1.5])
-            
+
             binvar0_bins = len(binning)
             vert_lines = list(range(nbins[1], binvar0_bins, int(nbins[1])))
             ax[0].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=20)
             ax[1].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=20)
-            
+
             ax[1].set_xticks(list(range(0, binvar0_bins, int(nbins[1]))))
 
             # annotate windows (BDT score)
@@ -205,13 +208,13 @@ def draw_1d(
                     xpos, ypos, f"({nbins[0][idx]}, {nbins[0][idx+1]})", 
                     ha='center', va='top', fontsize=ftsize,
                 )
-                
+
         try:
             ax[1].set_xlabel(var_kw[plot_var])
         except KeyError:
             print(f"{plot_var} not defined in var_kw")
             ax[1].set_xlabel(plot_var.replace("_"," "))
-        
+
         if sig_ratio:
             denom_mask = df_mc.index.get_level_values("parent") != "H_sm"
             bin_edges, bin_cents = dftools.draw.bin_lows_to_edges_cents(binning)
