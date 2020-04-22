@@ -18,12 +18,38 @@ cp_bins = {
         "tt_201$_higgs_Pi_A1_Mixed": 4,
         "tt_201$_higgs_Pi_0A1_Mixed": 4,
         "tt_201$_higgs_A1_0A1": 4,
+        "tt_201$_zttEmbed_Rho_Rho": 16,
+        "tt_201$_zttEmbed_0A1_Rho_and_0A1_0A1": 4,
+        "tt_201$_zttEmbed_A1_Rho": 8,
+        "tt_201$_zttEmbed_A1_A1": 4,
+        "tt_201$_zttEmbed_Pi_Rho_Mixed": 16,
+        "tt_201$_zttEmbed_Pi_Pi": 6,
+        "tt_201$_zttEmbed_Pi_A1_Mixed": 4,
+        "tt_201$_zttEmbed_Pi_0A1_Mixed": 4,
+        "tt_201$_zttEmbed_A1_0A1": 4,
+        "tt_201$_jetFakes_Rho_Rho": 16,
+        "tt_201$_jetFakes_0A1_Rho_and_0A1_0A1": 4,
+        "tt_201$_jetFakes_A1_Rho": 8,
+        "tt_201$_jetFakes_A1_A1": 4,
+        "tt_201$_jetFakes_Pi_Rho_Mixed": 16,
+        "tt_201$_jetFakes_Pi_Pi": 6,
+        "tt_201$_jetFakes_Pi_A1_Mixed": 4,
+        "tt_201$_jetFakes_Pi_0A1_Mixed": 4,
+        "tt_201$_jetFakes_A1_0A1": 4,
         "mt_ztt_201$": 1,
         "mt_fakes_201$": 1,
         "mt_murho_sig_201$": 16,
         "mt_mupi_sig_201$": 12,
         "mt_mua1_sig_201$": 8,
         "mt_mu0a1_sig_201$": 4,
+        "mt_murho_ztt_201$": 16,
+        "mt_mupi_ztt_201$": 12,
+        "mt_mua1_ztt_201$": 8,
+        "mt_mu0a1_ztt_201$": 4,
+        "mt_murho_fakes_201$": 16,
+        "mt_mupi_fakes_201$": 12,
+        "mt_mua1_fakes_201$": 8,
+        "mt_mu0a1_fakes_201$": 4,
 }
 
 def MergeXBins(hist, nxbins):
@@ -74,10 +100,21 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
           if dirname.replace(year,'201$') in cp_bins: nxbins = cp_bins[dirname.replace(year,'201$')]
           else: nxbins=1
           skip = ('data_obs' in key.GetName() or 'htt125' in key.GetName())
-          if nxbins>1 and not skip:
+          rename = ('data_obs' in key.GetName())
+          if rename:
+            outfile.cd()
+            if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
+            ROOT.gDirectory.cd(dirname)
+            histo.Write()
+          if nxbins>1 and not skip and not rename:
             print 'rebinning for ', dirname, key.GetName()
-            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname: histo =  MergeXBins(histo,nxbins)
+            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname and not key.GetName().startswith('jetFakes'): histo =  MergeXBins(histo,nxbins)
             else: histo =  Symmetrise(histo,nxbins)
+          if nxbins>1 and rename:
+            print 'rebinning for ', dirname, key.GetName()
+            if '_mupi_' not in dirname and '_Pi_Pi' not in dirname and not key.GetName().startswith('jetFakes'): histo =  MergeXBins(histo,nxbins)
+            else: histo =  Symmetrise(histo,nxbins)
+            histo.SetName(histo.GetName()+'_merged')
           outfile.cd()
           if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
           ROOT.gDirectory.cd(dirname)

@@ -121,6 +121,32 @@ Make impact plot:
 
   `plotImpacts.py -i impacts.json -o impacts`
 
+Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+This is useful if you want to compare data/MC agreement in these completly unblinded categories
+
+first run morphing (use --backgroundOnly=1 for ZTT categories or =2 for jetFakes category) 
+'MorphingSMCPDecays18 --output_folder="ztt_checks" --mergeXbbb=true --backgroundOnly=1'
+
+run T2W:
+
+'combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/ztt_checks/cmb/* -o ws.root --parallel 8'
+
+Then make plots in the usual way
+
+We could also perform fits / GOF tests for these categories - but this may count as unblinding so might be better to not do this before unblinding. 
+
+To perform KS test:
+
+   'combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS.toys" --freezeParameters muggH,alpha,muV --there --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 100 -s 0:5:1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1'
+
+Run observed
+   'combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS" --freezeParameters muggH,alpha,muV --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1'
+
+Collect outputs and make plots
+
+   ' combineTool.py -M CollectGoodnessOfFit --input output/ztt_checks/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/ztt_checks/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json'
+
+   'python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS''
 
 # New (Apr 2020) plotting scripts using PostFitShapesFromWorkspace output and MultiDimFit result (1D scan)
 
@@ -172,6 +198,8 @@ For `alpha=0` prefit:
 For `alpha=90` prefit:
 
     PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws_ps.root --print -o shapes_eff_ps.root
+
+(You can just use the same workspace for the above and use --freeze alpha=90)
 
 For multiple channels, can accelerate prefit shapes by looping over folders and
 create workspace + PostFitShapes for separate bins.
