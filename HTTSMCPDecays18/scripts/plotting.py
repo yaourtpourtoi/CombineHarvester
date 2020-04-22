@@ -23,6 +23,9 @@ def create_df(
             # in CH we remove processes with 0 yield
             # can add them back here in this case (using near zero event weights)
             # TO DO: can be implemented directly in CH (Morphing script)
+            # Take nbins from data hist in this case
+            nbins = _file["{}/data_obs".format(directory)].numbins
+            bin_edges = _file["{}/data_obs".format(directory)].edges
             df = pd.concat([df, pd.DataFrame({
                 "varname0": ["var"] * nbins,
                 "binvar0": bin_edges[:-1],
