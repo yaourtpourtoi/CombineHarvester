@@ -19,7 +19,9 @@ def create_df(
     df = pd.DataFrame()
     _file = uproot.open(datacard)
     for process in processes:
+        print(f"Loading {process}")
         if process not in _file[directory]:
+            print(f"Not found {process} in {_file[directory]}: set weights to 10^{{-10}}")
             # in CH we remove processes with 0 yield
             # can add them back here in this case (using near zero event weights)
             # TO DO: can be implemented directly in CH (Morphing script)
@@ -36,7 +38,6 @@ def create_df(
             })], axis='index', sort=False)
             continue
         hist = _file["{}/{}".format(directory, process)]
-        # print(dir(hist))
         bins = hist.bins
         bin_edges = hist.edges
         nbins = hist.numbins
