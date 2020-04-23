@@ -14,7 +14,7 @@ class CPMixtureDecays(PhysicsModel):
 
         poiNames = []
  
-        self.modelBuilder.doVar('alpha[0,-1,1]') 
+        self.modelBuilder.doVar('alpha[0,-90,90]')
         poiNames.append('alpha')
 
         self.modelBuilder.doVar('mutautau[1]')
