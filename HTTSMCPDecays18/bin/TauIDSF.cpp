@@ -1,3 +1,11 @@
+//***********************************
+//
+//
+//
+//Search the word 'ToBeChecked' in this file before running
+//
+//
+//*********************************
 #include <string>
 #include <map>
 #include <set>
@@ -194,16 +202,23 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
 
 int main(int argc, char** argv) {
 
+
+//***************************** ToBeChecked BeforeRunning**************
+// A regular command I use to run (specifing these options is recommended): 
+// $TauIDSF --era=2016 --embed=true --output_folder='et_datacards_output/embed/2016/'
+//
+// MC/embed and year will be added to  input folder automatically, but the proper output folder must be given in the option. It just adds 'output/' in the beginning so one should add all the rest (would be good is one make it nicer!)
+
     //for tight deeptauVsEle (et channel)
     string output_folder = "et_datacards_output/"; //easier to use output option though
-    string input_folder_mt="IC/et_datacards/";
+    string input_folder_mt="IC/et_datacards/"; 
     string input_folder_zmm="IC/et_datacards/";
     
     //for VVLoose deeptauVsEle (mt&tt channel)
     //string output_folder = "ttAndmt_datacards_output/";//easier to use output option though
     //string input_folder_mt="IC/ttAndmt_datacards/";
     //string input_folder_zmm="IC/ttAndmt_datacards/"; 
-
+//***********************************************************************
     
     string scale_sig_procs="";
     string postfix="-2D";
