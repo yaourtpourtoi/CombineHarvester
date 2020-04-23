@@ -3,8 +3,8 @@
 
 
 //-----------Only this part should be modified
-int year =2018;//2016 or 2017 or  2018
-TString sample = "MC"; //MC or embed
+int year =2016;//2016 or 2017 or  2018
+TString sample = "embed"; //MC or embed
 TString channel = "et"; // "ttAndmt" or "et"
 //--------------------------------
 
@@ -20,7 +20,7 @@ double eSF[22]={};
         
         stringstream fileNameStream;
         
-        fileNameStream <<"../output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        fileNameStream <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
         
         TString fileName;
         fileNameStream >> fileName;
@@ -94,7 +94,7 @@ TH1F *h_HPS_highpt = new TH1F("h_HPS_highpt","h_HPS_highpt", 12, 0, 12);
     h_HPS_highpt->SetBinError(12, eSF[17]);
 
 stringstream rootFileStream;
-rootFileStream <<"../output_TauIDresult_ForHiggsCP/result_TauIDSF_"<<channel<<"_"<<sample<<"_"<<to_string(year)<<".root"<<endl;
+rootFileStream <<"output_TauIDresult_ForHiggsCP/result_TauIDSF_"<<channel<<"_"<<sample<<"_"<<to_string(year)<<".root"<<endl;
 TString rootFile;
 rootFileStream >> rootFile;
 cout<<rootFile<<endl;
