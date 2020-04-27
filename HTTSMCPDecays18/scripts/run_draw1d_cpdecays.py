@@ -29,6 +29,10 @@ def parse_arguments():
         help="Which year to use",
     )
     parser.add_argument(
+        "--signals", default="H_sm",
+        help="Which signals to draw",
+    )
+    parser.add_argument(
         "--signal-scale", default=1.,
         help="Scale the signal by this value (not for 'unrolled' plots)",
     )
@@ -66,11 +70,11 @@ def parse_arguments():
     return arguments
 
 def draw1d_cpdecays(
-    channel, year, signal_scale, ff, embedding, mode, datacard, alt_datacard,
+    channel, year, signals, signal_scale, ff, embedding, mode, datacard, alt_datacard,
 ):
 
     # Plotting SM and PS template
-    signals = ["H_sm"]
+    signals = []
     if alt_datacard is not None:
         signals = ["H_sm", "H_ps"]
 
