@@ -58,6 +58,35 @@ def create_df(
     
     return df
 
+def draw_signal_ratio(ax, df_, sigs=["H_sm", "H_ps",],):
+    
+    df = df_.copy(deep=True)
+    # do ratio with respect to first entry given in sigs list
+    denom_mask = df.index.get_level_values("parent") != sigs[0]
+    binning = df.index.get_level_values("binvar0").unique()
+    df["binwidth"] = df.reset_index().eval("binvar1-binvar0").values
+    bin_edges, bin_cents = dftools.draw.bin_lows_to_edges_cents(binning)
+    for sig_name in sigs:
+        numer_mask = df.index.get_level_values("parent") != sig_name
+        sig_ratio = df.loc[~numer_mask, "sum_w"].values / df.loc[~denom_mask, "sum_w"].values
+        sig_ratio_ww = df.loc[~numer_mask, "sum_ww"].values / df.loc[~denom_mask, "sum_w"].values**2
+        ax.hist(
+            binning, bins=list(binning)+[binning[-1] + df["binwidth"].values[0]], 
+            weights=sig_ratio, histtype='step', lw=1,
+            color=process_kw["colours"][sig_name],
+            ls=process_kw["linestyles"][sig_name],
+            zorder=1,
+        )
+        up = sig_ratio + np.sqrt(sig_ratio_ww)
+        down = sig_ratio - np.sqrt(sig_ratio_ww)
+        ax.fill_between(
+            bin_edges, list(up)+[up[-1]], list(down)+[down[-1]],
+            step='post', color=process_kw["colours"][sig_name],
+            ls=process_kw["linestyles"][sig_name],
+            alpha=0.2, zorder=1,
+        )
+    return ax
+
 def draw_1d(
     df_, plot_var, channel, year, blind, sigs=[], 
     signal_scale=1., ch_kw={}, process_kw={}, var_kw={}, 
@@ -219,26 +248,24 @@ def draw_1d(
             print(f"{plot_var} not defined in var_kw")
             ax[1].set_xlabel(plot_var.replace("_"," "))
 
+
         if sig_ratio:
-            denom_mask = df_mc.index.get_level_values("parent") != "H_sm"
-            bin_edges, bin_cents = dftools.draw.bin_lows_to_edges_cents(binning)
-            for sig_name in ["H_sm", "H_ps"]:
-                numer_mask = df_mc.index.get_level_values("parent") != sig_name
-                sig_ratio = df_mc.loc[~numer_mask, "sum_w"].values / df_mc.loc[~denom_mask, "sum_w"].values
-                sig_ratio_ww = df_mc.loc[~numer_mask, "sum_ww"].values / df_mc.loc[~denom_mask, "sum_w"].values**2
-                ax[1].hist(
-                    binning, bins=list(binning)+[binning[-1] + df["binwidth"].values[0]], 
-                    weights=sig_ratio, histtype='step', lw=1,
-                    color=process_kw["colours"][sig_name],
-                    zorder=-1,
-                )
-                up = sig_ratio + np.sqrt(sig_ratio_ww)
-                down = sig_ratio - np.sqrt(sig_ratio_ww)
-                ax[1].fill_between(
-                    bin_edges, list(up)+[up[-1]], list(down)+[down[-1]],
-                    step='post', color=process_kw["colours"][sig_name],
-                    alpha=0.2, zorder=-1,
-                )
+            # use function defined above for signal ratios
+            draw_signal_ratio(ax[2], df_mc, sigs=sigs)
+            if unrolled:
+                box = ax[2].get_position()
+                ax[2].set_position([box.x0, box.y0, box.width*0.8, box.height])
+            # set x axis label to bottom pad
+            ax[1].set_xlabel("")
+            try:
+                ax[2].set_xlabel(var_kw[plot_var])
+            except KeyError:
+                print(f"{plot_var} not defined in var_kw")
+                ax[2].set_xlabel(plot_var.replace("_"," "))
+            ax[2].set_ylim(0.5, 1.5)
+            # ax[2].set_yticks([0.8, 1., 1.2])
+            ax[2].set_ylabel(r'Ratio')
+
 
         ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
         #ax[1].axhline(1.2, ls='--', color='gray')
@@ -327,8 +354,12 @@ process_kw={
         "ggH": "#ef3b2c",
         "qqH": "#2171b5",
         "VH": "#c994c7",
-        "H_sm": "#4292c6",
-        "H_ps": "#2ca25f", # dark green
+        "H_sm": "#253494",
+        "H_ps": "#006837",
+    },
+    "linestyles": {
+        "H_sm": "--",
+        "H_ps": "-",
     },
 }
 
@@ -365,7 +396,7 @@ nbins_kw = {
 
 nllscan_kw = {
     "tt": {
-        0: [r"$\tau_h\tau_h\ \mathrm{combined}$", "combined", "#DE5A6A"],
+        0: [r"$\tau_h\tau_h$", "combined", "#DE5A6A"],
         1: ["embed", "embed", ""], # embed
         2: ["fakes", "fakes", ""], # fakes
         3: [r'$\rho\rho$', "rho-rho", "#9B98CC"], # rho-rho
@@ -379,7 +410,7 @@ nllscan_kw = {
         11: [r'$a_{1}^{3\mathrm{pr}} a_{1}^{1\mathrm{pr}}$', "a1-0a1", "#2171b5"], # a1-0a1
     },
     "mt": {
-        0: [r"$\tau_{\mu}\tau_h\ \mathrm{combined}$", "combined", "#DE5A6A"],
+        0: [r"$\tau_{\mu}\tau_h$", "combined", "#DE5A6A"],
         1: ["embed", "embed", ""], # embed
         2: ["fakes", "fakes", ""], # fakes
         3: [r'$\mu\rho$', "mu-rho", "#9B98CC"], # mu-rho
