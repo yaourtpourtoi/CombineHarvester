@@ -310,7 +310,7 @@ if args.POI == 'alpha':
   latex.SetTextSize(0.04)
   latex.SetTextAlign(12)
   latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance)
-  print "0^{+} vs 0^{-} = %.2f#sigma" % significance
+  print "0^{+} vs 0^{-} = %.3f#sigma" % significance
 
 for other in other_scans:
     if args.breakdown is not None:

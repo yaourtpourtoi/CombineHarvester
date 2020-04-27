@@ -690,9 +690,18 @@ int main(int argc, char** argv) {
       .SetAddThreshold(0.)
       .SetMergeThreshold(0.5)
       .SetFixNorm(false);
-      bbb_real.MergeBinErrors(cb.cp().backgrounds().process({"jetFakes"}, false));
-      bbb_real.AddBinByBin(cb.cp().backgrounds().process({"jetFakes"},false), cb);
+      bbb_real.MergeBinErrors(cb.cp().backgrounds().process({"EmbedZTT"}));
+      bbb_real.AddBinByBin(cb.cp().backgrounds().process({"EmbedZTT"}), cb);
 
+      // we make sure the 2 largest backgrounds have seperate bbbs above. Now for the smaller backgrounds we merge all bbb uncertainties into a single nuisance
+
+      auto bbb_others = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#") // this needs to have "_bbb_bin_" in the pattern for the mergeXbbb option to work
+      .SetAddThreshold(0.)
+      .SetMergeThreshold(1.0)
+      .SetFixNorm(false);
+      bbb_others.MergeBinErrors(cb.cp().backgrounds().process({"jetFakes","EmbedZTT"}, false));
+      bbb_others.AddBinByBin(cb.cp().backgrounds().process({"jetFakes","EmbedZTT"},false), cb);
 
      //  if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
      //
@@ -703,6 +712,12 @@ int main(int argc, char** argv) {
      //  Note that the merging is now only performed for the EmbedZTT as this has a flat distribution
      std::vector<unsigned> mt_nxbins = {1,1,16,1,8,4}; // note setting element 3 to 1 because we dont want to merge bins for mu+pi channel!
      std::vector<unsigned> tt_nxbins = {1,1,16,4,8,4,16,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
+
+     tt_nxbins = {1,1,10,4,4,4,10,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
+     mt_nxbins = {1,1,10,1,4,4};
+
+
+
      for(auto year: years) {
        for (string ch: chns) {
          std::vector<unsigned> bins = {};
@@ -712,7 +727,7 @@ int main(int argc, char** argv) {
            unsigned nxbins = bins[i];
            if (nxbins <=1) continue; 
            std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl; 
-           cb.cp().backgrounds().process({"jetFakes","Wfakes"}, false).channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
+           cb.cp().backgrounds().process({"jetFakes"}, false).channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
              TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
              cb.cp().ForEachSyst([&](ch::Systematic *syst) {
                auto old_name = syst->name();
@@ -763,8 +778,13 @@ int main(int argc, char** argv) {
 
      // now we want to merge the processes that aren't flat but that are symmetric about phiCP=pi
 
-     mt_nxbins = {1,1,16,12,8,4};
-     tt_nxbins = {1,1,16,4,8,4,16,6,4,4,4};
+     //mt_nxbins = {1,1,16,12,8,4};
+     //tt_nxbins = {1,1,16,4,8,4,16,6,4,4,4};
+
+
+     tt_nxbins = {1,1,10,4,4,4,10,4,4,4,4};
+     mt_nxbins = {1,1,10,8,4,4};
+     
 
      for(auto year: years) { 
        for (string ch: chns) { 
@@ -777,7 +797,7 @@ int main(int argc, char** argv) {
            std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl;
 
            
-           auto procs = cb.cp().backgrounds().process({"jetFakes","Wfakes"}).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes
+           auto procs = cb.cp().backgrounds().process({"jetFakes"}).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes
            if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
 
            procs.ForEachProc([&](ch::Process *proc){

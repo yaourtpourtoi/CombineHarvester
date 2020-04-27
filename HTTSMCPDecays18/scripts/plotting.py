@@ -336,17 +336,24 @@ nbins_kw = {
     "tt": {
         1: [[None], 1, "embed", "embed"], # embed
         2: [[None], 1, "fakes", "fakes"], # fakes
-        3: [[0., 0.7, 0.8, 0.9, 1.], 16, r'$\rho\rho$', "rho-rho"], # rho-rho
+        3: [[0., 0.7, 0.8, 0.9, 1.], 10, r'$\rho\rho$', "rho-rho"], # rho-rho
         4: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{1\mathrm{pr}}\rho + a_{1}^{1\mathrm{pr}}a_{1}^{1\mathrm{pr}}$', "0a1-rho_0a1-0a1"], # 0a1-rho + 0a1-0a1
-        5: [[0., 0.7, 0.8, 0.9, 1.], 8, r'$a_{1}^{3\mathrm{pr}}\rho$', "a1-rho"], # a1-rho
+        5: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{3\mathrm{pr}}\rho$', "a1-rho"], # a1-rho
         6: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{3\mathrm{pr}}a_{1}^{3\mathrm{pr}}$', "a1-a1"], # a1-a1
-        7: [[0., 0.7, 0.8, 0.9, 1.], 16, r'$\pi\rho$', "pi-rho"], # pi-rho
-        8: [[0., 0.7, 0.8, 1.], 6, r'$\pi\pi$', "pi-pi"], # pi-pi
+        7: [[0., 0.7, 0.8, 0.9, 1.], 10, r'$\pi\rho$', "pi-rho"], # pi-rho
+        8: [[0., 0.7, 0.8, 1.], 4, r'$\pi\pi$', "pi-pi"], # pi-pi
         9: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$\pi a_{1}^{3\mathrm{pr}}$', "pi-a1"], # pi-a1
         10: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$\pi a_{1}^{1\mathrm{pr}}$', "pi-0a1"], # pi-0a1
         11: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{3\mathrm{pr}} a_{1}^{1\mathrm{pr}}$', "a1-0a1"], # a1-0a1
     },
     "mt": {
+        #1: [[None], 1, "embed", "embed"], # embed
+        #2: [[None], 1, "fakes", "fakes"], # fakes
+        #3: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 10, r'$\mu\rho$', "mu-rho"], # mu-rho
+        #4: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 8, r'$\mu\pi$', "mu-pi"], # mu-pi
+        #5: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1"], # mu-a1
+        #6: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu3a1
+
         1: [[None], 1, "embed", "embed"], # embed
         2: [[None], 1, "fakes", "fakes"], # fakes
         3: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 10, r'$\mu\rho$', "mu-rho"], # mu-rho

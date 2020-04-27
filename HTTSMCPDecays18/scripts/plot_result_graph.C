@@ -2,7 +2,7 @@
 
 //-----------Only this part should be modified
 TString sample = "MC"; //MC or embed
-TString channel = "ttAndmt"; // "ttAndmt" or "et"
+TString channel = "et"; // "ttAndmt" or "et"
 //--------------------------------
 
 const Int_t n = 5; 
@@ -22,7 +22,6 @@ x3[k]-=offset;
 int year_max=2018;
 int year_min=2016;
 
-if (channel=="et") year_min=2017;
 
 Double_t ex[n] = {0, 0, 0, 0, 0};
 
@@ -44,12 +43,12 @@ for (int year = year_max; year>=year_min; year--){
     for (int i=0; i<n; i++){
         
         stringstream fileNameStream_lowpt;
-        fileNameStream_lowpt <<"../output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        fileNameStream_lowpt <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
         TString fileName_lowpt;
         fileNameStream_lowpt >> fileName_lowpt;
         
         stringstream fileNameStream_highpt;
-        fileNameStream_highpt <<"../output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<5+i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
+        fileNameStream_highpt <<"output/"<<channel<<"_datacards_output/"<<sample<<"/"<<to_string(year)<<"/htt_mt_"<<5+i+1<<"_13TeV/125/multidimfit.r.root"<<endl;
         TString fileName_highpt;
         fileNameStream_highpt >> fileName_highpt;
         
@@ -105,22 +104,20 @@ min_gr = 0.7;
    gr_2017_lowpt->SetMarkerStyle(20);
    gr_2017_lowpt->SetLineColor(kRed);
  
-   if (channel!="et"){
-       gr_2016_lowpt->SetMarkerColor(kBlack);
-       gr_2016_lowpt->SetMarkerStyle(20);
-       gr_2016_lowpt->SetLineColor(kBlack);
-   }
+   gr_2016_lowpt->SetMarkerColor(kBlack);
+   gr_2016_lowpt->SetMarkerStyle(20);
+   gr_2016_lowpt->SetLineColor(kBlack);
 
 auto mg_lowpt = new TMultiGraph();
 
 mg_lowpt->Add(gr_2017_lowpt);
-if (channel!="et") mg_lowpt->Add(gr_2016_lowpt);
+mg_lowpt->Add(gr_2016_lowpt);
 
 
 leg1= new TLegend(0.55,0.65,0.7,0.85);
 leg1->AddEntry(gr_2018_lowpt,"2018","lep");
 leg1->AddEntry(gr_2017_lowpt,"2017","lep");
-if (channel!="et") leg1->AddEntry(gr_2016_lowpt,"2016","lep");
+leg1->AddEntry(gr_2016_lowpt,"2016","lep");
 leg1->SetFillColor(kWhite);
 
 
@@ -134,7 +131,7 @@ mg_lowpt->Draw("P");
 leg1->Draw();
 
 stringstream outputstream_lowpt;
-outputstream_lowpt<<"../output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_20pt40_MVADM.pdf"<<endl;
+outputstream_lowpt<<"output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_20pt40_MVADM.pdf"<<endl;
 
 TString output_lowpt;
 outputstream_lowpt>>output_lowpt;
@@ -165,22 +162,20 @@ c1->Print(output_lowpt);
    gr_2017_highpt->SetMarkerStyle(20);
    gr_2017_highpt->SetLineColor(kRed);
  
-   if (channel!="et"){
-       gr_2016_highpt->SetMarkerColor(kBlack);
-       gr_2016_highpt->SetMarkerStyle(20);
-       gr_2016_highpt->SetLineColor(kBlack);
-   }
+   gr_2016_highpt->SetMarkerColor(kBlack);
+   gr_2016_highpt->SetMarkerStyle(20);
+   gr_2016_highpt->SetLineColor(kBlack);
 
 auto mg_highpt = new TMultiGraph();
 
 mg_highpt->Add(gr_2017_highpt);
-if (channel!="et") mg_highpt->Add(gr_2016_highpt);
+mg_highpt->Add(gr_2016_highpt);
 
 
 leg2= new TLegend(0.55,0.65,0.7,0.85);
 leg2->AddEntry(gr_2018_highpt,"2018","lep");
 leg2->AddEntry(gr_2017_highpt,"2017","lep");
-if (channel!="et") leg2->AddEntry(gr_2016_highpt,"2016","lep");
+leg2->AddEntry(gr_2016_highpt,"2016","lep");
 leg2->SetFillColor(kWhite);
 
 
@@ -196,7 +191,7 @@ leg2->Draw();
 
 
 stringstream outputstream_highpt;
-outputstream_highpt<<"../output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_40pt_MVADM.pdf"<<endl;
+outputstream_highpt<<"output_TauIDresult_Generic/"<<channel<<"_"<<sample<<"_40pt_MVADM.pdf"<<endl;
 
 TString output_highpt;
 outputstream_highpt>>output_highpt;
