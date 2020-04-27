@@ -39,7 +39,17 @@ def parse_arguments():
     parser.add_argument(
         "--channel",
         default="tt", choices=["tt", "mt"],
-        help="Which channel to use",
+        help="Which channel to use, only required for combined scans",
+    )
+    parser.add_argument(
+        "--cat",
+        default="cmb",
+        help="Which sub-category to use",
+    )
+    parser.add_argument(
+        "--nsigmas",
+        default=[],
+        help="How many sigmas to annotate on plot",
     )
     parser.add_argument(
         "--mode",
@@ -71,7 +81,7 @@ def custom_cms_label(ax, label, lumi=35.9, energy=13):
         ha='left', va='bottom', transform=ax.transAxes,
     )
     ax.text(
-        1, 1, r'${:.0f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
+        1, 1, r'${:.1f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
         ha='right', va='bottom', transform=ax.transAxes,
     )
 
@@ -115,7 +125,7 @@ def prepare_scan(scan):
     return xs, ys
 
 
-def single_scan(input_folder, channel, plot_name, add_significance=False):
+def single_scan(input_folder, cat, nsigmas, plot_name, add_significance=False):
     """
     Function to plot NLL scan using ROOT output file from MultiDimFit
 
@@ -126,12 +136,20 @@ def single_scan(input_folder, channel, plot_name, add_significance=False):
         Path to top of output directory within which ROOT file output 
         from MultiDimFit is stored
 
-    channel: str
-        Channel to plot for
+    cat: str
+        Sub-category to plot. Usually 'cmb' for full
+
+    nsigmas: str
+        How many sigmas to annotate
 
     plot_name: str
         Name of plot to be saved as pdf
     """
+    nsigs = []
+    if nsigmas == 1:
+        nsigs = [1]
+    elif nsigmas == 2:
+        nsigs = [1, 2]
 
     # Plot single scan (for combined scan for instance or any other)
     with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
@@ -139,22 +157,32 @@ def single_scan(input_folder, channel, plot_name, add_significance=False):
             figsize=(3.2, 2.8), dpi=200,
         )
 
-        path = f"{input_folder}/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root"
+        path = f"{input_folder}/{cat}/125/higgsCombine.alpha.MultiDimFit.mH125.root"
         xvalues, yvalues = prepare_scan(path)
 
         # Helper function from dftools to return DataFrame with spline fit
         results = dftools.draw.nllscan(
-            xvalues, yvalues, ax=ax, nsigs=[1,2], 
+            xvalues, yvalues, ax=ax, nsigs=[1],
             left_bracket=(-90,0), right_bracket=(0,90),
         )
         
         # Aesthetics and lines 1sigma, 2sigma lines
-        custom_cms_label(ax, "Preliminary", lumi=137)
+        custom_cms_label(ax, "Preliminary", lumi=59.7)
         ax.set_xticks([-90, -45, 0, 45, 90])
         ax.set_xlim(-90., 90)
         ax.set_ylim(0., None)
-        ax.text(-85, 1.01, r'$1\sigma$', ha='left', va='bottom', color='gray')
-        ax.text(-85, 4.01, r'$2\sigma$', ha='left', va='bottom', color='gray')
+
+        # Add label of sigma here
+        if len(nsigs) >= 1:
+            ax.text(
+                -85, 1.01, r'$1\sigma$', 
+                ha='left', va='bottom', color='gray'
+            )
+            if len(nsigs) >= 2:
+                ax.text(
+                    -85, 4.01, r'$2\sigma$', 
+                    ha='left', va='bottom', color='gray'
+                )
 
         bestfit = results.query("nsig == 0.")["xval"].values
         result = np.abs(results.query("abs(nsig) == 1.")["xval"].values)
@@ -163,7 +191,7 @@ def single_scan(input_folder, channel, plot_name, add_significance=False):
         if hi_string == lo_string:
             full_string = f"{bestfit[0]:.0f} \\pm {hi_string}\\ {{}}^{{\circ}}$"
         else:
-            full_string = f"{bestfit[0]:.0f}_{{{lo_string}}}^{{+{hi_string}}} {{}}^{{\circ}}$"
+            full_string = f"{bestfit[0]:.0f}_{{-{lo_string}}}^{{+{hi_string}}} {{}}^{{\circ}}$"
 
         result_label = (
             r"$\hat{\phi}_{\tau} = " + full_string
@@ -294,9 +322,9 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
         print(f"Saving figure as {plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
-def main(input_folder, channel, mode, plot_name, y_scale, add_significance):
+def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, add_significance):
     if mode == "single":
-        single_scan(input_folder, channel, plot_name, add_significance)
+        single_scan(input_folder, cat, nsigmas, plot_name, add_significance)
     elif mode == "split_by_category":
         split_by_category_scan(input_folder, channel, plot_name, y_scale)
 
