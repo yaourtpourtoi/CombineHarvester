@@ -70,7 +70,7 @@ def parse_arguments():
     return arguments
 
 def draw1d_cpdecays(
-    channel, year, signals, signal_scale, ff, embedding, mode, datacard, alt_datacard,
+    channel, year, draw_signals, signal_scale, ff, embedding, mode, datacard, alt_datacard,
 ):
 
     # Plotting SM and PS template
