@@ -221,4 +221,6 @@ Add `--postfit --sampling -f <fit_result>` to PostFitShapesFromWorkspace command
 
 Use `scripts/run_draw1d_cpdecays.py` (with option `--mode prefit` or `--mode posfit`, eg:
     
-    python3 scripts/run_draw1d_cpdecays.py --channel tt --year 2016 --signal-scale 50 --mode prefit --datacard shapes_eff_sm_prefitonly_tt_2016.root --alt-datacard shapes_eff_ps_prefitonly_tt_2016.root
+    python3 scripts/run_draw1d_cpdecays.py --channel tt --year 2016 --draw_signals True --signal-scale 50 --mode prefit --datacard shapes_eff_sm_prefitonly_tt_2016.root --alt-datacard shapes_eff_ps_prefitonly_tt_2016.root
+
+If not wanting to draw signals, use `--draw_signals False` and no need to specify `alt-datacard`.

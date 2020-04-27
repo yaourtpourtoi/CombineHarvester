@@ -29,8 +29,8 @@ def parse_arguments():
         help="Which year to use",
     )
     parser.add_argument(
-        "--signals", default="H_sm",
-        help="Which signals to draw",
+        "--draw_signals", action='store_true', default=False,
+        help="Draw signals?",
     )
     parser.add_argument(
         "--signal-scale", default=1.,
@@ -75,7 +75,7 @@ def draw1d_cpdecays(
 
     # Plotting SM and PS template
     signals = []
-    if alt_datacard is not None:
+    if alt_datacard is not None and draw_signals:
         signals = ["H_sm", "H_ps"]
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
