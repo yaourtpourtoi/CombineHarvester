@@ -189,7 +189,7 @@ Change `alpha[0,-90,90] --> alpha[90,-90,90]` for PS and rerun command for works
 
 Otherwise, only using Asmiov of SM (`alpha=0`).
 
-### Prefit
+### Producing prefit shapes
 
 For `alpha=0` prefit:
 
@@ -204,7 +204,7 @@ For `alpha=90` prefit:
 For multiple channels, can accelerate prefit shapes by looping over folders and
 create workspace + PostFitShapes for separate bins.
 
-### Postfit
+### Producing postfit shapes
 
 Run MultiDimFit and save fit result:
 
@@ -219,6 +219,6 @@ Add `--postfit --sampling -f <fit_result>` to PostFitShapesFromWorkspace command
 
 ### Drawing distributions
 
-Use `scripts/run_draw1d_cpdecays.py`, eg:
+Use `scripts/run_draw1d_cpdecays.py` (with option `--mode prefit` or `--mode posfit`, eg:
     
     python3 scripts/run_draw1d_cpdecays.py --channel tt --year 2016 --signal-scale 50 --mode prefit --datacard shapes_eff_sm_prefitonly_tt_2016.root --alt-datacard shapes_eff_ps_prefitonly_tt_2016.root

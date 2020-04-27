@@ -1,6 +1,7 @@
 mt: 
     jetFakes: 
         - jetFakes
+        - Wfakes
     TT: 
         - TTT
     Electroweak: 
@@ -25,6 +26,7 @@ mt:
 et: 
     jetFakes:
         - jetFakes
+        - Wfakes
     TT: 
         - TTT
     Electroweak: 
@@ -39,6 +41,7 @@ et:
 tt:
     jetFakes: 
         - jetFakes
+        - Wfakes
     TT: 
         - TTT
     Electroweak: 
