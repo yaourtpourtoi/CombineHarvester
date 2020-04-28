@@ -129,7 +129,7 @@ first run morphing (use --backgroundOnly=1 for ZTT categories or =2 for jetFakes
 
 run T2W:
 
-'combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/ztt_checks/cmb/* -o ws.root --parallel 8'
+    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/ztt_checks/cmb/* -o ws.root --parallel 8
 
 Then make plots in the usual way
 
@@ -137,16 +137,17 @@ We could also perform fits / GOF tests for these categories - but this may count
 
 To perform KS test:
 
-   'combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS.toys" --freezeParameters muggH,alpha,muV --there --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 100 -s 0:5:1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1'
+   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS.toys" --freezeParameters muggH,alpha,muV --there --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 100 -s 0:5:1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1
 
 Run observed
-   'combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS" --freezeParameters muggH,alpha,muV --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1'
+
+   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/ztt_checks/cmb/125/ws.root -n ".KS" --freezeParameters muggH,alpha,muV --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1
 
 Collect outputs and make plots
 
-   ' combineTool.py -M CollectGoodnessOfFit --input output/ztt_checks/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/ztt_checks/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json'
+    combineTool.py -M CollectGoodnessOfFit --input output/ztt_checks/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/ztt_checks/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json
 
-   'python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS''
+    python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="60 fb^{-1} (13 TeV)" --output='-KS'
 
 # New (Apr 2020) plotting scripts using PostFitShapesFromWorkspace output and MultiDimFit result (1D scan)
 
@@ -221,6 +222,6 @@ Add `--postfit --sampling -f <fit_result>` to PostFitShapesFromWorkspace command
 
 Use `scripts/run_draw1d_cpdecays.py` (with option `--mode prefit` or `--mode posfit`, eg:
     
-    python3 scripts/run_draw1d_cpdecays.py --channel tt --year 2016 --draw_signals True --signal-scale 50 --mode prefit --datacard shapes_eff_sm_prefitonly_tt_2016.root --alt-datacard shapes_eff_ps_prefitonly_tt_2016.root
+    python3 scripts/run_draw1d_cpdecays.py --channel tt --year 2016 --draw-signals --signal-scale 50 --mode prefit --datacard shapes_eff_sm_prefitonly_tt_2016.root --alt-datacard shapes_eff_ps_prefitonly_tt_2016.root
 
-If not wanting to draw signals, use `--draw_signals False` and no need to specify `alt-datacard`.
+If not wanting to draw signals, use `--draw-signals False` and no need to specify `alt-datacard`.
