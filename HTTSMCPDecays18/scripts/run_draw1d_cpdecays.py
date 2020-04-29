@@ -15,8 +15,8 @@ def parse_arguments():
     epilog = (
         "Example:\n \n"
         "python3 scripts/run_draw1d_cpdecays.py --channel mt --year 2016 "
-        "--signal-scale 50 --mode prefit --datacard shapes_sm_eff.root "
-        "--alt-datacard shapes_ps_eff.root "
+        "--draw-signals --signal-scale 50 --mode prefit " 
+        "--datacard shapes_sm_eff.root --alt-datacard shapes_ps_eff.root "
     )
     parser = argparse.ArgumentParser(epilog=epilog)
 
@@ -29,7 +29,7 @@ def parse_arguments():
         help="Which year to use",
     )
     parser.add_argument(
-        "--draw_signals", action='store_true', default=False,
+        "--draw-signals", action='store_true', default=False,
         help="Draw signals?",
     )
     parser.add_argument(
@@ -70,7 +70,8 @@ def parse_arguments():
     return arguments
 
 def draw1d_cpdecays(
-    channel, year, signals, signal_scale, ff, embedding, mode, datacard, alt_datacard,
+    channel, year, draw_signals, signal_scale, ff, embedding, mode,
+    datacard, alt_datacard,
 ):
 
     # Plotting SM and PS template
@@ -80,6 +81,9 @@ def draw1d_cpdecays(
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
 
+    # The following channel kwargs config file define the 
+    # merging for the plotting, eg. merge all SM higgs signals into H_sm.
+    # Should always use scripts/plot_kw_postfix.yaml when using ff and embedding
     ch_kw = {}
     with open("scripts/plot_kw.yaml", "r") as f:
         ch_kw = yaml.safe_load(f)
@@ -94,6 +98,7 @@ def draw1d_cpdecays(
                 del proc["ZTT"]
 
     # Histogram processes to load in
+    # By default we use fake factors and embedding
     if embedding and ff:
         processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes',]
     elif ff:
@@ -109,30 +114,32 @@ def draw1d_cpdecays(
         ]
 
     if len(signals) > 0:
+        # uncomment VH signals when ready
         processes.extend([
             "ggH_sm_htt", "qqH_sm_htt", #"ZH_sm_htt", "WH_sm_htt",
             "ggH_ps_htt", "qqH_ps_htt", #"ZH_ps_htt", "WH_ps_htt",
         ])
         
-    # Draw categories (defined in nbins_kw):
+    # Draw categories (defined in nbins_kw in plotting.py):
     # 1-2: backgrounds, 3+: higgs categories
+    # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
-        unrolled_bins = list(range(1, 12))
+        bins_to_plot = list(range(1, 12))
     elif channel == "mt":
-        unrolled_bins = list(range(1,7))
-    for bin_number in unrolled_bins:
+        bins_to_plot = list(range(1,7))
+    for bin_number in bins_to_plot:
 
         category = nbins_kw[channel][bin_number][3]
 
-        if channel == "tt":
-            plot_var = "IC_15Mar2020_max_score"
-        elif channel == "mt":
-            plot_var = "NN_score"
+        # Initialise empty and change depending on category bellow
+        plot_var = ""
 
+        # Making use of python3 f-strings
         directory = f"htt_{channel}_{year}_{bin_number}_13TeV_{mode}"
 
         print(f"Doing category {category}")
         if category in ["embed", "fakes"]:
+            # MVA score plots for background categories
             if channel == "tt":
                 plot_var = "IC_15Mar2020_max_score"
             elif channel == "mt":
@@ -142,13 +149,20 @@ def draw1d_cpdecays(
             norm_bins = True
             signal_scale = 50.
         else:
+            # 'unrolled' category plots
             plot_var = "Bin_number"
             partial_blind = True
             unrolled = True
-            norm_bins = False
-            signal_scale = 1.
+            norm_bins = False # x-axis is bin-number, no need to normalise bins
+            signal_scale = 1. # no need to scale on log plot
 
+        # Create dataframe to plot
         df_plot = create_df(datacard, directory, channel, processes, ch_kw)
+
+        # In order to have alternative (PS) hypothesis create dataframe for this
+        # and then replace PS hypothesis in df_plot by PS entries here.
+        # This is because, with PostFitShapesFromWorkspace, we don't have any
+        # entries for PS signals when SM (alpha=0) 
         df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
         if df_plot_alt is not None:
             df_plot = pd.concat([
@@ -163,12 +177,16 @@ def draw1d_cpdecays(
             blind_mask = df_plot.index.get_level_values("binvar0") >= \
                 nbins_kw[channel][bin_number][1]
             df_plot.loc[data_mask & blind_mask, "sum_w"] = np.nan
+
+        # Always use mcstat=True and mcsyst=True when plotting systematic unc.
         draw_1d(
-            df_plot, plot_var, channel, year, blind=False,
-            sigs=signals, signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
+            df_plot, plot_var, channel, year, blind=False, sigs=signals, 
+            signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,
         )
 
 if __name__ == "__main__":
+    # Unpack arguments from argparse so that the options can be passed directly 
+    # into the function.
     draw1d_cpdecays(**vars(parse_arguments()))

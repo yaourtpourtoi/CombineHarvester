@@ -43,7 +43,7 @@ def create_df(
         nbins = hist.numbins
         weights = hist.values
         variance = hist.variances
-        
+
         df = pd.concat([df, pd.DataFrame({
             "varname0": ["var"] * nbins,
             "binvar0": bin_edges[:-1],
@@ -59,7 +59,7 @@ def create_df(
     return df
 
 def draw_signal_ratio(ax, df_, sigs=["H_sm", "H_ps",],):
-    
+
     df = df_.copy(deep=True)
     # do ratio with respect to first entry given in sigs list
     denom_mask = df.index.get_level_values("parent") != sigs[0]
@@ -268,8 +268,6 @@ def draw_1d(
 
 
         ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
-        #ax[1].axhline(1.2, ls='--', color='gray')
-        #ax[1].axhline(0.8, ls='--', color='gray')
         ax[1].set_ylim(0.6, 1.4)
         if unrolled:
             ax[1].set_ylim(0., 2.)
