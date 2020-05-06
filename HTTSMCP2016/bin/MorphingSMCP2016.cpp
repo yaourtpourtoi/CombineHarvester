@@ -650,7 +650,7 @@ int main(int argc, char** argv) {
       if(do_embedding){
         bkg_procs["et"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/};
         bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/};
-        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/};
+        bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/,"Wfakes"};
       }
 
     }
@@ -1082,29 +1082,16 @@ int main(int argc, char** argv) {
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_ph_htt"};
-    if(!useJHU) sig_procs["qqH"] = {"vbf125_powheg","wh125_powheg","zh125_powheg"};
-    else sig_procs["qqH"] = {"qqHsm_htt125","WHsm_htt125","ZHsm_htt125"};
-    sig_procs["qqH_BSM"] = {"qqHmm_htt","qqHps_htt","WHps_htt","WHmm_htt","ZHps_htt","ZHmm_htt"};
-    sig_procs["ggHCP"] = {"reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0"};
+    if(!useJHU) sig_procs["qqH"] = {"qqH_htt125","WH_htt125","ZH_htt125"};
+    else sig_procs["qqH"] = {"qqH_sm_htt125","WH_sm_htt125","ZH_sm_htt125"};
+    if(check) sig_procs["qqH"] = {"vbf125_powheg","wh125_powheg","zh125_powheg"};
+
+    sig_procs["qqH_BSM"] = {"qqH_mm_htt","qqH_ps_htt","WH_ps_htt","WH_mm_htt","ZH_ps_htt","ZH_mm_htt"};
+    
+    sig_procs["ggHCP"] = {"ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt"};
+    if(check) sig_procs["ggHCP"] = {"reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0"};
     
     vector<string> masses = {"125"};    
-
-    map<const std::string, float> sig_xsec_aachen;
-    map<const std::string, float> sig_xsec_IC;
-	
-    sig_xsec_aachen["reweighted_ggH_htt_0PM"] = 0.921684152;      
-    sig_xsec_aachen["reweighted_ggH_htt_0Mf05ph0"] = 1.84349344;    
-    sig_xsec_aachen["reweighted_ggH_htt_0M"] = 0.909898616;    
-    sig_xsec_aachen["qqHsm_htt"] = 0.689482928;    
-    sig_xsec_aachen["qqHmm_htt"] = 0.12242788;    
-    sig_xsec_aachen["qqHps_htt"] = 0.0612201968;
-
-    sig_xsec_IC["reweighted_ggH_htt_0PM"] = 0.3987;    
-    sig_xsec_IC["reweighted_ggH_htt_0Mf05ph0"] = 0.7893;    
-    sig_xsec_IC["reweighted_ggH_htt_0M"] = 0.3858;    
-    sig_xsec_IC["qqHsm_htt"] = 2.6707;    
-    sig_xsec_IC["qqHmm_htt"] = 0.47421;    
-    sig_xsec_IC["qqHps_htt"] = 0.2371314;    
     
     using ch::syst::bin_id;
     
@@ -1208,31 +1195,6 @@ int main(int argc, char** argv) {
     });
 
     
-    std::vector<std::string> all_prefit_bkgs = {
-        "QCD","ZL","ZJ","ZTT","TTJ","TTT","TT",
-        "W","W_rest","ZJ_rest","TTJ_rest","VVJ_rest","VV","VVT","VVJ",
-        "ggH_hww125","qqH_hww125","EWKZ", "qqHsm_htt125", "qqH_htt125", "WH_htt125", "ZH_htt125"};
-    
-        ////! Option to scale rate
-    std::vector< std::string > sig_processes = {"reweighted_ggH_htt_0PM125","reweighted_ggH_htt_0Mf05ph0125","reweighted_ggH_htt_0M125","qqHsm_htt125","qqHmm_htt125","qqHps_htt125"};
-     
-    if (!scale_sig_procs.empty()) {	
-    	cb.cp().PrintAll();		
-        cb.ForEachProc([sig_xsec_IC, sig_xsec_aachen](ch::Process *p) { if (sig_xsec_IC.count(p->process()) ){std::cout << "Scaling " << p->process() << std::endl;  p->set_rate(p->rate() * sig_xsec_IC.at(p->process())/sig_xsec_aachen.at(p->process()) ); };});                 	
-    };
-    
-    if(!real_data){
-         for (auto b : cb.cp().bin_set()) {
-             std::cout << " - Replacing data with asimov in bin " << b << "\n";
-             cb.cp().bin({b}).ForEachObs([&](ch::Observation *obs) {
-               obs->set_shape(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetShape()+cb.cp().bin({b}).signals().process({"reweighted_ggH_htt_0PM", "ggH_htt"}).mass({"125"}).GetShape(), true);
-               obs->set_rate(cb.cp().bin({b}).backgrounds().process(all_prefit_bkgs).GetRate()+cb.cp().bin({b}).signals().process({"reweighted_ggH_htt_0PM", "ggH_htt"}).mass({"125"}).GetRate());
-             });
-           }
-   }   
-
-
-    
     
     // can auto-merge the bins with bbb uncertainty > 90% - may be better to merge these bins by hand though!
     auto rebin = ch::AutoRebin()
@@ -1308,6 +1270,7 @@ int main(int argc, char** argv) {
 
   // partially decorrelate the energy scale uncertainties
   DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
+  DecorrelateMCAndEMB(cb,"CMS_scale_mu_13TeV","CMS_scale_embedded_mu_13TeV",0.5);
   DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
   DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
   DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
@@ -1328,6 +1291,7 @@ int main(int argc, char** argv) {
   DecorrelateMCAndEMB(cb,"CMS_eff_t_bin3_13TeV","CMS_eff_embedded_t_bin3_13TeV",0.5);
   DecorrelateMCAndEMB(cb,"CMS_eff_t_bin4_13TeV","CMS_eff_embedded_t_bin4_13TeV",0.5);
   DecorrelateMCAndEMB(cb,"CMS_eff_t_bin5_13TeV","CMS_eff_embedded_t_bin5_13TeV",0.5);
+
 
   // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
   cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
