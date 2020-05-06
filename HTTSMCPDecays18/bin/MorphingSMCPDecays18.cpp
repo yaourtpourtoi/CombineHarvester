@@ -1071,7 +1071,19 @@ int main(int argc, char** argv) {
     DecorrelateMCAndEMB(cb,"CMS_eff_t_bin3_13TeV","CMS_eff_embedded_t_bin3_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_eff_t_bin4_13TeV","CMS_eff_embedded_t_bin4_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_eff_t_bin5_13TeV","CMS_eff_embedded_t_bin5_13TeV",0.5);
-  
+ 
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pTlow_MVADM0_13TeV","CMS_eff_embedded_t_pTlow_MVADM0_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pTlow_MVADM1_13TeV","CMS_eff_embedded_t_pTlow_MVADM1_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pTlow_MVADM2_13TeV","CMS_eff_embedded_t_pTlow_MVADM2_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pTlow_MVADM10_13TeV","CMS_eff_embedded_t_pTlow_MVADM10_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pTlow_MVADM11_13TeV","CMS_eff_embedded_t_pTlow_MVADM11_13TeV",0.5);
+
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pThigh_MVADM0_13TeV","CMS_eff_embedded_t_pThigh_MVADM0_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pThigh_MVADM1_13TeV","CMS_eff_embedded_t_pThigh_MVADM1_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pThigh_MVADM2_13TeV","CMS_eff_embedded_t_pThigh_MVADM2_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pThigh_MVADM10_13TeV","CMS_eff_embedded_t_pThigh_MVADM10_13TeV",0.5);
+    DecorrelateMCAndEMB(cb,"CMS_eff_t_pThigh_MVADM11_13TeV","CMS_eff_embedded_t_pThigh_MVADM11_13TeV",0.5);
+ 
     // fully decorrelate lepton+tau trigger uncertainties for embedded and MC
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM0_13TeV","CMS_eff_embedded_Xtrigger_mt_DM0_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_Xtrigger_mt_DM1_13TeV","CMS_eff_embedded_Xtrigger_mt_DM1_13TeV");
