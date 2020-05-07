@@ -675,6 +675,15 @@ int main(int argc, char** argv) {
   // convert systematics to lnN here
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
 
+  // set normalisation only fake factor uncertainties to lnN for tt channel in all cats except background categories
+
+  cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *s) {
+      if (s->type().find("shape") == std::string::npos) return;
+      if(s->name().find("ff_tt_qcd_stat_unc1") != std::string::npos){
+         s->set_type("lnN");
+      }
+  });
+
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
       auto bbb_fakes = ch::BinByBinFactory()
