@@ -326,6 +326,7 @@ int main(int argc, char** argv) {
     bool do_jetfakes = true;
     bool mergeXbbb = false; 
     bool mergeSymm = false; 
+    bool control = false; 
     unsigned backgroundOnly = 0; 
 
     string era;
@@ -347,6 +348,7 @@ int main(int argc, char** argv) {
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
     ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
+    ("control", po::value<bool>(&control)->default_value(false))
     ("backgroundOnly", po::value<unsigned>(&backgroundOnly)->default_value(0));
 
 
@@ -376,7 +378,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt","mt"};
+    VString chns = {"tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -529,10 +531,22 @@ int main(int argc, char** argv) {
       }
     }
 
+    if(control) {
+      for (string y : years) {
+        cats["tt_"+y] = {
+          {1, "tt_2018_m_vis"},
+          {2, "tt_2018_svfit_mass"},
+          {3, "tt_2018_pt_1"},
+          {4, "tt_2018_pt_2"},
+        };
+      }
+    }
+
+
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
     sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"/*, "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"*/};   
- 
+
     vector<string> masses = {"125"};    
     
     using ch::syst::bin_id;
@@ -566,7 +580,7 @@ int main(int argc, char** argv) {
         return s->name().find("scale_t") != std::string::npos || s->name().find("scale_e") != std::string::npos || s->name().find("scale_j") != std::string::npos || s->name().find("_met_") != std::string::npos || s->name().find("ZLShape") != std::string::npos;
       });
     }
-            
+
     //! [part7]
     for(auto year: years) {
       for (string chn : chns){
@@ -575,18 +589,21 @@ int main(int argc, char** argv) {
           extra = "/"+year+"/";
           if(chn == "ttbar") channel = "em"; 
           cb.cp().channel({chn+"_"+year}).backgrounds().ExtractShapes(
-                                                             input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
-                                                             "$BIN/$PROCESS",
-                                                             "$BIN/$PROCESS_$SYSTEMATIC");
+            input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
+            "$BIN/$PROCESS",
+            "$BIN/$PROCESS_$SYSTEMATIC"
+          );
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
             cb.cp().channel({chn+"_"+year}).process(sig_procs["ggH"]).ExtractShapes(
-                                                                    input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                                                                    "$BIN/$PROCESS$MASS",
-                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
+              input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+              "$BIN/$PROCESS$MASS",
+              "$BIN/$PROCESS$MASS_$SYSTEMATIC"
+            );
             cb.cp().channel({chn+"_"+year}).process(sig_procs["qqH"]).ExtractShapes(
-                                                                    input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                                                                    "$BIN/$PROCESS$MASS",
-                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
+              input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+              "$BIN/$PROCESS$MASS",
+              "$BIN/$PROCESS$MASS_$SYSTEMATIC"
+            );
           }
       }
     }    
