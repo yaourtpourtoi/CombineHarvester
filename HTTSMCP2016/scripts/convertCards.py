@@ -5,6 +5,26 @@ ROOT.TH1.AddDirectory(False)
  
 # note that the merging of bins requires an even numnber of phi_CP bins, and this number must be set to the specific value used in the dictionary below otherwise the method will give incorrect results!
 
+def WeightedAve(h1,h2,h3):
+  hout = h1.Clone()
+  for i in range(1,hout.GetNbinsX()+1):
+
+    w1 = 1./h1.GetBinError(i)**2
+    w2 = 1./h2.GetBinError(i)**2
+    w3 = 1./h3.GetBinError(i)**2
+
+    c1 = h1.GetBinContent(i)
+    c2 = h2.GetBinContent(i)
+    c3 = h3.GetBinContent(i)
+
+    c = (w1*c1+w2*c2+w3*c3)/(w1+w2+w3)
+    u = 1./math.sqrt(w1+w2+w3)
+
+    hout.SetBinContent(i,c)
+    hout.SetBinError(i,u)
+
+  return hout
+
 def Symmetrise(hist,nxbins):
   histnew=hist.Clone()
   nbins = hist.GetNbinsX()
@@ -34,12 +54,8 @@ def ASymmetrise(hist,hsm,hps,nxbins):
   histnew=hist.Clone()
   hsub=hsm.Clone()
   hsub.Add(hps)
-  hsub.Scale(0.5) # not needed if we scale MM to 2*SM cross section!!!!!!
   for i in range(1,hsub.GetNbinsX()+1): hsub.SetBinError(i,0.) # 0 errors as we dont want to include the subtracted components bbb uncertainties in the final uncertainty
   histnew.Add(hsub,-1)
-  #canv = ROOT.TCanvas()
-  #histnew.Draw()
-  #canv.Print('test1.pdf')
   nbins = hist.GetNbinsX()
   if nbins % 2:
     print 'N X bins in 2D histogram is not even so cannot symmetrise!'
@@ -61,43 +77,78 @@ def ASymmetrise(hist,hsm,hps,nxbins):
       c2_new = cnew*c2/abs(c2)
       histnew.SetBinContent(lo_bin_,c1_new)
       histnew.SetBinContent(hi_bin_,c2_new)
-      #print lo_bin_, hi_bin_, c1, c2, c1_new, c2_new
       histnew.SetBinError(lo_bin_,enew)
       histnew.SetBinError(hi_bin_,enew)
-  #histnew.Draw()
-  #canv.Print('test2.pdf')
   histnew.Add(hsub)
   return histnew
 
-def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
+def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname, reweight=False):
     directory = infile.Get(dirname)
     year='2018'
     if '2016' in dirname: year='2016'
     if '2017' in dirname: year='2017'
-    # in first loop we symmetrise all templates except for mm ones
+
+    # if we are combining reweighted templates with standard ones then we perform this step first
+    if reweight:
+      for key in directory.GetListOfKeys():
+          histo = directory.Get(key.GetName())
+          if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F):
+
+            cps = ['sm','ps','mm']
+            for i in cps:
+              if i == 'sm':
+                o1 = 'ps'
+                o2 = 'mm'
+              if i == 'ps':
+                o1 = 'sm'
+                o2 = 'mm'
+              if i == 'mm':
+                o1 = 'sm'
+                o2 = 'ps'
+              if 'ggH_%s_htt' % i in key.GetName() and 'reweightedto' not in key.GetName():
+                h2 = directory.Get(key.GetName().replace(i+'_htt125',o1+'_htt125_reweightedto_'+i))
+                h3 = directory.Get(key.GetName().replace(i+'_htt125',o2+'_htt125_reweightedto_'+i))
+                histo=WeightedAve(histo,h2,h3)
+                break
+            outfile.cd()
+            if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
+            ROOT.gDirectory.cd(dirname)
+            histo.Write("",ROOT.TObject.kOverwrite)
+            ROOT.gDirectory.cd('/')
+      
+      directory = outfile.Get(dirname)
+
+    to_write = []
+
+    # in second loop we symmetrise all templates except for mm ones
     for key in directory.GetListOfKeys():
         histo = directory.Get(key.GetName())
         if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F): 
           nxbins=12
           skip = ('data_obs' in key.GetName())
-          asymm = ('ggH_mm' in key.GetName() or 'ggHmm' in key.GetName()  or 'qqHmm' in key.GetName()  or 'qqH_mm' in key.GetName() or 'WHmm' in key.GetName() or 'WH_mm' in key.GetName()  or 'ZHmm' in key.GetName() or 'ZH_mm' in key.GetName())
-          if nxbins>1 and not skip:
+          asymm = (('ggH_mm' in key.GetName() or 'ggHmm' in key.GetName()  or 'qqHmm' in key.GetName()  or 'qqH_mm' in key.GetName() or 'WHmm' in key.GetName() or 'WH_mm' in key.GetName()  or 'ZHmm' in key.GetName() or 'ZH_mm' in key.GetName() or 'reweightedto_mm' in key.GetName())) and 'reweightedto_sm' not in key.GetName() and 'reweightedto_ps' not in key.GetName()
+          if nxbins>1 and not skip and not asymm:
             print 'rebinning for ', dirname, key.GetName()
             if not asymm: histo =  Symmetrise(histo,nxbins)
-          outfile.cd()
-          if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
-          ROOT.gDirectory.cd(dirname)
-          histo.Write()
-          ROOT.gDirectory.cd('/')
+          to_write.append([dirname,histo])
+
+    for x in to_write:
+      outfile.cd()
+      if not ROOT.gDirectory.GetDirectory(x[0]): ROOT.gDirectory.mkdir(x[0])
+      ROOT.gDirectory.cd(x[0])
+      x[1].Write("",ROOT.TObject.kOverwrite)
+      ROOT.gDirectory.cd('/')
+
+    directory = outfile.Get(dirname)
 
     # now loop to antisymmetrise mm templates
     for key in directory.GetListOfKeys():
         histo = directory.Get(key.GetName())
         if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F):
-          if not ('ggH_mm' in key.GetName() or 'ggHmm' in key.GetName()  or 'qqHmm' in key.GetName()  or 'qqH_mm' in key.GetName() or 'WHmm' in key.GetName() or 'WH_mm' in key.GetName()  or 'ZHmm' in key.GetName() or 'ZH_mm' in key.GetName()): continue
+          if not ((('ggH_mm' in key.GetName() or 'ggHmm' in key.GetName()  or 'qqHmm' in key.GetName()  or 'qqH_mm' in key.GetName() or 'WHmm' in key.GetName() or 'WH_mm' in key.GetName()  or 'ZHmm' in key.GetName() or 'ZH_mm' in key.GetName() or 'reweightedto_mm' in key.GetName())) and 'reweightedto_sm' not in key.GetName() and 'reweightedto_ps' not in key.GetName()): continue
           nxbins=12
           if nxbins>1 and not skip:
-            print 'rebinning for ', dirname, key.GetName()
+            print 'asymm rebinning for ', dirname, key.GetName()
             sm_name = key.GetName()
             ps_name = key.GetName()
             to_asymm = ['ggHmm', 'ggH_mm', 'qqHmm','qqH_mm','WHmm','WH_mm','ZHmm','ZH_mm']
@@ -109,15 +160,18 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
             hsm = directory.Get(sm_name)
             hps = directory.Get(ps_name)
             histo =  ASymmetrise(histo,hsm,hps,nxbins)
-          outfile.cd()
-          if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
-          ROOT.gDirectory.cd(dirname)
-          histo.Write()
-          ROOT.gDirectory.cd('/')
+          to_write.append([dirname,histo])
 
+    for x in to_write:
+      outfile.cd()
+      if not ROOT.gDirectory.GetDirectory(x[0]): ROOT.gDirectory.mkdir(x[0])
+      ROOT.gDirectory.cd(x[0])
+      x[1].Write("",ROOT.TObject.kOverwrite)
+      ROOT.gDirectory.cd('/')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', '-f', help= 'File from which we want to merge X bins')
+parser.add_argument('--reweight', '-r', action='store_true', help= 'Combine reweighted templates with standard ones')
 args = parser.parse_args()
 filename = args.file
 newfilename=filename.replace('.root','-symm.root')
@@ -128,6 +182,7 @@ output_file = ROOT.TFile(newfilename,"RECREATE")
 for key in original_file.GetListOfKeys():
     if isinstance(original_file.Get(key.GetName()),ROOT.TDirectory):
         dirname=key.GetName()
-        #if not ('boosted' in dirname and 'tightmjj' in dirname): continue
-        getHistogramAndWriteToFile(original_file,output_file,key.GetName(),dirname)
+        if not ('dijet' in dirname or 'vbf' in dirname): continue
+        print 'performing (anti-)symmetrisation for cat:', dirname
+        getHistogramAndWriteToFile(original_file,output_file,key.GetName(),dirname,reweight=args.reweight)
 
