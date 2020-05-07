@@ -553,6 +553,7 @@ int main(int argc, char** argv) {
     bool useJHU = false;
     bool powheg_check = false;
     int sync = 0;
+    bool mergeSymm = false;
 
     string era;
     po::variables_map vm;
@@ -578,11 +579,14 @@ int main(int argc, char** argv) {
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(true))
     ("powheg_check", po::value<bool>(&powheg_check)->default_value(false))
     ("useJHU", po::value<bool>(&useJHU)->default_value(false))
+    ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
     ("sync", po::value<int>(&sync)->default_value(0));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
     typedef vector<string> VString;
+
+    if(mergeSymm) postfix+="-symm";
  
     if(do_control_plots>0){
       ttbar_fit = false;
@@ -1084,12 +1088,12 @@ int main(int argc, char** argv) {
     sig_procs["ggH"] = {"ggH_ph_htt"};
     if(!useJHU) sig_procs["qqH"] = {"qqH_htt125","WH_htt125","ZH_htt125"};
     else sig_procs["qqH"] = {"qqH_sm_htt125","WH_sm_htt125","ZH_sm_htt125"};
-    if(check) sig_procs["qqH"] = {"vbf125_powheg","wh125_powheg","zh125_powheg"};
+    if(sync) sig_procs["qqH"] = {"vbf125_powheg","wh125_powheg","zh125_powheg"};
 
     sig_procs["qqH_BSM"] = {"qqH_mm_htt","qqH_ps_htt","WH_ps_htt","WH_mm_htt","ZH_ps_htt","ZH_mm_htt"};
     
     sig_procs["ggHCP"] = {"ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt"};
-    if(check) sig_procs["ggHCP"] = {"reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0"};
+    if(sync) sig_procs["ggHCP"] = {"reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0"};
     
     vector<string> masses = {"125"};    
     
@@ -1260,11 +1264,32 @@ int main(int argc, char** argv) {
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
   //ConvertShapesToLnN(cb.cp(), "CMS_PreFire_13TeV", 0.);
 
-
   // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
-  cb.cp().RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
-  cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
-  cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+  cb.cp().process({"qqH_htt","qqH_htt125"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
+  cb.cp().process({"qqH_htt","qqH_htt125"}).RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
+  cb.cp().process({"qqH_htt","qqH_htt125"}).RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+
+  // scale up/down QCD scale uncertainties to ensure they do not change the inclusive yields only the shapes/acceptance
+
+  // update these numbers for VBF and ggH samples used for ggH analysis!!!!
+
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.16021);
+      syst->set_value_d(syst->value_d()*0.847445);
+  });
+  cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*0.993322);
+      syst->set_value_d(syst->value_d()*1.00631);
+  });
+
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.15977);
+      syst->set_value_d(syst->value_d()*0.848289);
+  });
+  cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*0.994640);
+      syst->set_value_d(syst->value_d()*1.00565);
+  });
 
   // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
 
@@ -1457,24 +1482,133 @@ int main(int argc, char** argv) {
  
     //! [part8]
     //// add bbb uncertainties for all backgrounds
-    //auto bbb = ch::BinByBinFactory()
-    //.SetPattern("CMS_$ANALYSIS_$BIN_$ERA_$PROCESS_bin_$#")
-    //.SetAddThreshold(0.)
-    //.SetMergeThreshold(0.4)
-    //.SetFixNorm(false);
-    //bbb.MergeBinErrors(cb.cp().backgrounds());
-    //bbb.AddBinByBin(cb.cp().backgrounds(), cb);
+    auto bbb = ch::BinByBinFactory()
+    .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
+    .SetAddThreshold(0.)
+    .SetMergeThreshold(0.5)
+    .SetFixNorm(false);
+    bbb.MergeBinErrors(cb.cp().backgrounds());
+    bbb.AddBinByBin(cb.cp().backgrounds(), cb);
 
-    //// add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
-    //auto bbb_sig = ch::BinByBinFactory()
-    //.SetPattern("CMS_$ANALYSIS_$BIN_$ERA_$PROCESS_bin_$#")
-    //.SetAddThreshold(0.05)
-    //.SetMergeThreshold(0.0)
-    //.SetFixNorm(false);
-    //bbb_sig.AddBinByBin(cb.cp().signals().bin_id({1,2,3,4,5,6,31,32,41,42}),cb); 
+    // add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
+    auto bbb_sig = ch::BinByBinFactory()
+    .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
+    .SetAddThreshold(0.)
+    .SetMergeThreshold(0.0)
+    .SetFixNorm(false);
+    bbb_sig.AddBinByBin(cb.cp().signals(),cb); 
+
+    if(mergeSymm) {
+
+      unsigned nxbins = 12; // same dphi binning in each category for now!
+
+      // first ensure symmetrised bins have bbb's correlated
+
+      std::cout << "merging bins with nxbins set to " << nxbins << std::endl;
+      cb.cp().process({"ggH_mm_htt","qqH_mm_htt125","qqH_mm_htt"},false).bin_id({1,2},false).ForEachProc([&](ch::Process *proc){
+        TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
+        cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+          auto old_name = syst->name();
+          std::string nonum_name = old_name;
+          bool match_proc = (MatchingProcess(*proc,*syst));
+          if (match_proc && old_name.find("_bbb_bin_") != std::string::npos) {
+            int bin_num = -1;
+            std::stringstream old_name_ss;
+            old_name_ss << old_name;
+            string temp;
+            int found;
+            while (std::getline(old_name_ss, temp, '_')) {
+              if (stringstream(temp) >> found) bin_num = found;
+            }
+            int bin_num_y =floor((double)(bin_num-1)/(double)nxbins);
+            if((bin_num-bin_num_y*nxbins)<=nxbins/2) {
+            int bin_num_hi = (bin_num_y+1)*nxbins - (bin_num-bin_num_y*nxbins) + 1;
+              nonum_name.erase (nonum_name.end()-std::to_string(bin_num).length(), nonum_name.end());
+              TH1D *shape_u_new = (TH1D*)syst->ClonedShapeU().get()->Clone();
+              TH1D *shape_d_new = (TH1D*)syst->ClonedShapeD().get()->Clone();
+              shape_u_new->Add(nominal,-1);
+              shape_d_new->Add(nominal,-1);
+
+              std::string to_add_name = nonum_name+std::to_string(bin_num_hi);
+              cb.cp().syst_name({to_add_name}).ForEachSyst([&](ch::Systematic *s) {
+                TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
+                TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
+                shape_u_temp->Add(nominal,-1);
+                shape_d_temp->Add(nominal,-1);
+                shape_u_new->Add(shape_u_temp);
+                shape_d_new->Add(shape_d_temp);
+              });
+              shape_u_new->Add(nominal);
+              shape_d_new->Add(nominal);
+              syst->set_shapes(std::unique_ptr<TH1>(static_cast<TH1*>(shape_u_new)),std::unique_ptr<TH1>(static_cast<TH1*>(shape_d_new)),nullptr);
+              syst->set_value_u((syst->value_u()-1.)*2 + 1.);
+              syst->set_value_d((syst->value_d()-1.)*2 + 1.);
+              std::cout << "removing" << "    " << to_add_name << std::endl;
+              cb.FilterSysts([&](ch::Systematic *s){
+                return s->name() == to_add_name;
+              });
+            }
+          }
+        });
+      });
+
+      // now anti-correlate bbb's for anti-symmetrised templates
+
+      cb.cp().process({"ggH_mm_htt","qqH_mm_htt125","qqH_mm_htt"}).bin_id({1,2},false).ForEachProc([&](ch::Process *proc){
+        TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
+        cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+          auto old_name = syst->name();
+          std::string nonum_name = old_name;
+          bool match_proc = (MatchingProcess(*proc,*syst));
+          if (match_proc && old_name.find("_bbb_bin_") != std::string::npos) {
+            int bin_num = -1;
+            std::stringstream old_name_ss;
+            old_name_ss << old_name;
+            string temp;
+            int found;
+            while (std::getline(old_name_ss, temp, '_')) {
+              if (stringstream(temp) >> found) bin_num = found;
+            }
+            int bin_num_y =floor((double)(bin_num-1)/(double)nxbins);
+            if((bin_num-bin_num_y*nxbins)<=nxbins/2) {
+            int bin_num_hi = (bin_num_y+1)*nxbins - (bin_num-bin_num_y*nxbins) + 1;
+              nonum_name.erase (nonum_name.end()-std::to_string(bin_num).length(), nonum_name.end());
+              TH1D *shape_u_new = (TH1D*)syst->ClonedShapeU().get()->Clone();
+              TH1D *shape_d_new = (TH1D*)syst->ClonedShapeD().get()->Clone();
+              shape_u_new->Add(nominal,-1);
+              shape_d_new->Add(nominal,-1);
+              double val_up_new = syst->value_u();
+              double val_down_new = syst->value_d();
+
+              std::string to_add_name = nonum_name+std::to_string(bin_num_hi);
+              cb.cp().syst_name({to_add_name}).ForEachSyst([&](ch::Systematic *s) {
+                TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
+                TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
+                shape_u_temp->Add(nominal,-1);
+                shape_d_temp->Add(nominal,-1);
+                shape_u_new->Add(shape_d_temp); // order switched
+                shape_d_new->Add(shape_u_temp); // due to anti-correlation
+
+                val_up_new+=(s->value_d()-1.);
+                val_down_new+=(s->value_u()-1.); // double check these values when you have datacards!!!!
+              });
+              shape_u_new->Add(nominal);
+              shape_d_new->Add(nominal);
+              syst->set_shapes(std::unique_ptr<TH1>(static_cast<TH1*>(shape_u_new)),std::unique_ptr<TH1>(static_cast<TH1*>(shape_d_new)),nullptr);
+              syst->set_value_u(val_up_new);
+              syst->set_value_d(val_down_new);
+              std::cout << "removing" << "    " << to_add_name << std::endl;
+              cb.FilterSysts([&](ch::Systematic *s){
+                return s->name() == to_add_name;
+              });
+            }
+          }
+        });
+      });
+    }
 
     // use for Barlow-Beeston-lite method for bbb uncertainties
-    cb.AddDatacardLineAtEnd("* autoMCStats 0");
+    //cb.AddDatacardLineAtEnd("* autoMCStats 0");
 
     // binomial bbb uncertainties for embedded em events to cover statistical uncertainties on generator weights
     //auto bbb = ch::BinByBinFactory()
