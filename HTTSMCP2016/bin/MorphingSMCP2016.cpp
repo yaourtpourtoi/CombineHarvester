@@ -1273,22 +1273,39 @@ int main(int argc, char** argv) {
 
   // update these numbers for VBF and ggH samples used for ggH analysis!!!!
 
-  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.16021);
-      syst->set_value_d(syst->value_d()*0.847445);
-  });
   cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*0.993322);
-      syst->set_value_d(syst->value_d()*1.00631);
-  });
-
-  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.15977);
-      syst->set_value_d(syst->value_d()*0.848289);
+      syst->set_value_u(syst->value_u()*0.9925);
+      syst->set_value_d(syst->value_d()*1.0075);
   });
   cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*0.994640);
-      syst->set_value_d(syst->value_d()*1.00565);
+      syst->set_value_u(syst->value_u()*0.9941);
+      syst->set_value_d(syst->value_d()*1.0063);
+  });
+
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).process({"ggH_sm_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.162);
+      syst->set_value_d(syst->value_d()*0.863);
+  });
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).process({"ggH_ps_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.161);
+      syst->set_value_d(syst->value_d()*0.863);
+  });
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).process({"ggH_sm_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.189);
+      syst->set_value_d(syst->value_d()*0.844);
+  });
+
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).process({"ggH_sm_htt"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.163);
+      syst->set_value_d(syst->value_d()*0.862);
+  });
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).process({"ggH_ps_htt"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.162);
+      syst->set_value_d(syst->value_d()*0.862);
+  });
+  cb.cp().syst_name({"CMS_scale_gg_13TeV"}).process({"ggH_mm_htt"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+      syst->set_value_u(syst->value_u()*1.191);
+      syst->set_value_d(syst->value_d()*0.842);
   });
 
   // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
