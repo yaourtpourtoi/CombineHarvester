@@ -562,6 +562,9 @@ int main(int argc, char** argv) {
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats[chn+"_"+year], true); // SM VBF/VH are added as signal
 
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ggH"], cats[chn+"_"+year], true);
+
+            // add VH for tt channel only for now
+            if(chn == "tt") cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, {"WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"}, cats[chn+"_"+year], true);
           }
       }
     } 
@@ -604,6 +607,13 @@ int main(int argc, char** argv) {
               "$BIN/$PROCESS$MASS",
               "$BIN/$PROCESS$MASS_$SYSTEMATIC"
             );
+            if(chn=="tt") { // add VH only for tt channel at the moment
+              cb.cp().channel({chn+"_"+year}).process({"WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"}).ExtractShapes(
+                input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+                "$BIN/$PROCESS$MASS",
+                "$BIN/$PROCESS$MASS_$SYSTEMATIC"
+              );
+            }
           }
       }
     }    
@@ -797,10 +807,6 @@ int main(int argc, char** argv) {
 
      // now we want to merge the processes that aren't flat but that are symmetric about phiCP=pi
 
-     //mt_nxbins = {1,1,16,12,8,4};
-     //tt_nxbins = {1,1,16,4,8,4,16,6,4,4,4};
-
-
      tt_nxbins = {1,1,10,4,4,4,10,4,4,4,4};
      mt_nxbins = {1,1,10,8,4,4};
      
@@ -884,19 +890,21 @@ int main(int argc, char** argv) {
       .SetFixNorm(false);
       bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
 
-      auto bbb_Wh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
+// neglect VH uncerts as they are a small contribution
 
-      auto bbb_Zh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
+//      auto bbb_Wh = ch::BinByBinFactory()
+//      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bin_$#")
+//      .SetAddThreshold(0.0)
+//      .SetMergeThreshold(0.0)
+//      .SetFixNorm(false);
+//      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
+//
+//      auto bbb_Zh = ch::BinByBinFactory()
+//      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bin_$#")
+//      .SetAddThreshold(0.0)
+//      .SetMergeThreshold(0.0)
+//      .SetFixNorm(false);
+//      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
 
     }
 
