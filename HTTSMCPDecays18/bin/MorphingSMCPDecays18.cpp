@@ -378,7 +378,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt","mt"};
+    VString chns = {"tt"};//,"mt"};
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -534,10 +534,13 @@ int main(int argc, char** argv) {
     if(control) {
       for (string y : years) {
         cats["tt_"+y] = {
-          {1, "tt_2018_m_vis"},
-          {2, "tt_2018_svfit_mass"},
-          {3, "tt_2018_pt_1"},
-          {4, "tt_2018_pt_2"},
+          {1, "tt_"+y+"_m_vis"},
+          {2, "tt_"+y+"_svfit_mass"},
+          {3, "tt_"+y+"_pt_1"},
+          {4, "tt_"+y+"_pt_2"},
+          {5, "tt_"+y+"_n_jets"},
+          {6, "tt_"+y+"_met"},
+          {7, "tt_"+y+"_mjj"},
         };
       }
     }
@@ -632,10 +635,6 @@ int main(int argc, char** argv) {
         }
         return null_yield;
     });   
-    
-    cb.cp().channel({"tt_2017"}).process({"ZL"}).bin_id({9}).FilterSysts([&](ch::Systematic *s){
-      return (s->name().find("scale_j") != std::string::npos || s->name().find("res_j"));
-    });
     
     
     // And convert any shapes in the ttbar CRs to lnN:
