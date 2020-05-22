@@ -632,9 +632,9 @@ int main(int argc, char** argv) {
         }
         return null_yield;
     });   
-    
+
     cb.cp().channel({"tt_2017"}).process({"ZL"}).bin_id({9}).FilterSysts([&](ch::Systematic *s){
-      return (s->name().find("scale_j") != std::string::npos || s->name().find("res_j"));
+      return (s->name().find("scale_j") != std::string::npos || s->name().find("res_j") != std::string::npos);
     });
     
     
