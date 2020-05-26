@@ -331,7 +331,7 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
         print(f"Saving figure as {plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
-def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappas",):
+def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
     """
     Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
     This is specifically for 2D scans of kappas (ie. reduced Yukawa couplings)
@@ -370,7 +370,9 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappas",):
         df["deltaNLL"] = 2*df["deltaNLL"]
         # print(df)
         z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
-        z[np.isnan(z)] = 0
+        # some nans...remove by setting to high value (high NLL)
+        # this is only a temp. fix, hopefully fix to Physics model will remove these
+        z[np.isnan(z)] = 300
         # print(z)
         
         pos = ax.imshow(
@@ -398,17 +400,17 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappas",):
             levels=[scipy.stats.chi2.ppf(0.95, df=2)],
             colors=['black'], linestyles='dashed',
         )
-        #ax.plot(
-        #    1, 1, '*', color='#e31a1c',
-        #    ms=6, label="SM",
-        #)
         bf = (
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter1],
         )
         ax.plot(
             *bf, 'P', color='black',
-            ms=6, label="Best fit",
+            ms=5, label="Best fit",
+        )
+        ax.plot(
+            1, 0, '*', color='#e31a1c',
+            ms=4, label="SM",
         )
         handles, labels = ax.get_legend_handles_labels()
         handles = handles[::-1] + [
@@ -418,15 +420,20 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappas",):
         labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
         ax.legend(
             handles, labels,
-            loc=4, labelspacing=0.1, borderpad=0.2,
+            loc=3, labelspacing=0.1, borderpad=0.2,
             fancybox=True, edgecolor='#d9d9d9',
-            framealpha=0.6, handlelength=1.,
+            framealpha=0., handlelength=1.,
         )
-        
+
+        ax.text(
+            0.75, 0.05, r"$\mu_{gg\mathrm{H}}^{\tau\tau} = \mu_{V}^{\tau\tau} = 1$",
+            ha='center', va='bottom', transform=ax.transAxes,
+        )
+
         ax.set_xlabel(r'$\kappa_{\tau}$')
         ax.set_ylabel(r'$\tilde{\kappa}_{\tau}$')
-        ax.set_ylim(-1.5, 1.5)
-        ax.set_xlim(-1.5, 1.5)
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_xlim(-1.5, 1.5)
         print(f"Saving figure as plots/{plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
