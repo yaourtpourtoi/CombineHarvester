@@ -28,6 +28,9 @@ def parse_arguments():
         "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
         "--channel tt --mode split_by_category --plot-name alpha_tt_split "
         "--y-scale linear "
+        
+        "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
+        "--mode 2d_kappa"
     )
     parser = argparse.ArgumentParser(epilog=epilog)
 
@@ -54,7 +57,7 @@ def parse_arguments():
     parser.add_argument(
         "--mode",
         default="single",
-        choices=["single", "split_by_category"],
+        choices=["single", "split_by_category", "2d_kappa"],
         help="What scans to plot",
     )
     parser.add_argument(
@@ -80,10 +83,16 @@ def custom_cms_label(ax, label, lumi=35.9, energy=13):
         0, 1, r'$\mathbf{CMS}\ \mathit{'+label+'}$',
         ha='left', va='bottom', transform=ax.transAxes,
     )
-    ax.text(
-        1, 1, r'${:.1f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
-        ha='right', va='bottom', transform=ax.transAxes,
-    )
+    if lumi != 137:
+        ax.text(
+            1, 1, r'${:.1f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
+            ha='right', va='bottom', transform=ax.transAxes,
+        )
+    else:
+        ax.text(
+            1, 1, r'${:.0f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
+            ha='right', va='bottom', transform=ax.transAxes,
+        )
 
 def prepare_scan(scan):
     """
@@ -322,11 +331,10 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
         print(f"Saving figure as {plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
-def scan_2d_kappa(input_folder, plot_name, category="cmb",):
+def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappas",):
     """
     Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
-    The combined channel scan will be plotted, included all the sub-categories
-    of that channel.
+    This is specifically for 2D scans of kappas (ie. reduced Yukawa couplings)
 
 
     Paramters
@@ -342,7 +350,7 @@ def scan_2d_kappa(input_folder, plot_name, category="cmb",):
         Category name as in CH, usually 'cmb' for these kind of scans
     """
 
-    with mpl.backends.backend_pdf.PdfPages(f"plots/scan-2d-kappas.pdf", keep_empty=False,) as pdf:
+    with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
         fig, ax = plt.subplots(
             figsize=(4, 3), dpi=200,
         )
@@ -360,10 +368,10 @@ def scan_2d_kappa(input_folder, plot_name, category="cmb",):
         xbins = df[parameter0].unique()
         ybins = df[parameter1].unique()
         df["deltaNLL"] = 2*df["deltaNLL"]
-        display(df)
+        # print(df)
         z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
         z[np.isnan(z)] = 0
-        display(z)
+        # print(z)
         
         pos = ax.imshow(
             z, origin='lower', interpolation='bicubic',
@@ -419,11 +427,7 @@ def scan_2d_kappa(input_folder, plot_name, category="cmb",):
         ax.set_ylabel(r'$\tilde{\kappa}_{\tau}$')
         ax.set_ylim(-1.5, 1.5)
         ax.set_xlim(-1.5, 1.5)
-        pdf.savefig(fig, bbox_inches='tight')
-        pass
-
-
-        print(f"Saving figure as {plot_name}.pdf")
+        print(f"Saving figure as plots/{plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
 def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, add_significance):
@@ -432,7 +436,7 @@ def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, add_sign
     elif mode == "split_by_category":
         split_by_category_scan(input_folder, channel, plot_name, y_scale)
     elif mode == "2d_kappa":
-        scan_2d_kappa(input_folder, plot_name, cat)
+        scan_2d_kappa(input_folder, cat, plot_name)
 
 if __name__ == "__main__":
     main(**vars(parse_arguments()))
