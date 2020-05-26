@@ -27,12 +27,12 @@ def parse_arguments():
 
         "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
         "--channel tt --mode split_by_category --plot-name alpha_tt_split "
-        "--y-scale linear "
+        "--y-scale linear \n "
         
         "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
-        "--mode 2d_kappa"
+        "--mode 2d_kappa \n "
     )
-    parser = argparse.ArgumentParser(epilog=epilog)
+    parser = argparse.ArgumentParser(epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument(
         "--input-folder",
