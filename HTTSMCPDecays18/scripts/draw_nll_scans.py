@@ -154,7 +154,7 @@ def single_scan(input_folder, cat, nsigmas, plot_name, add_significance=False):
     # Plot single scan (for combined scan for instance or any other)
     with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
         fig, ax = plt.subplots(
-            figsize=(3.2, 2.8), dpi=200,
+            figsize=(4, 3), dpi=200,
         )
 
         path = f"{input_folder}/{cat}/125/higgsCombine.alpha.MultiDimFit.mH125.root"
@@ -253,7 +253,7 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
 
     with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
         fig, ax = plt.subplots(
-            figsize=(3.2, 2.8), dpi=200,
+            figsize=(4, 3), dpi=200,
         )
 
         if channel == "tt":
@@ -322,11 +322,117 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
         print(f"Saving figure as {plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
+def scan_2d_kappa(input_folder, plot_name, category="cmb",):
+    """
+    Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
+    The combined channel scan will be plotted, included all the sub-categories
+    of that channel.
+
+
+    Paramters
+    =========
+    input_folder: str
+        Path to top of output directory within which ROOT file output 
+        from MultiDimFit is stored
+
+    plot_name: str
+        Name of plot to be saved as pdf
+
+    category: str
+        Category name as in CH, usually 'cmb' for these kind of scans
+    """
+
+    with mpl.backends.backend_pdf.PdfPages(f"plots/scan-2d-kappas.pdf", keep_empty=False,) as pdf:
+        fig, ax = plt.subplots(
+            figsize=(4, 3), dpi=200,
+        )
+        path = f"{input_folder}/{category}/125/higgsCombine.kappas.MultiDimFit.mH125.root"
+        parameter0 = "kappaH"
+        parameter1 = "kappaA"
+        f = uproot.open(path)["limit"]
+        df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
+            namedecode="utf-8")
+        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        df = df.loc[~df.duplicated(),:]
+        df = df.sort_values(by=[parameter0, parameter1])
+        custom_cms_label(ax, "Preliminary", lumi=137)
+        
+        xbins = df[parameter0].unique()
+        ybins = df[parameter1].unique()
+        df["deltaNLL"] = 2*df["deltaNLL"]
+        display(df)
+        z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
+        z[np.isnan(z)] = 0
+        display(z)
+        
+        pos = ax.imshow(
+            z, origin='lower', interpolation='bicubic',
+            extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]],
+            aspect='auto', cmap="Blues_r",
+            vmin=0., vmax=25.,
+        )
+        cbar = fig.colorbar(pos, ax=ax)
+        cbar.set_label(r'$-2\Delta\log \mathcal{L}$')
+        
+        X, Y = np.meshgrid(xbins, ybins)
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            #z,
+            levels=[scipy.stats.chi2.ppf(0.68, df=2)],
+            colors=['black'],
+        )
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            levels=[scipy.stats.chi2.ppf(0.95, df=2)],
+            colors=['black'], linestyles='dashed',
+        )
+        #ax.plot(
+        #    1, 1, '*', color='#e31a1c',
+        #    ms=6, label="SM",
+        #)
+        bf = (
+            df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
+            df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter1],
+        )
+        ax.plot(
+            *bf, 'P', color='black',
+            ms=6, label="Best fit",
+        )
+        handles, labels = ax.get_legend_handles_labels()
+        handles = handles[::-1] + [
+            mpl.lines.Line2D([0], [0], color='black', lw=1),
+            mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
+        ]
+        labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
+        ax.legend(
+            handles, labels,
+            loc=4, labelspacing=0.1, borderpad=0.2,
+            fancybox=True, edgecolor='#d9d9d9',
+            framealpha=0.6, handlelength=1.,
+        )
+        
+        ax.set_xlabel(r'$\kappa_{\tau}$')
+        ax.set_ylabel(r'$\tilde{\kappa}_{\tau}$')
+        ax.set_ylim(-1.5, 1.5)
+        ax.set_xlim(-1.5, 1.5)
+        pdf.savefig(fig, bbox_inches='tight')
+        pass
+
+
+        print(f"Saving figure as {plot_name}.pdf")
+        pdf.savefig(fig, bbox_inches='tight')
+
 def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, add_significance):
     if mode == "single":
         single_scan(input_folder, cat, nsigmas, plot_name, add_significance)
     elif mode == "split_by_category":
         split_by_category_scan(input_folder, channel, plot_name, y_scale)
+    elif mode == "2d_kappa":
+        scan_2d_kappa(input_folder, plot_name, cat)
 
 if __name__ == "__main__":
     main(**vars(parse_arguments()))
