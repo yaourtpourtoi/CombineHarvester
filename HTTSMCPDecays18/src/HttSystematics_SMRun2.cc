@@ -698,10 +698,10 @@ namespace ch {
 
 
         // temp remove for VBF in mt in 2018 as it isn't working properly
-        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
         //
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","tt_2018","mt","mt_2016","mt_2017"}).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({{"ggH_sm_htt","ggH_mm_htt","ggH_ps_htt"}, all_mc_bkgs})).channel({"mt_2018"}).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","tt_2018","mt","mt_2016","mt_2017"}).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({{"ggH_sm_htt","ggH_mm_htt","ggH_ps_htt"}, all_mc_bkgs})).channel({"mt_2018"}).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Background normalization uncertainties

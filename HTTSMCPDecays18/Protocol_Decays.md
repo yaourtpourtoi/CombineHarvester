@@ -34,6 +34,16 @@ To plot alpha:
 
 Plot 1D scans using `scripts/draw_nll_scans.py`, see instructions below.
 
+# do 2D scans of kappas
+build workspace with 
+
+  combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/merge_sig/cmb/* --PO do_kappas -o ws_kappas.root --parallel 8
+
+run files (note i would use batch jobs):
+
+  combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,muggH=1,kappaH=1,kappaA=0  --redefineSignalPOIs kappaH,kappaA --points 2000  -d output/merge_sig/cmb/125/ws_kappas.root --algo grid -t -1 --there -n .kappas --alignEdges 1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1
+
+
 # perform ZTT validation
 
 Morphing step

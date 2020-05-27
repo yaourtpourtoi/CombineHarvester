@@ -93,8 +93,12 @@ def ASymmetrise(hist,hsm,hps,nxbins):
   hsub=hsm.Clone()
   hsub.Add(hps)
   hsub.Scale(0.5)
-  for i in range(1,hsub.GetNbinsX()+1): hsub.SetBinError(i,0.) # 0 errors as we dont want to include the subtracted components bbb uncertainties in the final uncertainty
-  histnew.Add(hsub,-1)
+  for i in range(1,hsub.GetNbinsX()+1): 
+    histnew.SetBinContent(i,histnew.GetBinContent(i)-hsub.GetBinContent(i))
+    #e = histnew.GetBinError(i) - hsm.GetBinError(i)/2 - hps.GetBinError(i)/2
+    #histnew.SetBinError(i,e)
+  #hsub.SetBinError(i,0.) # 0 errors as we dont want to include the subtracted components bbb uncertainties in the final uncertainty
+  #histnew.Add(hsub,-1)
   nbins = hist.GetNbinsX()
   if nbins % 2:
     print 'N X bins in 2D histogram is not even so cannot symmetrise!'
@@ -106,30 +110,35 @@ def ASymmetrise(hist,hsm,hps,nxbins):
     for j in range(1,nybins+1):
       lo_bin_ = lo_bin+(j-1)*nxbins
       hi_bin_ = hi_bin+(j-1)*nxbins
-      c1 = histnew.GetBinContent(lo_bin_)
-      c2 = histnew.GetBinContent(hi_bin_)
-      e1 = histnew.GetBinError(lo_bin_)
-      e2 = histnew.GetBinError(hi_bin_)
-      #cnew = (abs(c1)+abs(c2))/2
-      cnew = abs(c1-c2)/2 # this way of defining it gives better results in cases where statistical fluctuations cause the bins to have the same signs
-      enew = math.sqrt(e1**2 + e2**2)/2
-      if c1*c2>=0:
-        # in cases where the bins have the same signs we define the one with the smallest bin content to be the negative bin and the other positive
-        if c1<c2:
-          c1_new = -cnew
-          c2_new =  cnew
-        else:
-          c1_new =  cnew
-          c2_new = -cnew
-      else:
-        c1_new = cnew*c1/abs(c1)
-        c2_new = cnew*c2/abs(c2)
+
+      mmi = hist.GetBinContent(lo_bin_)       
+      mmj = hist.GetBinContent(hi_bin_)       
+      smi = hsm.GetBinContent(lo_bin_) 
+      smj = hsm.GetBinContent(hi_bin_)
+      psi = hps.GetBinContent(lo_bin_)
+      psj = hps.GetBinContent(hi_bin_)
+
+      e_mmi = hist.GetBinError(lo_bin_)
+      e_mmj = hist.GetBinError(hi_bin_)
+      e_smi = hsm.GetBinError(lo_bin_)
+      e_smj = hsm.GetBinError(hi_bin_)
+      e_psi = hps.GetBinError(lo_bin_)
+      e_psj = hps.GetBinError(hi_bin_) 
+
+      c1_new = ( smj+psj-mmj + mmi)/2
+      c2_new = ( smi+psi-mmi + mmj)/2
+
+      e1_new = math.sqrt((e_smj+e_psj-e_mmj)**2 + e_mmi**2)/2 
+      e2_new = math.sqrt((e_smi+e_psi-e_mmi)**2 + e_mmj**2)/2 
 
       histnew.SetBinContent(lo_bin_,c1_new)
       histnew.SetBinContent(hi_bin_,c2_new)
-      histnew.SetBinError(lo_bin_,enew)
-      histnew.SetBinError(hi_bin_,enew)
-  histnew.Add(hsub)
+      histnew.SetBinError(lo_bin_,e1_new)
+      histnew.SetBinError(hi_bin_,e1_new)
+
+      #print c1_new, c2_new
+      #print e1_new, e2_new    
+
   return histnew
 
 def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
@@ -148,8 +157,6 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
             if '_mm_htt125' in key.GetName():
               hsm = directory.Get(key.GetName().replace('_mm_','_sm_'))
               hps = directory.Get(key.GetName().replace('_mm_','_ps_'))
-              hsm = Symmetrise(hsm,nxbins)
-              hps = Symmetrise(hps,nxbins)
               histo = ASymmetrise(histo,hsm,hps,nxbins)
             else: histo = Symmetrise(histo,nxbins)
 
@@ -186,6 +193,7 @@ output_file = ROOT.TFile(newfilename,"RECREATE")
 
 for key in original_file.GetListOfKeys():
     if isinstance(original_file.Get(key.GetName()),ROOT.TDirectory):
+        #if 'murho' not in key.GetName() or 'sig' not in key.GetName(): continue
         dirname=key.GetName()
         getHistogramAndWriteToFile(original_file,output_file,key.GetName(),dirname)
 
