@@ -27,9 +27,12 @@ def parse_arguments():
 
         "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
         "--channel tt --mode split_by_category --plot-name alpha_tt_split "
-        "--y-scale linear "
+        "--y-scale linear \n "
+        
+        "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
+        "--mode 2d_kappa \n "
     )
-    parser = argparse.ArgumentParser(epilog=epilog)
+    parser = argparse.ArgumentParser(epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument(
         "--input-folder",
@@ -54,7 +57,7 @@ def parse_arguments():
     parser.add_argument(
         "--mode",
         default="single",
-        choices=["single", "split_by_category"],
+        choices=["single", "split_by_category", "2d_kappa"],
         help="What scans to plot",
     )
     parser.add_argument(
@@ -80,10 +83,16 @@ def custom_cms_label(ax, label, lumi=35.9, energy=13):
         0, 1, r'$\mathbf{CMS}\ \mathit{'+label+'}$',
         ha='left', va='bottom', transform=ax.transAxes,
     )
-    ax.text(
-        1, 1, r'${:.1f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
-        ha='right', va='bottom', transform=ax.transAxes,
-    )
+    if lumi != 137:
+        ax.text(
+            1, 1, r'${:.1f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
+            ha='right', va='bottom', transform=ax.transAxes,
+        )
+    else:
+        ax.text(
+            1, 1, r'${:.0f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
+            ha='right', va='bottom', transform=ax.transAxes,
+        )
 
 def prepare_scan(scan):
     """
@@ -154,7 +163,7 @@ def single_scan(input_folder, cat, nsigmas, plot_name, add_significance=False):
     # Plot single scan (for combined scan for instance or any other)
     with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
         fig, ax = plt.subplots(
-            figsize=(3.2, 2.8), dpi=200,
+            figsize=(4, 3), dpi=200,
         )
 
         path = f"{input_folder}/{cat}/125/higgsCombine.alpha.MultiDimFit.mH125.root"
@@ -253,7 +262,7 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
 
     with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
         fig, ax = plt.subplots(
-            figsize=(3.2, 2.8), dpi=200,
+            figsize=(4, 3), dpi=200,
         )
 
         if channel == "tt":
@@ -322,11 +331,119 @@ def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
         print(f"Saving figure as {plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
+def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
+    """
+    Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
+    This is specifically for 2D scans of kappas (ie. reduced Yukawa couplings)
+
+
+    Paramters
+    =========
+    input_folder: str
+        Path to top of output directory within which ROOT file output 
+        from MultiDimFit is stored
+
+    plot_name: str
+        Name of plot to be saved as pdf
+
+    category: str
+        Category name as in CH, usually 'cmb' for these kind of scans
+    """
+
+    with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
+        fig, ax = plt.subplots(
+            figsize=(4, 3), dpi=200,
+        )
+        path = f"{input_folder}/{category}/125/higgsCombine.kappas.MultiDimFit.mH125.root"
+        parameter0 = "kappaH"
+        parameter1 = "kappaA"
+        f = uproot.open(path)["limit"]
+        df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
+            namedecode="utf-8")
+        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        df = df.loc[~df.duplicated(),:]
+        df = df.sort_values(by=[parameter0, parameter1])
+        custom_cms_label(ax, "Preliminary", lumi=137)
+        
+        xbins = df[parameter0].unique()
+        ybins = df[parameter1].unique()
+        df["deltaNLL"] = 2*df["deltaNLL"]
+        # print(df)
+        z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
+        # some nans...remove by setting to high value (high NLL)
+        # this is only a temp. fix, hopefully fix to Physics model will remove these
+        z[np.isnan(z)] = 300
+        # print(z)
+        
+        pos = ax.imshow(
+            z, origin='lower', interpolation='bicubic',
+            extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]],
+            aspect='auto', cmap="Blues_r",
+            vmin=0., vmax=25.,
+        )
+        cbar = fig.colorbar(pos, ax=ax)
+        cbar.set_label(r'$-2\Delta\log \mathcal{L}$')
+        
+        X, Y = np.meshgrid(xbins, ybins)
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            #z,
+            levels=[scipy.stats.chi2.ppf(0.68, df=2)],
+            colors=['black'],
+        )
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            levels=[scipy.stats.chi2.ppf(0.95, df=2)],
+            colors=['black'], linestyles='dashed',
+        )
+        bf = (
+            df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
+            df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter1],
+        )
+        ax.plot(
+            *bf, 'P', color='black',
+            ms=5, label="Best fit",
+        )
+        ax.plot(
+            1, 0, '*', color='#e31a1c',
+            ms=4, label="SM",
+        )
+        handles, labels = ax.get_legend_handles_labels()
+        handles = handles[::-1] + [
+            mpl.lines.Line2D([0], [0], color='black', lw=1),
+            mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
+        ]
+        labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
+        ax.legend(
+            handles, labels,
+            loc=3, labelspacing=0.1, borderpad=0.2,
+            fancybox=True, edgecolor='#d9d9d9',
+            framealpha=0., handlelength=1.,
+        )
+
+        ax.text(
+            0.75, 0.05, r"$\mu_{gg\mathrm{H}}^{\tau\tau} = \mu_{V}^{\tau\tau} = 1$",
+            ha='center', va='bottom', transform=ax.transAxes,
+        )
+
+        ax.set_xlabel(r'$\kappa_{\tau}$')
+        ax.set_ylabel(r'$\tilde{\kappa}_{\tau}$')
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_xlim(-1.5, 1.5)
+        print(f"Saving figure as plots/{plot_name}.pdf")
+        pdf.savefig(fig, bbox_inches='tight')
+
 def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, add_significance):
     if mode == "single":
         single_scan(input_folder, cat, nsigmas, plot_name, add_significance)
     elif mode == "split_by_category":
         split_by_category_scan(input_folder, channel, plot_name, y_scale)
+    elif mode == "2d_kappa":
+        scan_2d_kappa(input_folder, cat, plot_name)
 
 if __name__ == "__main__":
     main(**vars(parse_arguments()))

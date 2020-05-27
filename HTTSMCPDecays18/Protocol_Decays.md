@@ -177,12 +177,19 @@ Also create the output directory called `plots`:
     mkdir plots
 
 ## Scans of alpha
+To see the full list of options with examples can use `python3 scripts/draw_nll_scans.py --help` (like usual).
+
 To plot 1D scan of alpha using MultiDimFit output (ie. run fit first using above commands):
 
     python3 scripts/draw_nll_scans.py --input-folder output/01042020/ --channel tt --mode single --plot-name alpha_cmb
 
 There are some options available to plot multiple by category and channel 
 (will add by year as well soon).
+
+## 2D scans of kappa
+To plot 2D scans of kappa (related to Yukawa couplings) use option `--mode 2d_kappa`, eg:
+
+    python3 scripts/draw_nll_scans.py --input-folder output/01042020 --mode 2d_kappa
 
 ## Prefit/postfit distributions
 First create workspace for category/merged category of interest using above command.
