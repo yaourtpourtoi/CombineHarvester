@@ -88,6 +88,58 @@ def Symmetrise(hist,nxbins):
       histnew.SetBinError(hi_bin_,enew)
   return histnew
 
+def ASymmetrise(hist,hsm,hps,nxbins):
+  histnew=hist.Clone()
+  hsub=hsm.Clone()
+  hsub.Add(hps)
+  hsub.Scale(0.5)
+  for i in range(1,hsub.GetNbinsX()+1): 
+    histnew.SetBinContent(i,histnew.GetBinContent(i)-hsub.GetBinContent(i))
+    #e = histnew.GetBinError(i) - hsm.GetBinError(i)/2 - hps.GetBinError(i)/2
+    #histnew.SetBinError(i,e)
+  #hsub.SetBinError(i,0.) # 0 errors as we dont want to include the subtracted components bbb uncertainties in the final uncertainty
+  #histnew.Add(hsub,-1)
+  nbins = hist.GetNbinsX()
+  if nbins % 2:
+    print 'N X bins in 2D histogram is not even so cannot symmetrise!'
+    return
+  nybins = nbins/nxbins
+  for i in range(1,nxbins/2+1):
+    lo_bin = i
+    hi_bin = nxbins-i+1
+    for j in range(1,nybins+1):
+      lo_bin_ = lo_bin+(j-1)*nxbins
+      hi_bin_ = hi_bin+(j-1)*nxbins
+
+      mmi = hist.GetBinContent(lo_bin_)       
+      mmj = hist.GetBinContent(hi_bin_)       
+      smi = hsm.GetBinContent(lo_bin_) 
+      smj = hsm.GetBinContent(hi_bin_)
+      psi = hps.GetBinContent(lo_bin_)
+      psj = hps.GetBinContent(hi_bin_)
+
+      e_mmi = hist.GetBinError(lo_bin_)
+      e_mmj = hist.GetBinError(hi_bin_)
+      e_smi = hsm.GetBinError(lo_bin_)
+      e_smj = hsm.GetBinError(hi_bin_)
+      e_psi = hps.GetBinError(lo_bin_)
+      e_psj = hps.GetBinError(hi_bin_) 
+
+      c1_new = ( smj+psj-mmj + mmi)/2
+      c2_new = ( smi+psi-mmi + mmj)/2
+
+      e1_new = math.sqrt((e_smj+e_psj-e_mmj)**2 + e_mmi**2)/2 
+      e2_new = math.sqrt((e_smi+e_psi-e_mmi)**2 + e_mmj**2)/2 
+
+      histnew.SetBinContent(lo_bin_,c1_new)
+      histnew.SetBinContent(hi_bin_,c2_new)
+      histnew.SetBinError(lo_bin_,e1_new)
+      histnew.SetBinError(hi_bin_,e1_new)
+
+      #print c1_new, c2_new
+      #print e1_new, e2_new    
+
+  return histnew
 
 def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
     directory = infile.Get(dirname)
@@ -99,6 +151,15 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
         if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F): 
           if dirname.replace(year,'201$') in cp_bins: nxbins = cp_bins[dirname.replace(year,'201$')]
           else: nxbins=1
+
+          #for signal always symmetrise SM and PS and anti-symmetrise MM
+          if 'htt125' in key.GetName() and nxbins>1:
+            if '_mm_htt125' in key.GetName():
+              hsm = directory.Get(key.GetName().replace('_mm_','_sm_'))
+              hps = directory.Get(key.GetName().replace('_mm_','_ps_'))
+              histo = ASymmetrise(histo,hsm,hps,nxbins)
+            else: histo = Symmetrise(histo,nxbins)
+
           skip = ('data_obs' in key.GetName() or 'htt125' in key.GetName())
           rename = ('data_obs' in key.GetName())
           if rename:
@@ -132,6 +193,7 @@ output_file = ROOT.TFile(newfilename,"RECREATE")
 
 for key in original_file.GetListOfKeys():
     if isinstance(original_file.Get(key.GetName()),ROOT.TDirectory):
+        #if 'murho' not in key.GetName() or 'sig' not in key.GetName(): continue
         dirname=key.GetName()
         getHistogramAndWriteToFile(original_file,output_file,key.GetName(),dirname)
 
