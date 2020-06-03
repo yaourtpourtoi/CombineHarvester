@@ -148,7 +148,8 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
     if '2017' in dirname: year='2017'
     for key in directory.GetListOfKeys():
         histo = directory.Get(key.GetName())
-        if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F): 
+        if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F):
+          print histo.GetName() 
           if dirname.replace(year,'201$') in cp_bins: nxbins = cp_bins[dirname.replace(year,'201$')]
           else: nxbins=1
 
@@ -179,6 +180,7 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
           outfile.cd()
           if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
           ROOT.gDirectory.cd(dirname)
+          print 'Writing ', dirname, histo.GetName()
           histo.Write()
           ROOT.gDirectory.cd('/')
 

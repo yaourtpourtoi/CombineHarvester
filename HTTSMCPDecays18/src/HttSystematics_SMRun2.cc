@@ -70,21 +70,45 @@ namespace ch {
         //
         // for correlations using https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
 
-        // uncorrelated parts 2.2%, 2.0%, 1.5%
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
-                                            "lumi_2016_13TeV", "lnN", SystMap<>::init(1.022));
+                                            "lumi_13TeV_2016", "lnN", SystMap<>::init(1.022));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
-                                            "lumi_2017_13TeV", "lnN", SystMap<>::init(1.020));
+                                            "lumi_13TeV_2017", "lnN", SystMap<>::init(1.020));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","mt_2018","et_2018","em_2018","ttbar_2018"}).AddSyst(cb,
-                                            "lumi_2018_13TeV", "lnN", SystMap<>::init(1.015));
+                                            "lumi_13TeV_2018", "lnN", SystMap<>::init(1.015));
 
-        // correlated parts, 1.2%, 1.1%, 2.0%
+
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.012));
+                                            "lumi_13TeV_XY", "lnN", SystMap<>::init(1.009));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.011));
+                                            "lumi_13TeV_XY", "lnN", SystMap<>::init(1.008));
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","mt_2018","et_2018","em_2018","ttbar_2018"}).AddSyst(cb,
-                                            "lumi_13TeV", "lnN", SystMap<>::init(1.020));
+                                            "lumi_13TeV_XY", "lnN", SystMap<>::init(1.020));
+
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
+                                            "lumi_13TeV_LS", "lnN", SystMap<>::init(1.003));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","mt_2018","et_2018","em_2018","ttbar_2018"}).AddSyst(cb,
+                                            "lumi_13TeV_LS", "lnN", SystMap<>::init(1.002));
+
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
+                                            "lumi_13TeV_BBD", "lnN", SystMap<>::init(1.004));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
+                                            "lumi_13TeV_BBD", "lnN", SystMap<>::init(1.004));
+
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
+                                            "lumi_13TeV_DB", "lnN", SystMap<>::init(1.005));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
+                                            "lumi_13TeV_DB", "lnN", SystMap<>::init(1.005));
+
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
+                                            "lumi_13TeV_BCC", "lnN", SystMap<>::init(1.003));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","mt_2018","et_2018","em_2018","ttbar_2018"}).AddSyst(cb,
+                                            "lumi_13TeV_BCC", "lnN", SystMap<>::init(1.002));
+
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","et","et_2016","mt","mt_2016","em","em_2016","ttbar","ttbar_2016"}).AddSyst(cb,
+                                            "lumi_13TeV_GS", "lnN", SystMap<>::init(1.004));
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2017","mt_2017","et_2017","em_2017","ttbar_2017"}).AddSyst(cb,
+                                            "lumi_13TeV_GS", "lnN", SystMap<>::init(1.001));
 
         //##############################################################################
         //  trigger   
@@ -99,38 +123,45 @@ namespace ch {
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs,embed})).channel({"em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}).AddSyst(cb,
                                              "CMS_eff_trigger_em_13TeV", "lnN", SystMap<>::init(1.02));
 
-// old version with constant trigger uncertainty for tt
-//        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-//                                             "CMS_eff_trigger_tt_13TeV", "lnN", SystMap<>::init(1.1));
 
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,"CMS_eff_t_trg_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,"CMS_eff_t_trg_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,"CMS_eff_t_trg_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,"CMS_eff_t_trg_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,"CMS_eff_t_trg_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
+    //    {1, "tt_2016_zttEmbed"},
+    //    {2, "tt_2016_jetFakes"},
+    //    {3, "tt_2016_higgs_Rho_Rho"},
+    //    {4, "tt_2016_higgs_0A1_Rho_and_0A1_0A1"},
+    //    {5, "tt_2016_higgs_A1_Rho"},
+    //    {6, "tt_2016_higgs_A1_A1"},
+    //    {7, "tt_2016_higgs_Pi_Rho_Mixed"},
+    //    {8, "tt_2016_higgs_Pi_Pi"},
+    //    {9, "tt_2016_higgs_Pi_A1_Mixed"},
+    //    {10, "tt_2016_higgs_Pi_0A1_Mixed"},
+    //    {11, "tt_2016_higgs_A1_0A1"},
+    //    //{11, "tt_2016_higgs_other"},
+    //  };
+    //  cats["mt_2016"] = {
+    //    {1, "mt_ztt_2016"},
+    //    {2, "mt_fakes_2016"},
+    //    {3, "mt_murho_sig_2016"},
+    //    {4, "mt_mupi_sig_2016"},
+    //    {5, "mt_mua1_sig_2016"},
+    //    {6, "mt_mu0a1_sig_2016"},
+    //  };
 
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb,"CMS_eff_t_trg_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb,"CMS_eff_t_trg_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb,"CMS_eff_t_trg_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb,"CMS_eff_t_trg_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
+//        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb,"CMS_eff_t_trg_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
 
-        // additional uncertainties due to tau SF on cross-triggers (check problem with nan values is fixed!)
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM11_13TeV", "shape", SystMap<>::init(1.00)); 
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb,"CMS_eff_Xtrigger_mt_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"et_2017","et_2018"}).AddSyst(cb,"CMS_eff_Xtrigger_et_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Electron, muon and tau Id  efficiencies
@@ -148,26 +179,30 @@ namespace ch {
 
 
 
-        // due to different treatments of embedding and MC uncertainties for the tau ID they are included seperatly for now
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,4}).AddSyst(cb,"CMS_eff_t_pTlow_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,3}).AddSyst(cb,"CMS_eff_t_pTlow_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,6}).AddSyst(cb,"CMS_eff_t_pTlow_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,5}).AddSyst(cb,"CMS_eff_t_pTlow_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
+//        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,"CMS_eff_t_pTlow_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,4}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,3}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,6}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,5}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
+//        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,"CMS_eff_t_pTlow_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,"CMS_eff_t_pTlow_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,"CMS_eff_t_pTlow_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,"CMS_eff_t_pTlow_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,"CMS_eff_t_pTlow_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).AddSyst(cb,"CMS_eff_t_pThigh_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).AddSyst(cb,"CMS_eff_t_pThigh_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).AddSyst(cb,"CMS_eff_t_pThigh_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).AddSyst(cb,"CMS_eff_t_pThigh_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).AddSyst(cb,"CMS_eff_t_pThigh_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM0_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM1_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM2_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM10_13TeV", "shape", SystMap<>::init(1.00));
+//        cb.cp().process(JoinStr({sig_procs,all_mc_bkgs,embed})).process({"ZL","EWKZ"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,"CMS_eff_t_pThigh_MVADM11_13TeV", "shape", SystMap<>::init(1.00));
 
 
         // the uncorrelated part by channel is due to anti-electron and anti-muon disctiminant, it is the same for MC and embedding so decorrelated in the Morphing. From tau POG recomendation this uncertainty is 3%      
 
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).process({"ZL","EWKZ"},false).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                              "CMS_eff_t_mt_13TeV", "lnN", SystMap<>::init(1.03));
 
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed})).process({"ZL","EWKZ"},false).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
                                              "CMS_eff_t_et_13TeV", "lnN", SystMap<>::init(1.03));
 
         // 2 real taus
@@ -333,7 +368,7 @@ namespace ch {
         cb.cp().process({"ZH_ps_htt125"}).channel({"tt_2017"}).bin_id({9}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.023,0.956));
         cb.cp().process({"ZH_mm_htt125"}).channel({"tt_2017"}).bin_id({9}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.022,0.959));
         cb.cp().process({"VVT"}).channel({"tt_2017"}).bin_id({9}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.104,1.000));
-        cb.cp().process({"Wfakes"}).channel({"tt_2017"}).bin_id({9}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.000,0.539));
+        cb.cp().process({"Wfakes"}).channel({"tt_2017"}).bin_id({9}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.016,1.001));
         cb.cp().process({"EmbedZTT"}).channel({"tt_2017"}).bin_id({7}).AddSyst(cb,"CMS_IP_significance_Embed_2017_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.998));
         cb.cp().process({"ggH_sm_htt125"}).channel({"tt_2017"}).bin_id({7}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.038,0.958));
         cb.cp().process({"ggH_ps_htt125"}).channel({"tt_2017"}).bin_id({7}).AddSyst(cb,"CMS_IP_significance_MC_2017_13TeV", "lnN", SystMapAsymm<>::init(1.039,0.959));
@@ -631,21 +666,27 @@ namespace ch {
  
          cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed, /*{"jetFakes", "QCD"}*/})).channel({"et","et_2016","et_2017","et_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}).AddSyst(cb, 
                                               "CMS_scale_e_13TeV", "shape", SystMap<>::init(1.00)); 
-        
+
+ 
        // // Decay Mode based TES Settings
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,4}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,3,6}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,5}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,5}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00)); // drop this uncertainty as it is always very small compared to the 3-prong uncertainty
 
-
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-
-        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-        //                                        "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,7,8,9,10}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+                                                "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,3,4,5,7,10,11}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,                                        
+                                                "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,5,6,9,11}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+                                                "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,5,6,9,11}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00)); // drop this uncertainty as it is always very small compared to the 3-prong uncertainty
+        
 
         // Muon 
         // ES Add back after!
@@ -743,157 +784,68 @@ namespace ch {
         //  Fake-Factor Method Uncertainties
         //##############################################################################
 
-
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_l_pt_closure_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_met_closure_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_stat_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_qcd_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_l_pt_closure_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_met_closure_syst", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_stat_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_wjets_syst", "shape", SystMap<>::init(1.00));
-
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc1_njets2_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets0_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets1_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_qcd_stat_unc2_njets2_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets0_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets1_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc1_njets2_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets0_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets1_mvadm2", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm1", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm10", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm11", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_et_wjets_stat_unc2_njets2_mvadm2", "shape", SystMap<>::init(1.00));
 
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_sub_syst", "shape", SystMap<>::init(1.00));
-
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_qcd_l_pt_closure_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_qcd_met_closure_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_mt_qcd_stat_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_qcd_stat_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_mt_qcd_stat_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_mt_qcd_stat_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_qcd_stat_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_qcd_stat_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_mt_qcd_stat_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_qcd_stat_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_mt_qcd_stat_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_mt_qcd_stat_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_qcd_stat_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_qcd_stat_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_mt_qcd_stat_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_qcd_stat_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_mt_qcd_stat_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_mt_qcd_stat_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_qcd_stat_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_qcd_stat_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_qcd_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_wjets_l_pt_closure_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_wjets_met_closure_syst", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_mt_wjets_stat_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_wjets_stat_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_mt_wjets_stat_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_mt_wjets_stat_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_wjets_stat_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_wjets_stat_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_wjets_stat_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_mt_wjets_stat_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_mt_wjets_stat_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_mt_wjets_stat_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_wjets_stat_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_wjets_stat_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb, "ff_mt_wjets_stat_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_wjets_stat_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}).AddSyst(cb, "ff_mt_wjets_stat_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}).AddSyst(cb, "ff_mt_wjets_stat_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_mt_wjets_stat_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_wjets_stat_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_wjets_syst", "shape", SystMap<>::init(1.00));
 
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_sub_syst", "shape", SystMap<>::init(1.00));
 
@@ -971,26 +923,6 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}).AddSyst(cb, "ff_mt_wjets_stat_unc2_njets2_mvadm2", "shape", SystMap<>::init(1.00));
 
 
-
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_njets0_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_njets0_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_njets0_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_njets1_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_njets1_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_njets1_mvadm2", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
-        ////cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_njets2_mvadm1", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_njets2_mvadm11", "shape", SystMap<>::init(1.00));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_njets2_mvadm2", "shape", SystMap<>::init(1.00));
-        //
         //temporarily remove the next one (buggy template)
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_qcd_met_closure_syst", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_qcd_syst", "shape", SystMap<>::init(1.00));
@@ -1001,37 +933,37 @@ namespace ch {
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets0_mvadm1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets0_mvadm11", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets0_mvadm11", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets0_mvadm2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm11", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm11", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets1_mvadm2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm11", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm11", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_unc1_njets2_mvadm2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm11", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm11", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets0_mvadm2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm11", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm11", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets1_mvadm2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7,8,9,10}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm0_sig_gt", "shape", SystMap<>::init(1.00));
         //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm0_sig_lt", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,4,5,7}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm10", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm11", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm11", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4,10,11}).AddSyst(cb, "ff_tt_qcd_stat_unc2_njets2_mvadm2", "shape", SystMap<>::init(1.00));
 
         // put an additional uncertainty on the Wfake comonent which is estimated from MC
@@ -1066,8 +998,6 @@ namespace ch {
         // add back for mt also
         cb.cp().process( {"TTJ","TTT","TT"}).AddSyst(cb,
                                         "CMS_htt_ttbarShape_13TeV", "shape", SystMap<>::init(1.00));
-        //cb.cp().process( {"TTJ","TTT","TT"}).channel({"mt_2016","mt_2017","mt_2018"},false).AddSyst(cb,
-        //                                "CMS_htt_ttbarShape_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         // ZL shape  and electron/muon  to tau fake only in  mt and et channels (updated March 22)
@@ -1075,20 +1005,15 @@ namespace ch {
 
         // Add back later!
         
-        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb,
                                                          "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
+        cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3,6}).AddSyst(cb,
                                                          "CMS_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb,
                                                          "CMS_htt_ZLShape_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,6}).AddSyst(cb,
                                                          "CMS_htt_ZLShape_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
-        // rename to make more sense when including et as well?
-        //cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-        //                                                 "CMS_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        //cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
-        //                                                 "CMS_ZLShape_mt_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
        
         // weighted avarages of recommended tau POG uncertainties provided in bins of eta (update later!)
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb,
@@ -1141,15 +1066,15 @@ namespace ch {
         cb.cp().process({"ggH_hww125","qqH_hww125"}).AddSyst(cb,"BR_hww_PU_alphas", "lnN", SystMap<>::init(1.0066));
         
         
-        cb.cp().process(JoinStr({ggH_sig_procs, {"ggH_hww125"}})).AddSyst(cb,"QCDScale_ggH", "lnN", SystMap<>::init(1.039));
-        cb.cp().process(JoinStr({qqH_sig_procs, {"qqH_hww125"}})).AddSyst(cb,"QCDScale_qqH", "lnN", SystMap<>::init(1.004));
-        cb.cp().process({"WH_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt"}).AddSyst(cb,"QCDScale_WH", "lnN", SystMap<>::init(1.007));
-        cb.cp().process({"ZH_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}).AddSyst(cb,"QCDScale_ZH", "lnN", SystMap<>::init(1.038));
+        cb.cp().process(JoinStr({ggH_sig_procs, {"ggH_hww125"}})).AddSyst(cb,"QCDscale_ggH", "lnN", SystMap<>::init(1.039));
+        cb.cp().process(JoinStr({qqH_sig_procs, {"qqH_hww125"}})).AddSyst(cb,"QCDscale_qqH", "lnN", SystMap<>::init(1.004));
+        cb.cp().process({"WH_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt"}).AddSyst(cb,"QCDscale_VH", "lnN", SystMap<>::init(1.007));
+        cb.cp().process({"ZH_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}).AddSyst(cb,"QCDscale_VH", "lnN", SystMap<>::init(1.038));
         
         cb.cp().process(JoinStr({ggH_sig_procs, {"ggH_hww125"}})).AddSyst(cb,"pdf_Higgs_gg", "lnN", SystMap<>::init(1.032));
-        cb.cp().process(JoinStr({qqH_sig_procs, {"qqH_hww125"}})).AddSyst(cb,"pdf_Higgs_qq", "lnN", SystMap<>::init(1.021));
-        cb.cp().process({"WH_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt"}).AddSyst(cb,"pdf_Higgs_WH", "lnN", SystMap<>::init(1.019));
-        cb.cp().process({"ZH_htt""ZH_sm_htt","ZH_ps_htt","ZH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}).AddSyst(cb,"pdf_Higgs_ZH", "lnN", SystMap<>::init(1.016));
+        cb.cp().process(JoinStr({qqH_sig_procs, {"qqH_hww125"}})).AddSyst(cb,"pdf_Higgs_qqbar", "lnN", SystMap<>::init(1.021));
+        cb.cp().process({"WH_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt"}).AddSyst(cb,"pdf_Higgs_qqbar", "lnN", SystMap<>::init(1.019));
+        cb.cp().process({"ZH_htt""ZH_sm_htt","ZH_ps_htt","ZH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}).AddSyst(cb,"pdf_Higgs_qqbar", "lnN", SystMap<>::init(1.016));
         
         
         if (ttbar_fit) {
