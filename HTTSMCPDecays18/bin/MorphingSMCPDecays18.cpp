@@ -747,7 +747,6 @@ int main(int argc, char** argv) {
   ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM10_13TeV", 0.);
 
   // For mu->tau fake energy scale templates there is no clear shape effects for 1prong1pi temnplates so convert to lnN
-  //ConvertShapesToLnN(cb.cp().backgrounds(),"CMS_htt_ZLShape_1prong1pi_13TeV",0.);
 
   std::vector<std::string> jes_systs = {
     "CMS_scale_j_Absolute_13TeV",
@@ -785,20 +784,41 @@ int main(int argc, char** argv) {
   };
 
   for (auto jes : jes_systs) {
-    ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ"}),jes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"ZL","Wfakes","VVT"}),jes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),jes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),jes,0.); // worse stats in 2017 for some reason so we have to conver to lnN for other categories - check
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"ZL","VVT"}).bin_id({4,5,6}),jes,0.);
   }
-  ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3},false),"CMS_htt_ZLShape_1prong1pi_13TeV",0.);
-
+  ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3},false),"CMS_htt_ZLShape_mt_1prong1pizero_13TeV",0.);
   for (auto tes : tes_systs) {
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"Wfakes","VVT"}),tes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),tes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),tes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"VVT"}).bin_id({4,5,6}),tes,0.);
   }
+
+  // remove uncertainties which are dominated by statistical fluctuations so are unphysical
+  cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).syst_name(JoinStr({{"CMS_scale_mu_13TeV"},jes_systs})).process({"ZL"}).bin_id({5,6}).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  }); 
+  cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"ZL","VVT","Wfakes"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
+  cb.cp().channel({"tt_2017"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"TTT"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  }); 
+  cb.cp().channel({"tt_2016","tt_2018"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"TTT"}).bin_id({1,2,3},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
+  // these uncertainty that effectivly don't do anything will be removed at a later stage
 
 //  // If any shapes are identical then change these uncertainties to lnN - they will then be removed altogether in a latter step if the yields also match
 //  // Be careful with this part as you could miss bug in the code which might mean the systematic is not implemented properly - suggest this is kept commented until the very end
@@ -1062,8 +1082,8 @@ int main(int argc, char** argv) {
         syst->set_value_d(syst->value_d()*0.847445);
     });
     cb.cp().syst_name({"QCDscale_qqH_ACCEPT"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-        syst->set_value_u(syst->value_u()*0.993322);
-        syst->set_value_d(syst->value_d()*1.00631);
+        syst->set_value_u(syst->value_u()*0.994194);
+        syst->set_value_d(syst->value_d()*1.00908);
     });
 
     cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
@@ -1071,10 +1091,10 @@ int main(int argc, char** argv) {
         syst->set_value_d(syst->value_d()*0.848289);
     });
     cb.cp().syst_name({"QCDscale_qqH_ACCEPT"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-        syst->set_value_u(syst->value_u()*0.994640);
-        syst->set_value_d(syst->value_d()*1.00565);
+        syst->set_value_u(syst->value_u()*0.995378);
+        syst->set_value_d(syst->value_d()*1.00768);
     });
-
+//1.00798 0.995281
 
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties and renaming of systematics to match Higgs comb requirements - so no need to try and implement any different treatments in HttSystematics_SMRun2 
     cb.cp().RenameSystematic(cb,"CMS_PreFire_13TeV","CMS_prefiring"); 
