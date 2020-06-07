@@ -9,6 +9,7 @@
 #include "boost/program_options.hpp"
 #include "boost/lexical_cast.hpp"
 #include "boost/regex.hpp"
+#include <boost/algorithm/string/replace.hpp>
 #include "CombineHarvester/CombineTools/interface/CombineHarvester.h"
 #include "CombineHarvester/CombineTools/interface/Observation.h"
 #include "CombineHarvester/CombineTools/interface/Process.h"
@@ -27,6 +28,7 @@
 #include "TH2.h"
 #include "TF1.h"
 #include "TMatrix.h"
+#include "TCanvas.h"
 
 using namespace std;
 using boost::starts_with;
@@ -47,48 +49,59 @@ void To1Bin(T* proc)
     // integral of the hist
 }
 
+bool CheckHistsMatch(TH1 *h1, TH1 *h2, double threshold){
+  bool match = true;
+  for (unsigned i=1; i<=(unsigned)h1->GetNbinsX(); ++i) {
+    double c1 = h1->GetBinContent(i);
+    double c2 = h2->GetBinContent(i);
+    if(c1 != c2){
+       match = false;
+       break;
+    }
+  //  //if (c2 ==0 && c1 == 0) continue;
+  //  //else if( c2== 0 ) {
+  //  //  nomatch=false;
+  //  //  break;  
+  //  //}
+  //  //if(fabs(c1/c2-1.)>threshold) {
+  //  //  nomatch = false;
+  //  //  break;
+  //  //}
+  }
+  return match;
+};
 
-
-void ConvertShapesToLnN (ch::CombineHarvester& cb, string name, double min_ks) {
+void ConvertShapesToLnN (ch::CombineHarvester& cb, string name, double threshold) {
   auto cb_syst = cb.cp().syst_name({name});
   cb_syst.ForEachSyst([&](ch::Systematic *syst) {
     if (syst->type().find("shape") != std::string::npos) {
-      if(min_ks<=0) {
+      if(threshold<=0) {
         std::cout << "Converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN." <<std::endl;
         syst->set_type("lnN");
         return;
       }
-      auto shape_u = syst->ClonedShapeU();
-      auto shape_d = syst->ClonedShapeD();
+      //auto shape_u = syst->ClonedShapeU();
+      //auto shape_d = syst->ClonedShapeD();
 
-      // set uncertainties of up and down templates to zero so they are not concidered in ks test
-      for(unsigned i=0; i<=(unsigned)shape_u->GetNbinsX(); ++i) {
-        shape_u->SetBinError(i,0.);
-        shape_d->SetBinError(i,0.);
-      }
+      //std::unique_ptr<TH1> nominal;
 
-      std::unique_ptr<TH1> nominal;
+      //cb.cp().ForEachProc([&](ch::Process *proc){
+      //  bool match_proc = (MatchingProcess(*proc,*syst));
+      //  if(match_proc) nominal = proc->ClonedScaledShape(); 
+      //});
 
-      double ks_u = 0., ks_d = 0.;
+      //bool match_u = false, match_d = false;
 
-      cb.cp().ForEachProc([&](ch::Process *proc){
-        bool match_proc = (MatchingProcess(*proc,*syst));
-        if(match_proc) nominal = proc->ClonedScaledShape(); 
-      });
-
-      if(shape_u && nominal){
-        ks_u = nominal.get()->KolmogorovTest(shape_u.get()); 
-      }
-      if(shape_d && nominal){
-        ks_d = nominal.get()->KolmogorovTest(shape_d.get());
-      } 
-      if(ks_u > min_ks && ks_d > min_ks){
-        std::cout << "Converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN. KS scores (u,d) = (" << ks_u << "," << ks_d << ")" <<std::endl;
-        syst->set_type("lnN");
-      }
-      else {
-        std::cout << "Not converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN. KS scores (u,d) = (" << ks_u << "," << ks_d << ")" <<std::endl;
-      }
+      //if(shape_u && nominal){
+      //  match_u = CheckHistsMatch(nominal.get(),shape_u.get(), 1.-threshold); 
+      //}
+      //if(shape_d && nominal){
+      //  match_d = CheckHistsMatch(nominal.get(),shape_d.get(),1.-threshold); 
+      //} 
+      //if(match_u && match_d){
+      //  std::cout << "Converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN as histograms match within specified threshold" <<std::endl;
+      //  syst->set_type("lnN");
+      //}
     }
   }); 
 
@@ -189,6 +202,19 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
     });
 
   }
+}
+
+void Remove13TeVFromNames (ch::CombineHarvester& cb) {
+  auto cb_syst = cb.cp();
+  cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+    std::string old_name = syst->name();
+    if (old_name.find("lumi") == std::string::npos) {
+      std::string new_name = old_name;
+      boost::replace_all(new_name,"_13TeV","");
+      syst->set_name(new_name);
+    }  
+  }
+  );
 }
 
 void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::vector<double> correlations, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
@@ -712,8 +738,109 @@ int main(int argc, char** argv) {
 
   // convert systematics to lnN here
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
+  cb.cp().RenameSystematic(cb,"CMS_eff_b_13TeV","CMS_btag_comb");
 
-  // set normalisation only fake factor uncertainties to lnN for tt channel in all cats except background categories
+  // for high pT tau ID uncertainties for tt channel, these can only affect normalizations in the MVA-DM exclusive categories
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM0_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM1_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM2_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM10_13TeV", 0.);
+
+  // For mu->tau fake energy scale templates there is no clear shape effects for 1prong1pi temnplates so convert to lnN
+
+  std::vector<std::string> jes_systs = {
+    "CMS_scale_j_Absolute_13TeV",
+    "CMS_scale_j_BBEC1_13TeV",
+    "CMS_scale_j_EC2_13TeV",
+    "CMS_scale_j_FlavorQCD_13TeV",          
+    "CMS_scale_j_HF_13TeV",
+    "CMS_scale_j_RelativeBal_13TeV",
+    "CMS_scale_j_Absolute_2016_13TeV",
+    "CMS_scale_j_Absolute_2017_13TeV",
+    "CMS_scale_j_Absolute_2018_13TeV",
+    "CMS_scale_j_BBEC1_2016_13TeV",
+    "CMS_scale_j_BBEC1_2017_13TeV",
+    "CMS_scale_j_BBEC1_2018_13TeV",
+    "CMS_scale_j_EC2_2016_13TeV",
+    "CMS_scale_j_EC2_2017_13TeV",
+    "CMS_scale_j_EC2_2018_13TeV",
+    "CMS_scale_j_HF_2016_13TeV", 
+    "CMS_scale_j_HF_2017_13TeV", 
+    "CMS_scale_j_HF_2018_13TeV", 
+    "CMS_scale_j_RelativeSample_2016_13TeV",
+    "CMS_scale_j_RelativeSample_2017_13TeV",
+    "CMS_scale_j_RelativeSample_2018_13TeV",
+    "CMS_res_j_13TeV",
+    "CMS_scale_met_unclustered_13TeV",
+    "CMS_htt_boson_reso_met_13TeV",
+    "CMS_htt_boson_scale_met_13TeV"
+  };
+
+  std::vector<std::string> tes_systs = {
+    "CMS_scale_t_1prong_13TeV",
+    "CMS_scale_t_1prong1pizero_13TeV",
+    "CMS_scale_t_3prong_13TeV",
+    "CMS_scale_t_3prong1pizero_13TeV"
+  };
+
+  for (auto jes : jes_systs) {
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"ZL","Wfakes","VVT"}),jes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),jes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),jes,0.); // worse stats in 2017 for some reason so we have to conver to lnN for other categories - check
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"ZL","VVT"}).bin_id({4,5,6}),jes,0.);
+  }
+  ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3},false),"CMS_htt_ZLShape_mt_1prong1pizero_13TeV",0.);
+  for (auto tes : tes_systs) {
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"Wfakes","VVT"}),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"VVT"}).bin_id({4,5,6}),tes,0.);
+  }
+
+  // remove uncertainties which are dominated by statistical fluctuations so are unphysical
+  cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).syst_name(JoinStr({{"CMS_scale_mu_13TeV"},jes_systs})).process({"ZL"}).bin_id({5,6}).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  }); 
+  cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"ZL","VVT","Wfakes"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
+  cb.cp().channel({"tt_2017"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"TTT"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  }); 
+  cb.cp().channel({"tt_2016","tt_2018"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"TTT"}).bin_id({1,2,3},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
+  // these uncertainty that effectivly don't do anything will be removed at a later stage
+
+//  // If any shapes are identical then change these uncertainties to lnN - they will then be removed altogether in a latter step if the yields also match
+//  // Be careful with this part as you could miss bug in the code which might mean the systematic is not implemented properly - suggest this is kept commented until the very end
+//  cb.ForEachSyst([&](ch::Systematic *s) {
+//    if (s->type().find("shape") == std::string::npos) return;
+//      std::unique_ptr<TH1> nominal;
+//
+//      cb.cp().ForEachProc([&](ch::Process *proc){
+//         bool match_proc = (MatchingProcess(*proc,*s));
+//         if(match_proc) nominal = proc->ClonedShape(); 
+//       });
+//    auto up = s->ClonedShapeU();
+//    auto down = s->ClonedShapeD();
+//    bool match_up = false, match_down = false;
+//    match_up = CheckHistsMatch(up.get(), nominal.get(), 0.) ;
+//    match_down = CheckHistsMatch(down.get(), nominal.get(), 0.) ;
+//
+//    if(match_up && match_down) {
+//      std::cout << "Systematic teamplates match exactly for: \n" << *s << "\n" << "changing it to lnN!" << std::endl;
+//      s->set_type("lnN"); 
+//    }
+//   });
 
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
@@ -943,36 +1070,40 @@ int main(int argc, char** argv) {
     });
 
     // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
-    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
-    cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
-    cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","QCDscale_qqH_ACCEPT");
+    cb.cp().process({"ggH_sm_htt","ggH_ps_htt","ggH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","QCDscale_ggH_ACCEPT");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
 
     // scale up/down QCD scale uncertainties to ensure they do not change the inclusive yields only the shapes/acceptance
 
-    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+    cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
         syst->set_value_u(syst->value_u()*1.16021);
         syst->set_value_d(syst->value_d()*0.847445);
     });
-    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-        syst->set_value_u(syst->value_u()*0.993322);
-        syst->set_value_d(syst->value_d()*1.00631);
+    cb.cp().syst_name({"QCDscale_qqH_ACCEPT"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.994194);
+        syst->set_value_d(syst->value_d()*1.00908);
     });
 
-    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+    cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
         syst->set_value_u(syst->value_u()*1.15977);
         syst->set_value_d(syst->value_d()*0.848289);
     });
-    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-        syst->set_value_u(syst->value_u()*0.994640);
-        syst->set_value_d(syst->value_d()*1.00565);
+    cb.cp().syst_name({"QCDscale_qqH_ACCEPT"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.995378);
+        syst->set_value_d(syst->value_d()*1.00768);
     });
+//1.00798 0.995281
 
-
-    // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
-  
+    // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties and renaming of systematics to match Higgs comb requirements - so no need to try and implement any different treatments in HttSystematics_SMRun2 
+    cb.cp().RenameSystematic(cb,"CMS_PreFire_13TeV","CMS_prefiring"); 
+ 
     // partially decorrelate the energy scale uncertainties
-    DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_scale_mu_13TeV","CMS_scale_embedded_mu_13TeV",0.5);
+    cb.cp().RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_e");
+    DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    cb.cp().RenameSystematic(cb,"CMS_scale_mu_13TeV","CMS_scale_m");
+    DecorrelateMCAndEMB(cb,"CMS_scale_m","CMS_scale_embedded_m",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
@@ -1070,6 +1201,19 @@ int main(int argc, char** argv) {
       }
 
     }
+
+    // remove the 13TeV labelling from all uncerts except lumi
+    Remove13TeVFromNames(cb);
+
+    // if lnN uncertainties have no effect then remove
+    cb.FilterSysts([&](ch::Systematic *s){
+      bool filter = s->type().find("lnN") != std::string::npos && ((s->asymm() && s->value_u()==1 && s->value_d()==1) || (!s->asymm() && s->value_u()==1));
+      //if (filter) {
+      //  std::cout << "Filtering syst " << s->name() << "    " << s->type() << "    " << s->asymm() << "    " << s->value_u() << "    " <<  s->value_d() << std::endl;
+      //std::cout << s->Systematic::PrintHeader << *s << std::endl; 
+      //}   
+      return filter;
+    });
 
      ch::SetStandardBinNames(cb);
 	//! [part8]
