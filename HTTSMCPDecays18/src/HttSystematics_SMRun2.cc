@@ -738,11 +738,7 @@ namespace ch {
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt_2018","em_2018","et_2018","mt_2018"}).AddSyst(cb,"CMS_scale_j_RelativeSample_2018_13TeV", "shape", SystMap<>::init(1.00));
 
 
-        // temp remove for VBF in mt in 2018 as it isn't working properly
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
-        //
-        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","tt_2018","mt","mt_2016","mt_2017"}).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
-        //cb.cp().process(JoinStr({{"ggH_sm_htt","ggH_mm_htt","ggH_ps_htt"}, all_mc_bkgs})).channel({"mt_2018"}).AddSyst(cb,"CMS_res_j_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Background normalization uncertainties
@@ -975,11 +971,10 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({10}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
 
         // prefiring
-        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","mt","mt_2016","mt_2017","et","et_2016","et_2017"}).AddSyst(cb,
-        //                                     "CMS_PreFire_13TeV", "shape", SystMap<>::init(1.0));
-        // add back for mt later                                    
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","et","et_2016","et_2017"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","mt","mt_2016","mt_2017","et","et_2016","et_2017"}).AddSyst(cb,
                                              "CMS_PreFire_13TeV", "shape", SystMap<>::init(1.0));
+        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","et","et_2016","et_2017"}).AddSyst(cb,
+        //                                     "CMS_PreFire_13TeV", "shape", SystMap<>::init(1.0));
 
 
         //##############################################################################
@@ -1008,22 +1003,48 @@ namespace ch {
         cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb,
                                                          "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3,6}).AddSyst(cb,
-                                                         "CMS_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-
+                                                         "CMS_ZLShape_et_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb,
-                                                         "CMS_htt_ZLShape_1prong_13TeV", "shape", SystMap<>::init(1.00));
+                                                         "CMS_htt_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,6}).AddSyst(cb,
-                                                         "CMS_htt_ZLShape_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
+                                                         "CMS_htt_ZLShape_mt_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
        
-        // weighted avarages of recommended tau POG uncertainties provided in bins of eta (update later!)
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.11));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.16));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.10));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.14));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.11));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.14));
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb,
                                                         "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.2));
+
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({3}).AddSyst(cb,
                                                         "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.3));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.05));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.11));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.12));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.08));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.12));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM1_13TeV", "lnN", SystMap<>::init(1.09));
+
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({6}).AddSyst(cb,
                                                         "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.3));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.015));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.002));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.013));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.013));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.006));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM2_13TeV", "lnN", SystMap<>::init(1.001));
+
         cb.cp().process({"ZL","EWKZ"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({5}).AddSyst(cb,
                                                         "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.4));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.017));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.002));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.017));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2017"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.002));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.018));
+        cb.cp().process({"ZL","EWKZ"}).channel({"mt_2018"}).bin_id({2}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM10and11_13TeV", "lnN", SystMap<>::init(1.006));
+
         cb.cp().process({"ZL","EWKZ"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb,
                                                         "CMS_htt_eFakeTau_13TeV", "lnN", SystMap<>::init(1.15));
         cb.cp().process({"ZL","EWKZ"}).channel({"tt","tt_2016"}).AddSyst(cb,
@@ -1039,20 +1060,19 @@ namespace ch {
         cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_scale_gg_13TeV", "shape", SystMap<>::init(1.00));
 
-
         // these don't exist yet for mt channel so add them only for tt for now
 
-        //cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
-        //                                     "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
-
-        //cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
-        //                                     "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
-
-        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+
+//        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+//                                             "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+
+//        cb.cp().process(JoinStr({ggH_sig_procs, qqH_sig_procs})).process({"ggH_ph_htt"},false).channel({"tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
+//                                             "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
  
         //    Uncertainty on BR for HTT @ 125 GeV
@@ -1077,14 +1097,6 @@ namespace ch {
         cb.cp().process({"ZH_htt""ZH_sm_htt","ZH_ps_htt","ZH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}).AddSyst(cb,"pdf_Higgs_qqbar", "lnN", SystMap<>::init(1.016));
         
         
-        if (ttbar_fit) {
-          // update if we use this as a CR
-            //cb.cp().channel({"ttbar","em","et","mt","tt","ttbar_2016","em_2016","et_2016","mt_2016","tt_2016"}).process({"TT","TTT","TTJ"}).AddSyst(cb, "rate_ttbar_2016", "rateParam", SystMap<>::init(1.0));
-            //cb.cp().channel({"ttbar_2017","ttbar_2018","em_2017","em_2018","et_2017","et_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).process({"TT","TTT","TTJ"}).AddSyst(cb, "rate_ttbar_2017", "rateParam", SystMap<>::init(1.0));
-            
-            //cb.GetParameter("rate_ttbar_2016")->set_range(0.80, 1.20);
-            //cb.GetParameter("rate_ttbar_2017")->set_range(0.80, 1.20);
-        }
         
     }
 }
