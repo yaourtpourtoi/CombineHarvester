@@ -1,1 +1,8 @@
 shapes/
+*.tex
+*.dvi
+*.err
+*.out
+*.log
+*.pdf
+*.sub
