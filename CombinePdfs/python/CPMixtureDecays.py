@@ -4,31 +4,47 @@ import numpy as np
 class CPMixtureDecays(PhysicsModel):
     def __init__(self):
         PhysicsModel.__init__(self)
+        self.do_kappas = False
 
-    #def setPhysicsOptions(self, physOptions):
-    #    for po in physOptions:
+    def setPhysicsOptions(self, physOptions):
+        for po in physOptions:
+            if po.startswith("do_kappas"):
+                self.do_kappas = True
 
     def doParametersOfInterest(self):
         """Create POI and other parameters, and define the POI set."""
         # --- POI and other parameters ----
 
         poiNames = []
- 
-        self.modelBuilder.doVar('alpha[0,-90,90]')
-        poiNames.append('alpha')
-
-        self.modelBuilder.doVar('mutautau[1]')
-        self.modelBuilder.doVar('muV[1,0,10]')
-        self.modelBuilder.doVar('muggH[1,0,10]')
-
-        self.modelBuilder.doSet('POI', ','.join(poiNames))
 
         params = {
                 'pi': np.pi
         }
+ 
+        if not self.do_kappas: 
+          self.modelBuilder.doVar('alpha[0,-90,90]')
+          poiNames.append('alpha')
+          self.modelBuilder.doVar('mutautau[1]')
+          self.modelBuilder.doVar('muV[1,0,10]')
+          self.modelBuilder.doVar('muggH[1,0,10]')
 
-        self.modelBuilder.factory_('expr::a1("sqrt(@0)*cos(@1/90*{pi}/2)", mutautau, alpha)'.format(**params))
-        self.modelBuilder.factory_('expr::a3("sqrt(@0)*sin(@1/90*{pi}/2)", mutautau, alpha)'.format(**params))
+          self.modelBuilder.doSet('POI', ','.join(poiNames))
+
+          self.modelBuilder.factory_('expr::a1("sqrt(@0)*cos(@1/90*{pi}/2)", mutautau, alpha)'.format(**params))
+          self.modelBuilder.factory_('expr::a3("sqrt(@0)*sin(@1/90*{pi}/2)", mutautau, alpha)'.format(**params))
+
+        else: 
+          self.modelBuilder.doVar('kappaH[1,-2,2]')
+          self.modelBuilder.doVar('kappaA[0,-2,2]')
+          poiNames.append('kappaH')
+          poiNames.append('kappaA')
+          self.modelBuilder.doSet('POI', ','.join(poiNames))
+          self.modelBuilder.doVar('muV[1]')
+          self.modelBuilder.doVar('muggH[1]')
+          self.modelBuilder.doVar('mutautau[1]')
+
+          self.modelBuilder.factory_('expr::a1("@0", kappaH)'.format(**params))
+          self.modelBuilder.factory_('expr::a3("@0", kappaA)'.format(**params))
 
         self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a1, a3)')
         self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a1, a3)')

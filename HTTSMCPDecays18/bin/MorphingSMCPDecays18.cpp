@@ -9,6 +9,7 @@
 #include "boost/program_options.hpp"
 #include "boost/lexical_cast.hpp"
 #include "boost/regex.hpp"
+#include <boost/algorithm/string/replace.hpp>
 #include "CombineHarvester/CombineTools/interface/CombineHarvester.h"
 #include "CombineHarvester/CombineTools/interface/Observation.h"
 #include "CombineHarvester/CombineTools/interface/Process.h"
@@ -27,6 +28,7 @@
 #include "TH2.h"
 #include "TF1.h"
 #include "TMatrix.h"
+#include "TCanvas.h"
 
 using namespace std;
 using boost::starts_with;
@@ -47,48 +49,59 @@ void To1Bin(T* proc)
     // integral of the hist
 }
 
+bool CheckHistsMatch(TH1 *h1, TH1 *h2, double threshold){
+  bool match = true;
+  for (unsigned i=1; i<=(unsigned)h1->GetNbinsX(); ++i) {
+    double c1 = h1->GetBinContent(i);
+    double c2 = h2->GetBinContent(i);
+    if(c1 != c2){
+       match = false;
+       break;
+    }
+  //  //if (c2 ==0 && c1 == 0) continue;
+  //  //else if( c2== 0 ) {
+  //  //  nomatch=false;
+  //  //  break;  
+  //  //}
+  //  //if(fabs(c1/c2-1.)>threshold) {
+  //  //  nomatch = false;
+  //  //  break;
+  //  //}
+  }
+  return match;
+};
 
-
-void ConvertShapesToLnN (ch::CombineHarvester& cb, string name, double min_ks) {
+void ConvertShapesToLnN (ch::CombineHarvester& cb, string name, double threshold) {
   auto cb_syst = cb.cp().syst_name({name});
   cb_syst.ForEachSyst([&](ch::Systematic *syst) {
     if (syst->type().find("shape") != std::string::npos) {
-      if(min_ks<=0) {
+      if(threshold<=0) {
         std::cout << "Converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN." <<std::endl;
         syst->set_type("lnN");
         return;
       }
-      auto shape_u = syst->ClonedShapeU();
-      auto shape_d = syst->ClonedShapeD();
+      //auto shape_u = syst->ClonedShapeU();
+      //auto shape_d = syst->ClonedShapeD();
 
-      // set uncertainties of up and down templates to zero so they are not concidered in ks test
-      for(unsigned i=0; i<=(unsigned)shape_u->GetNbinsX(); ++i) {
-        shape_u->SetBinError(i,0.);
-        shape_d->SetBinError(i,0.);
-      }
+      //std::unique_ptr<TH1> nominal;
 
-      std::unique_ptr<TH1> nominal;
+      //cb.cp().ForEachProc([&](ch::Process *proc){
+      //  bool match_proc = (MatchingProcess(*proc,*syst));
+      //  if(match_proc) nominal = proc->ClonedScaledShape(); 
+      //});
 
-      double ks_u = 0., ks_d = 0.;
+      //bool match_u = false, match_d = false;
 
-      cb.cp().ForEachProc([&](ch::Process *proc){
-        bool match_proc = (MatchingProcess(*proc,*syst));
-        if(match_proc) nominal = proc->ClonedScaledShape(); 
-      });
-
-      if(shape_u && nominal){
-        ks_u = nominal.get()->KolmogorovTest(shape_u.get()); 
-      }
-      if(shape_d && nominal){
-        ks_d = nominal.get()->KolmogorovTest(shape_d.get());
-      } 
-      if(ks_u > min_ks && ks_d > min_ks){
-        std::cout << "Converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN. KS scores (u,d) = (" << ks_u << "," << ks_d << ")" <<std::endl;
-        syst->set_type("lnN");
-      }
-      else {
-        std::cout << "Not converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN. KS scores (u,d) = (" << ks_u << "," << ks_d << ")" <<std::endl;
-      }
+      //if(shape_u && nominal){
+      //  match_u = CheckHistsMatch(nominal.get(),shape_u.get(), 1.-threshold); 
+      //}
+      //if(shape_d && nominal){
+      //  match_d = CheckHistsMatch(nominal.get(),shape_d.get(),1.-threshold); 
+      //} 
+      //if(match_u && match_d){
+      //  std::cout << "Converting systematic " << syst->name() << " for process " << syst->process() << " in bin " << syst->bin() << " to lnN as histograms match within specified threshold" <<std::endl;
+      //  syst->set_type("lnN");
+      //}
     }
   }); 
 
@@ -189,6 +202,19 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
     });
 
   }
+}
+
+void Remove13TeVFromNames (ch::CombineHarvester& cb) {
+  auto cb_syst = cb.cp();
+  cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+    std::string old_name = syst->name();
+    if (old_name.find("lumi") == std::string::npos) {
+      std::string new_name = old_name;
+      boost::replace_all(new_name,"_13TeV","");
+      syst->set_name(new_name);
+    }  
+  }
+  );
 }
 
 void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::vector<double> correlations, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
@@ -326,6 +352,7 @@ int main(int argc, char** argv) {
     bool do_jetfakes = true;
     bool mergeXbbb = false; 
     bool mergeSymm = false; 
+    bool control = false; 
     unsigned backgroundOnly = 0; 
 
     string era;
@@ -347,6 +374,7 @@ int main(int argc, char** argv) {
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
     ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
+    ("control", po::value<bool>(&control)->default_value(false))
     ("backgroundOnly", po::value<unsigned>(&backgroundOnly)->default_value(0));
 
 
@@ -529,14 +557,30 @@ int main(int argc, char** argv) {
       }
     }
 
+    if(control) {
+      for (string y : years) {
+        cats["tt_"+y] = {
+          {1, "tt_"+y+"_m_vis"},
+          {2, "tt_"+y+"_svfit_mass"},
+          {3, "tt_"+y+"_pt_1"},
+          {4, "tt_"+y+"_pt_2"},
+          {5, "tt_"+y+"_n_jets"},
+          {6, "tt_"+y+"_met"},
+          {7, "tt_"+y+"_mjj"},
+        };
+      }
+    }
+
+
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
     sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"/*, "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"*/};   
- 
+
     vector<string> masses = {"125"};    
     
     using ch::syst::bin_id;
-    
+    using ch::JoinStr;
+ 
     //! [part2]
     for(auto year: years) {
       for (auto chn : chns) {
@@ -548,6 +592,9 @@ int main(int argc, char** argv) {
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["qqH"], cats[chn+"_"+year], true); // SM VBF/VH are added as signal
 
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ggH"], cats[chn+"_"+year], true);
+
+            // add VH for tt channel only for now
+            if(chn == "tt") cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, {"WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"}, cats[chn+"_"+year], true);
           }
       }
     } 
@@ -566,7 +613,7 @@ int main(int argc, char** argv) {
         return s->name().find("scale_t") != std::string::npos || s->name().find("scale_e") != std::string::npos || s->name().find("scale_j") != std::string::npos || s->name().find("_met_") != std::string::npos || s->name().find("ZLShape") != std::string::npos;
       });
     }
-            
+
     //! [part7]
     for(auto year: years) {
       for (string chn : chns){
@@ -575,18 +622,28 @@ int main(int argc, char** argv) {
           extra = "/"+year+"/";
           if(chn == "ttbar") channel = "em"; 
           cb.cp().channel({chn+"_"+year}).backgrounds().ExtractShapes(
-                                                             input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
-                                                             "$BIN/$PROCESS",
-                                                             "$BIN/$PROCESS_$SYSTEMATIC");
+            input_dir[chn] + extra + "htt_"+channel+".inputs-sm-13TeV"+postfix+".root",
+            "$BIN/$PROCESS",
+            "$BIN/$PROCESS_$SYSTEMATIC"
+          );
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
             cb.cp().channel({chn+"_"+year}).process(sig_procs["ggH"]).ExtractShapes(
-                                                                    input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                                                                    "$BIN/$PROCESS$MASS",
-                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
+              input_dir[chn] + extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+              "$BIN/$PROCESS$MASS",
+              "$BIN/$PROCESS$MASS_$SYSTEMATIC"
+            );
             cb.cp().channel({chn+"_"+year}).process(sig_procs["qqH"]).ExtractShapes(
-                                                                    input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                                                                    "$BIN/$PROCESS$MASS",
-                                                                    "$BIN/$PROCESS$MASS_$SYSTEMATIC");
+              input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+              "$BIN/$PROCESS$MASS",
+              "$BIN/$PROCESS$MASS_$SYSTEMATIC"
+            );
+            if(chn=="tt") { // add VH only for tt channel at the moment
+              cb.cp().channel({chn+"_"+year}).process({"WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"}).ExtractShapes(
+                input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
+                "$BIN/$PROCESS$MASS",
+                "$BIN/$PROCESS$MASS_$SYSTEMATIC"
+              );
+            }
           }
       }
     }    
@@ -605,7 +662,14 @@ int main(int argc, char** argv) {
         }
         return null_yield;
     });   
-    
+
+    // effectivly remove problematic systs here
+    cb.cp().syst_name({"CMS_res_j_13TeV","CMS_scale_j_Absolute_13TeV","CMS_scale_j_BBEC1_13TeV","CMS_scale_j_FlavorQCD_13TeV"}).channel({"tt_2017"}).process({"ZL"}).bin_id({9}).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+    });
+
     
     // And convert any shapes in the ttbar CRs to lnN:
     // Convert all shapes to lnN at this stage
@@ -674,6 +738,109 @@ int main(int argc, char** argv) {
 
   // convert systematics to lnN here
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
+  cb.cp().RenameSystematic(cb,"CMS_eff_b_13TeV","CMS_btag_comb");
+
+  // for high pT tau ID uncertainties for tt channel, these can only affect normalizations in the MVA-DM exclusive categories
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM0_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM1_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM2_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM10_13TeV", 0.);
+
+  // For mu->tau fake energy scale templates there is no clear shape effects for 1prong1pi temnplates so convert to lnN
+
+  std::vector<std::string> jes_systs = {
+    "CMS_scale_j_Absolute_13TeV",
+    "CMS_scale_j_BBEC1_13TeV",
+    "CMS_scale_j_EC2_13TeV",
+    "CMS_scale_j_FlavorQCD_13TeV",          
+    "CMS_scale_j_HF_13TeV",
+    "CMS_scale_j_RelativeBal_13TeV",
+    "CMS_scale_j_Absolute_2016_13TeV",
+    "CMS_scale_j_Absolute_2017_13TeV",
+    "CMS_scale_j_Absolute_2018_13TeV",
+    "CMS_scale_j_BBEC1_2016_13TeV",
+    "CMS_scale_j_BBEC1_2017_13TeV",
+    "CMS_scale_j_BBEC1_2018_13TeV",
+    "CMS_scale_j_EC2_2016_13TeV",
+    "CMS_scale_j_EC2_2017_13TeV",
+    "CMS_scale_j_EC2_2018_13TeV",
+    "CMS_scale_j_HF_2016_13TeV", 
+    "CMS_scale_j_HF_2017_13TeV", 
+    "CMS_scale_j_HF_2018_13TeV", 
+    "CMS_scale_j_RelativeSample_2016_13TeV",
+    "CMS_scale_j_RelativeSample_2017_13TeV",
+    "CMS_scale_j_RelativeSample_2018_13TeV",
+    "CMS_res_j_13TeV",
+    "CMS_scale_met_unclustered_13TeV",
+    "CMS_htt_boson_reso_met_13TeV",
+    "CMS_htt_boson_scale_met_13TeV"
+  };
+
+  std::vector<std::string> tes_systs = {
+    "CMS_scale_t_1prong_13TeV",
+    "CMS_scale_t_1prong1pizero_13TeV",
+    "CMS_scale_t_3prong_13TeV",
+    "CMS_scale_t_3prong1pizero_13TeV"
+  };
+
+  for (auto jes : jes_systs) {
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"ZL","Wfakes","VVT"}),jes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),jes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),jes,0.); // worse stats in 2017 for some reason so we have to conver to lnN for other categories - check
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"ZL","VVT"}).bin_id({4,5,6}),jes,0.);
+  }
+  ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3},false),"CMS_htt_ZLShape_mt_1prong1pi_13TeV",0.);
+  for (auto tes : tes_systs) {
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"Wfakes","VVT"}),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"VVT"}).bin_id({4,5,6}),tes,0.);
+  }
+
+  // remove uncertainties which are dominated by statistical fluctuations so are unphysical
+  cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).syst_name(JoinStr({{"CMS_scale_mu_13TeV","CMS_htt_ZLShape_mt_1prong1pi_13TeV"},jes_systs})).process({"ZL"}).bin_id({5,6}).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  }); 
+  cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"ZL","VVT","Wfakes"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
+  cb.cp().channel({"tt_2017"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"TTT"}).bin_id({1,2},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  }); 
+  cb.cp().channel({"tt_2016","tt_2018"}).syst_name(JoinStr({tes_systs,jes_systs})).process({"TTT"}).bin_id({1,2,3},false).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
+  // these uncertainty that effectivly don't do anything will be removed at a later stage
+
+//  // If any shapes are identical then change these uncertainties to lnN - they will then be removed altogether in a latter step if the yields also match
+//  // Be careful with this part as you could miss bug in the code which might mean the systematic is not implemented properly - suggest this is kept commented until the very end
+//  cb.ForEachSyst([&](ch::Systematic *s) {
+//    if (s->type().find("shape") == std::string::npos) return;
+//      std::unique_ptr<TH1> nominal;
+//
+//      cb.cp().ForEachProc([&](ch::Process *proc){
+//         bool match_proc = (MatchingProcess(*proc,*s));
+//         if(match_proc) nominal = proc->ClonedShape(); 
+//       });
+//    auto up = s->ClonedShapeU();
+//    auto down = s->ClonedShapeD();
+//    bool match_up = false, match_down = false;
+//    match_up = CheckHistsMatch(up.get(), nominal.get(), 0.) ;
+//    match_down = CheckHistsMatch(down.get(), nominal.get(), 0.) ;
+//
+//    if(match_up && match_down) {
+//      std::cout << "Systematic teamplates match exactly for: \n" << *s << "\n" << "changing it to lnN!" << std::endl;
+//      s->set_type("lnN"); 
+//    }
+//   });
 
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
@@ -702,6 +869,37 @@ int main(int argc, char** argv) {
       .SetFixNorm(false);
       bbb_others.MergeBinErrors(cb.cp().backgrounds().process({"jetFakes","EmbedZTT"}, false));
       bbb_others.AddBinByBin(cb.cp().backgrounds().process({"jetFakes","EmbedZTT"},false), cb);
+
+      ////add bbb uncertainties for the signal but as we use reweighted histograms for sm, ps and mm these should be correlated. will need to do something for WH and ZH when we have the samples
+      auto bbb_ggh = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ggH_bbb_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(0.0)
+      .SetFixNorm(false);
+      bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
+
+      auto bbb_qqh = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(0.0)
+      .SetFixNorm(false);
+      bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
+
+// neglect VH uncerts as they are a small contribution
+
+//      auto bbb_Wh = ch::BinByBinFactory()
+//      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bbb_bin_$#")
+//      .SetAddThreshold(0.0)
+//      .SetMergeThreshold(0.0)
+//      .SetFixNorm(false);
+//      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
+//
+//      auto bbb_Zh = ch::BinByBinFactory()
+//      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bbb_bin_$#")
+//      .SetAddThreshold(0.0)
+//      .SetMergeThreshold(0.0)
+//      .SetFixNorm(false);
+//      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
 
      //  if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
      //
@@ -768,8 +966,8 @@ int main(int argc, char** argv) {
                        return s->name() == n;
                      });
                    }
-                 }  
-               }
+                 }
+               }  
              });
            });
          }
@@ -777,10 +975,6 @@ int main(int argc, char** argv) {
      }
 
      // now we want to merge the processes that aren't flat but that are symmetric about phiCP=pi
-
-     //mt_nxbins = {1,1,16,12,8,4};
-     //tt_nxbins = {1,1,16,4,8,4,16,6,4,4,4};
-
 
      tt_nxbins = {1,1,10,4,4,4,10,4,4,4,4};
      mt_nxbins = {1,1,10,8,4,4};
@@ -795,10 +989,12 @@ int main(int argc, char** argv) {
            unsigned nxbins = bins[i];
            if (nxbins <=1) continue;
            std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl;
-
            
-           auto procs = cb.cp().backgrounds().process({"jetFakes"}).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes
-           if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
+           auto procs = cb.cp().process(JoinStr({{"jetFakes"},sig_procs["ggH"],sig_procs["qqH"]})).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes and signal
+           if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
+
+           //auto procs = cb.cp().backgrounds().process({"jetFakes"}).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes and signal
+           //if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
 
            procs.ForEachProc([&](ch::Process *proc){
              TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
@@ -826,12 +1022,15 @@ int main(int argc, char** argv) {
                    
                    std::string to_add_name = nonum_name+std::to_string(bin_num_hi);
                    cb.cp().syst_name({to_add_name}).ForEachSyst([&](ch::Systematic *s) {
-                     TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
-                     TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
-                     shape_u_temp->Add(nominal,-1);
-                     shape_d_temp->Add(nominal,-1);
-                     shape_u_new->Add(shape_u_temp);
-                     shape_d_new->Add(shape_d_temp);
+                     bool match_proc_2 = (MatchingProcess(*proc,*s));
+                     if(match_proc_2){
+                       TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
+                       TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
+                       shape_u_temp->Add(nominal,-1);
+                       shape_d_temp->Add(nominal,-1);
+                       shape_u_new->Add(shape_u_temp);
+                       shape_d_new->Add(shape_d_temp); 
+                     }
                    });
                    shape_u_new->Add(nominal);
                    shape_d_new->Add(nominal);
@@ -840,153 +1039,20 @@ int main(int argc, char** argv) {
                    syst->set_value_d((syst->value_d()-1.)*2 + 1.);
                    std::cout << "removing" << "    " << to_add_name << std::endl;
                    cb.FilterSysts([&](ch::Systematic *s){
-                     return s->name() == to_add_name;
+                     bool match = (MatchingProcess(*proc,*s));
+                     return s->name() == to_add_name && match;
                    });
                  }
                }
              });
            });
+
          }
        }
      } 
 
-      //add bbb uncertainties for the signal but as we use reweighted histograms for sm, ps and mm these should be correlated. will need to do something for WH and ZH when we have the samples
-      auto bbb_ggh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ggH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
-
-      auto bbb_qqh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
-
-      auto bbb_Wh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
-
-      auto bbb_Zh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
-
     }
 
-    if(mergeSymm) {
-      // if we are mergin bbb's we can't use autoMC stats
-      auto bbb = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#") // this needs to have "_bbb_bin_" in the pattern for the mergeXbbb option to work
-      .SetAddThreshold(0.)
-      .SetMergeThreshold(0.5)
-      .SetFixNorm(false);
-      bbb.MergeBinErrors(cb.cp().backgrounds());
-      bbb.AddBinByBin(cb.cp().backgrounds(), cb);
-
-
-     // Now we deal with the mu+pi and pi+pi channels where the backgrounds are not flat but the merging instead takes into account to symmetry about x=pi
-
-
-     std::vector<unsigned> mt_nxbins = {1,1,16,12,8,4}; 
-     std::vector<unsigned> tt_nxbins = {1,1,16,4,8,4,16,6,4,4,4}; 
-
-     for(auto year: years) {
-       for (string ch: chns) {
-         std::vector<unsigned> bins = {};
-         if(ch == "tt") bins = tt_nxbins;
-         else bins = mt_nxbins;
-         for (unsigned i=0; i<bins.size(); ++i) {
-           unsigned nxbins = bins[i];
-           if (nxbins <=1) continue;
-           std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl;
-           cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}).ForEachProc([&](ch::Process *proc){
-             TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
-             cb.cp().ForEachSyst([&](ch::Systematic *syst) {
-               auto old_name = syst->name();
-               std::string nonum_name = old_name;
-               bool match_proc = (MatchingProcess(*proc,*syst));
-               if (match_proc && old_name.find("_bbb_bin_") != std::string::npos) {
-                 int bin_num = -1;
-                 std::stringstream old_name_ss;
-                 old_name_ss << old_name;
-                 string temp;
-                 int found;
-                 while (std::getline(old_name_ss, temp, '_')) {
-                   if (stringstream(temp) >> found) bin_num = found;
-                 }
-                 int bin_num_y =floor((double)(bin_num-1)/(double)nxbins);
-                 if((bin_num-bin_num_y*nxbins)<=nxbins/2) {
-                 int bin_num_hi = (bin_num_y+1)*nxbins - (bin_num-bin_num_y*nxbins) + 1;
-                   nonum_name.erase (nonum_name.end()-std::to_string(bin_num).length(), nonum_name.end());
-                   TH1D *shape_u_new = (TH1D*)syst->ClonedShapeU().get()->Clone();
-                   TH1D *shape_d_new = (TH1D*)syst->ClonedShapeD().get()->Clone();
-                   shape_u_new->Add(nominal,-1);
-                   shape_d_new->Add(nominal,-1);
-
-                   std::string to_add_name = nonum_name+std::to_string(bin_num_hi);
-                   cb.cp().syst_name({to_add_name}).ForEachSyst([&](ch::Systematic *s) {
-                     TH1D *shape_u_temp = (TH1D*)s->ClonedShapeU().get()->Clone();
-                     TH1D *shape_d_temp = (TH1D*)s->ClonedShapeD().get()->Clone();
-                     shape_u_temp->Add(nominal,-1);
-                     shape_d_temp->Add(nominal,-1);
-                     shape_u_new->Add(shape_u_temp);
-                     shape_d_new->Add(shape_d_temp);
-                   });
-                   shape_u_new->Add(nominal);
-                   shape_d_new->Add(nominal);
-                   syst->set_shapes(std::unique_ptr<TH1>(static_cast<TH1*>(shape_u_new)),std::unique_ptr<TH1>(static_cast<TH1*>(shape_d_new)),nullptr);
-                   syst->set_value_u((syst->value_u()-1.)*2 + 1.);
-                   syst->set_value_d((syst->value_d()-1.)*2 + 1.);
-                   std::cout << "removing" << "    " << to_add_name << std::endl;
-                   cb.FilterSysts([&](ch::Systematic *s){
-                     return s->name() == to_add_name;
-                   });
-                 }
-               }
-             });
-           });
-         }
-       }
-     }
-
-      //add bbb uncertainties for the signal but as we use reweighted histograms for sm, ps and mm these should be correlated. will need to do something for WH and ZH when we have the samples
-      auto bbb_ggh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ggH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
-
-      auto bbb_qqh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
-
-      auto bbb_Wh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
-
-      auto bbb_Zh = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bin_$#")
-      .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
-
-    }
 
     cb.ForEachSyst([](ch::Systematic *s) {
         if (s->type().find("shape") == std::string::npos) return;
@@ -1004,36 +1070,40 @@ int main(int argc, char** argv) {
     });
 
     // in this part of the code we rename the theory uncertainties for the VBF process so that they are not correlated with the ggH ones
-    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","CMS_scale_VBF_13TeV");
-    cb.cp().RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
-    cb.cp().RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","QCDscale_qqH_ACCEPT");
+    cb.cp().process({"ggH_sm_htt","ggH_ps_htt","ggH_mm_htt"}).RenameSystematic(cb,"CMS_scale_gg_13TeV","QCDscale_ggH_ACCEPT");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_PS_FSR_ggH_13TeV","CMS_PS_FSR_VBF_13TeV");
+    cb.cp().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}).RenameSystematic(cb,"CMS_PS_ISR_ggH_13TeV","CMS_PS_ISR_VBF_13TeV");
 
     // scale up/down QCD scale uncertainties to ensure they do not change the inclusive yields only the shapes/acceptance
 
-    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+    cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
         syst->set_value_u(syst->value_u()*1.16021);
         syst->set_value_d(syst->value_d()*0.847445);
     });
-    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-        syst->set_value_u(syst->value_u()*0.993322);
-        syst->set_value_d(syst->value_d()*1.00631);
+    cb.cp().syst_name({"QCDscale_qqH_ACCEPT"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.994194);
+        syst->set_value_d(syst->value_d()*1.00908);
     });
 
-    cb.cp().syst_name({"CMS_scale_gg_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+    cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
         syst->set_value_u(syst->value_u()*1.15977);
         syst->set_value_d(syst->value_d()*0.848289);
     });
-    cb.cp().syst_name({"CMS_scale_VBF_13TeV"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-        syst->set_value_u(syst->value_u()*0.994640);
-        syst->set_value_d(syst->value_d()*1.00565);
+    cb.cp().syst_name({"QCDscale_qqH_ACCEPT"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
+        syst->set_value_u(syst->value_u()*0.995378);
+        syst->set_value_d(syst->value_d()*1.00768);
     });
+//1.00798 0.995281
 
-
-    // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties - so no need to try and implement any different treatments in HttSystematics_SMRun2 
-  
+    // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties and renaming of systematics to match Higgs comb requirements - so no need to try and implement any different treatments in HttSystematics_SMRun2 
+    cb.cp().RenameSystematic(cb,"CMS_PreFire_13TeV","CMS_prefiring"); 
+ 
     // partially decorrelate the energy scale uncertainties
-    DecorrelateMCAndEMB(cb,"CMS_scale_e_13TeV","CMS_scale_embedded_e_13TeV",0.5);
-    DecorrelateMCAndEMB(cb,"CMS_scale_mu_13TeV","CMS_scale_embedded_mu_13TeV",0.5);
+    cb.cp().RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_e");
+    DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    cb.cp().RenameSystematic(cb,"CMS_scale_mu_13TeV","CMS_scale_m");
+    DecorrelateMCAndEMB(cb,"CMS_scale_m","CMS_scale_embedded_m",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong1pizero_13TeV","CMS_scale_embedded_t_1prong1pizero_13TeV",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_3prong_13TeV","CMS_scale_embedded_t_3prong_13TeV",0.5);
@@ -1131,6 +1201,19 @@ int main(int argc, char** argv) {
       }
 
     }
+
+    // remove the 13TeV labelling from all uncerts except lumi
+    Remove13TeVFromNames(cb);
+
+    // if lnN uncertainties have no effect then remove
+    cb.FilterSysts([&](ch::Systematic *s){
+      bool filter = s->type().find("lnN") != std::string::npos && ((s->asymm() && s->value_u()==1 && s->value_d()==1) || (!s->asymm() && s->value_u()==1));
+      //if (filter) {
+      //  std::cout << "Filtering syst " << s->name() << "    " << s->type() << "    " << s->asymm() << "    " << s->value_u() << "    " <<  s->value_d() << std::endl;
+      //std::cout << s->Systematic::PrintHeader << *s << std::endl; 
+      //}   
+      return filter;
+    });
 
      ch::SetStandardBinNames(cb);
 	//! [part8]

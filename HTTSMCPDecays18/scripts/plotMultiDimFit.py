@@ -3,8 +3,12 @@ import ROOT
 import math
 import argparse
 from array import array
+import sys
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
+
+sys.setrecursionlimit(20000)
+
 parser = argparse.ArgumentParser()
 parser.add_argument('files', nargs="+", help='Input files')
 parser.add_argument(
@@ -15,7 +19,7 @@ parser.add_argument(
 parser.add_argument(
     '--bg-exp', default=[], nargs="+", help="""Input files for the backgroud only expectation""")
 parser.add_argument(
-    '--cms-sub', default='Supplementary', help="""Text below the CMS logo""")
+    '--cms-sub', default='Preliminary', help="""Text below the CMS logo""")
 parser.add_argument(
     '--mass', default='', help="""Mass label on the plot""")
 parser.add_argument(
@@ -23,13 +27,21 @@ parser.add_argument(
 parser.add_argument(
     '--title-left', default='', help="""Left header text above the frame""")
 parser.add_argument(
-    '--x-title', default='#alpha (#frac{#pi}{2})', help="""Title for the x-axis""")
+    '--x-title', default='#alpha_{hgg} (#circ)', help="""Title for the x-axis""")
 parser.add_argument(
-    '--y-title', default='#mu_{F}', help="""Title for the y-axis""")
+    '--y-title', default='#mu_{ggH}^{#tau#tau}', help="""Title for the y-axis""")
+parser.add_argument(
+    '--x-min', default=None, help="minimum xaxis point")
+parser.add_argument(
+    '--x-max', default=None, help="maximum xaxis point")
+parser.add_argument(
+    '--y-min', default=None, help="minimum yaxis point")
+parser.add_argument(
+    '--y-max', default=None, help="maximum yaxis point")
 parser.add_argument(
     '--debug-output', '-d', help="""If specified, write the contour TH2s and
     TGraphs into this output ROOT file""")
-parser.add_argument('--kappa', action='store_true', help='Produce 2D plot for kappa parameterisation')
+parser.add_argument('--kappa', action='store_true', help='Produce 2D plot for kappa parameterisation', default=True)
 args = parser.parse_args()
 
 #Create canvas and TH2D for each component
@@ -46,8 +58,8 @@ else:
 
 limit = plot.MakeTChain(args.files, 'limit')
 if args.kappa:
-  args.x_title = '#kappa_{ggH}'
-  args.y_title = '#kappa_{ggA}'
+  args.y_title = '#kappa_{#tau}'
+  args.x_title = '#tilde{#kappa}_{#tau}'
   graph = plot.TGraph2DFromTree(
       limit, "kappaH", "kappaA", '2*deltaNLL', 'quantileExpected > -0.5 && deltaNLL > 0 && deltaNLL < 1000')
   best = plot.TGraphFromTree(
@@ -68,8 +80,9 @@ if args.bg_exp:
 
 # If included just plot SM exp at 1,1
 if args.sm_exp:
-    limit_sm = plot.MakeTChain(args.sm_exp, 'limit')
-    best_sm = ROOT.TGraph( 1, array('d', [1,]), array('d', [1,]))
+    #limit_sm = plot.MakeTChain(args.sm_exp, 'limit')
+    #best_sm = ROOT.TGraph( 1, array('d', [1,]), array('d', [1,]))
+    best_sm = ROOT.TGraph
     plot.RemoveGraphXDuplicates(best_sm)
 hists.SetMaximum(6)
 hists.SetMinimum(0)
@@ -78,7 +91,8 @@ hists.SetContour(255)
 # hists.Draw("COLZ")
 # c2.SaveAs("heatmap.png")
 
-axis = ROOT.TH2D(hists.GetName(),hists.GetName(),hists.GetXaxis().GetNbins(),0,hists.GetXaxis().GetXmax(),hists.GetYaxis().GetNbins(),0,hists.GetYaxis().GetXmax())
+#axis = ROOT.TH2D(hists.GetName(),hists.GetName(),hists.GetXaxis().GetNbins(),0,hists.GetXaxis().GetXmax(),hists.GetYaxis().GetNbins(),0,hists.GetYaxis().GetXmax())
+axis = ROOT.TH2D(hists.GetName(),hists.GetName(),hists.GetXaxis().GetNbins(),-1.5,1.5,hists.GetYaxis().GetNbins(),-1.5,1.5)
 axis.Reset()
 axis.GetXaxis().SetTitleOffset(0.9)
 axis.GetXaxis().SetTitle(args.x_title)
@@ -147,7 +161,7 @@ if args.sm_exp:
     best_sm.SetMarkerColor(1)
     best_sm.SetMarkerSize(3.0)
     best_sm.Draw("P SAME")
-    legend.AddEntry(best_sm, "Expected for 125 GeV SM Higgs", "P")
+    legend.AddEntry(best_sm, "SM Expected", "P")
 if args.bg_exp:
     best_bg.SetMarkerStyle(33)
     best_bg.SetMarkerColor(46)

@@ -23,6 +23,9 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
     To run on lx batch use:
     `--job-mode lxbatch --sub-opts '-q 1nh --split-points 1'
 
+    Useful option to save all nuisance parameter values when performing MultiDimFit (and doesn't seem to cost extra runtime):
+    --saveSpecifiedNuis all
+
 # Plot scan
 
 1D scans can be plotted using scripts/plot1DScan.py script.
@@ -33,6 +36,16 @@ To plot alpha:
 ## New scan plotting script
 
 Plot 1D scans using `scripts/draw_nll_scans.py`, see instructions below.
+
+# do 2D scans of kappas
+build workspace with 
+
+  combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/merge_sig/cmb/* --PO do_kappas -o ws_kappas.root --parallel 8
+
+run files (note i would use batch jobs):
+
+  combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,muggH=1,kappaH=1,kappaA=0  --redefineSignalPOIs kappaH,kappaA --points 2000  -d output/merge_sig/cmb/125/ws_kappas.root --algo grid -t -1 --there -n .kappas --alignEdges 1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1
+
 
 # perform ZTT validation
 
@@ -105,13 +118,15 @@ Collect output and make plots:
 
 # Run impacts
 
-first perform initial fit:
+First create workspace using top instructions.
 
-  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0'
+Then perform initial fit:
 
-then run impact with:
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0'
 
-  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=1'
+Run impacts for each systematic with:
+
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=1'
 
 
 To run on crab (recommended):
@@ -129,13 +144,14 @@ For lxplus batch use `--job-mode condor --sub-opts='+JobFlavour = "longlunch"` b
 
 Collect results:
 
-  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json`
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json
 
 Make impact plot:
 
-  `plotImpacts.py -i impacts.json -o impacts`
+    plotImpacts.py -i impacts.json -o impacts
 
-Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+# Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+
 This is useful if you want to compare data/MC agreement in these completly unblinded categories
 
 first run morphing (use --backgroundOnly=1 for ZTT categories or =2 for jetFakes category) 
@@ -181,12 +197,19 @@ Also create the output directory called `plots`:
     mkdir plots
 
 ## Scans of alpha
+To see the full list of options with examples can use `python3 scripts/draw_nll_scans.py --help` (like usual).
+
 To plot 1D scan of alpha using MultiDimFit output (ie. run fit first using above commands):
 
     python3 scripts/draw_nll_scans.py --input-folder output/01042020/ --channel tt --mode single --plot-name alpha_cmb
 
 There are some options available to plot multiple by category and channel 
 (will add by year as well soon).
+
+## 2D scans of kappa
+To plot 2D scans of kappa (related to Yukawa couplings) use option `--mode 2d_kappa`, eg:
+
+    python3 scripts/draw_nll_scans.py --input-folder output/01042020 --mode 2d_kappa
 
 ## Prefit/postfit distributions
 First create workspace for category/merged category of interest using above command.
