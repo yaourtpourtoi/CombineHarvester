@@ -23,6 +23,9 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
     To run on lx batch use:
     `--job-mode lxbatch --sub-opts '-q 1nh --split-points 1'
 
+    Useful option to save all nuisance parameter values when performing MultiDimFit (and doesn't seem to cost extra runtime):
+    --saveSpecifiedNuis all
+
 # Plot scan
 
 1D scans can be plotted using scripts/plot1DScan.py script.
@@ -115,23 +118,26 @@ Collect output and make plots:
 
 # Run impacts
 
-first perform initial fit:
+First create workspace using top instructions.
 
-  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0'
+Then perform initial fit:
 
-then run impact with:
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0'
 
-  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=1'
+Run impacts for each systematic with:
+
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=1'
 
 Collect results:
 
-  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json`
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json
 
 Make impact plot:
 
-  `plotImpacts.py -i impacts.json -o impacts`
+    plotImpacts.py -i impacts.json -o impacts
 
-Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+# Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+
 This is useful if you want to compare data/MC agreement in these completly unblinded categories
 
 first run morphing (use --backgroundOnly=1 for ZTT categories or =2 for jetFakes category) 
