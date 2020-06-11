@@ -574,7 +574,7 @@ int main(int argc, char** argv) {
 
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
-    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt"/*, "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"*/};   
+    sig_procs["qqH"] = {"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"};   
 
     vector<string> masses = {"125"};    
     
@@ -593,8 +593,6 @@ int main(int argc, char** argv) {
 
             cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, sig_procs["ggH"], cats[chn+"_"+year], true);
 
-            // add VH for tt channel only for now
-            if(chn == "tt") cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+"_"+year}, {"WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"}, cats[chn+"_"+year], true);
           }
       }
     } 
@@ -637,13 +635,6 @@ int main(int argc, char** argv) {
               "$BIN/$PROCESS$MASS",
               "$BIN/$PROCESS$MASS_$SYSTEMATIC"
             );
-            if(chn=="tt") { // add VH only for tt channel at the moment
-              cb.cp().channel({chn+"_"+year}).process({"WH_sm_htt", "WH_ps_htt", "WH_mm_htt", "ZH_sm_htt", "ZH_ps_htt", "ZH_mm_htt"}).ExtractShapes(
-                input_dir[chn] + extra +  "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
-                "$BIN/$PROCESS$MASS",
-                "$BIN/$PROCESS$MASS_$SYSTEMATIC"
-              );
-            }
           }
       }
     }    
@@ -1094,7 +1085,6 @@ int main(int argc, char** argv) {
         syst->set_value_u(syst->value_u()*0.995378);
         syst->set_value_d(syst->value_d()*1.00768);
     });
-//1.00798 0.995281
 
     // this part of the code should be used to handle the propper correlations between MC and embedded uncertainties and renaming of systematics to match Higgs comb requirements - so no need to try and implement any different treatments in HttSystematics_SMRun2 
     cb.cp().RenameSystematic(cb,"CMS_PreFire_13TeV","CMS_prefiring"); 

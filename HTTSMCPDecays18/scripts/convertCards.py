@@ -184,6 +184,28 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
           histo.Write()
           ROOT.gDirectory.cd('/')
 
+def MergeWH(infile,outfile,dirname):
+    directory = infile.Get(dirname)
+    year='2018'
+    if '2016' in dirname: year='2016'
+    if '2017' in dirname: year='2017'
+    for key in directory.GetListOfKeys():
+        histo = directory.Get(key.GetName()).Clone()
+        if 'WplusH' not in key.GetName(): continue
+        if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F):
+          print histo.GetName()
+          histo2 = directory.Get(key.GetName().replace('plus','minus'))
+          print histo, histo2
+          print histo.Integral(), histo2.Integral()
+          histo.Add(histo2)
+          print histo.Integral()
+          outfile.cd()
+          if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
+          ROOT.gDirectory.cd(dirname)
+          print 'Writing ', dirname, histo.GetName()
+          histo.Write(key.GetName().replace('plus',''), ROOT.TObject.kOverwrite)
+          ROOT.gDirectory.cd('/')
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', '-f', help= 'File from which we want to merge X bins')
 args = parser.parse_args()
@@ -198,4 +220,4 @@ for key in original_file.GetListOfKeys():
         #if 'murho' not in key.GetName() or 'sig' not in key.GetName(): continue
         dirname=key.GetName()
         getHistogramAndWriteToFile(original_file,output_file,key.GetName(),dirname)
-
+        #MergeWH(output_file,output_file,dirname)
