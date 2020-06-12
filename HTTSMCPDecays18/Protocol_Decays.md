@@ -4,18 +4,18 @@ ulimit -s unlimited
 
 # Creating datacard
 
-    MorphingSMCPDecays18 --output_folder="pas_1206" --mergeXbbb=true 
+    MorphingSMCPDecays18 --output_folder="pas_1206_v2" --mergeXbbb=true 
 
 the option --no_shape_systs=true can be used as well to remove all shape uncertainties except for bbb's
 
 # Building the workspaces:
 (combined sub folder only)
 
-    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/pas_1206/cmb/* -o ws.root --parallel 8
+    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/pas_1206_v2/cmb/* -o ws.root --parallel 8
 
 (or to build all subdirectories)
 
-    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/pas_1206/*/* -o ws.root --parallel 8
+    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/pas_1206_v2/*/* -o ws.root --parallel 8
 
 # Run maximum likelihood scan
 
@@ -61,16 +61,16 @@ Also change job-mode options if you are not running on IC batch!
 
 Run toys for all cats seperatly:
 
-   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/pas_1206/cmb/125/ws.root -n ".KS.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 1 -s 0:500:1 
+   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".KS.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 1 -s 0:500:1 
 
 (this runs 500 jobs with 1 toys each)
 
 Run observed
-   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/pas_1206/cmb/125/ws.root -n ".KS" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
+   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".KS" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
 
 Collect results and make plots
 
-    combineTool.py -M CollectGoodnessOfFit --input output/pas_1206/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/pas_1206/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json
+    combineTool.py -M CollectGoodnessOfFit --input output/pas_1206_v2/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/pas_1206_v2/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json
 
    python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="137 fb^{-1} (13 TeV)" --output='-KS'
 
@@ -80,19 +80,19 @@ For saturated model we always run seperatly for each category
 
 Run toys for all cats seperatly:
 
-   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206/htt_*_13TeV/125/ws.root -n ".saturated.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 50 -s 0:10:1
+   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/htt_*_13TeV/125/ws.root -n ".saturated.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 50 -s 0:10:1
 
 (this runs 10 jobs per channel/year with 50 toys each)
  
 and for combined
-   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206/cmb/125/ws.root -n ".saturated.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 1 -s 0:500:1
+   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".saturated.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 1 -s 0:500:1
 
 (this runs 500 jobs with 1 toys each) 
 
 Run observed
-   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206/htt_*_13TeV/125/ws.root -n ".saturated" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
+   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/htt_*_13TeV/125/ws.root -n ".saturated" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
 and for combined 
-  combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206/cmb/125/ws.root -n ".saturated" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
+  combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".saturated" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
 
 
 Collect output and make plots:
@@ -104,7 +104,7 @@ Collect output and make plots:
     do
       for j in "${years[@]}"
       do
-        combineTool.py -M CollectGoodnessOfFit --input output/pas_1206/htt_"$i"_"$j"_13TeV/125/higgsCombine.saturated.GoodnessOfFit.mH125.root output/gof/htt_"$i"_"$j"_13TeV/125/higgsCombine.saturated.toys.GoodnessOfFit.mH125.*.root --there -o "$i"_"$j"_saturated.json
+        combineTool.py -M CollectGoodnessOfFit --input output/pas_1206_v2/htt_"$i"_"$j"_13TeV/125/higgsCombine.saturated.GoodnessOfFit.mH125.root output/gof/htt_"$i"_"$j"_13TeV/125/higgsCombine.saturated.toys.GoodnessOfFit.mH125.*.root --there -o "$i"_"$j"_saturated.json
       python ../CombineTools/scripts/plotGof.py --statistic saturated --mass 125.0 "$i"_"$j"_saturated.json --title-right="137 fb^{-1} (13 TeV)" --output="$i"_"$j"'-saturated'
       done
     done
@@ -308,7 +308,7 @@ Run MultiDimFit and save fit result:
 
 (the -t -1 has been removed from the command below so be careful if you are not unblinding!)
 
-combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/pas_1206/cmb/125/ws.root --algo none  --there -n .bestfit --cminDefaultMinimizerStrategy=0 --saveFitResult
+combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/pas_1206_v2/cmb/125/ws.root --algo none  --there -n .bestfit --cminDefaultMinimizerStrategy=0 --saveFitResult
 
 This will create multidimfit.bestfit.root
 
@@ -322,7 +322,7 @@ this will produce all plots at once in one root file but it tends to be slow:
 
 it is better to produce shapes seperate for each year to speed this up (e.g for tt in 2016):
 
-    PostFitShapesFromWorkspace -m 125 -d output/pas_1202/tt_2016/125/combined.txt.cmb -w output/pas_1202/tt_2016/125/ws.root -o shapes_tt_2016.root --print --postfit --sampling -f output/pas_1206/cmb/125/multidimfit.bestfit.root:fit_mdf
+    PostFitShapesFromWorkspace -m 125 -d output/pas_1202/tt_2016/125/combined.txt.cmb -w output/pas_1202/tt_2016/125/ws.root -o shapes_tt_2016.root --print --postfit --sampling -f output/pas_1206_v2/cmb/125/multidimfit.bestfit.root:fit_mdf
 
 If this is still too slow you can produce the shapes for each channel seperatly instead
 
