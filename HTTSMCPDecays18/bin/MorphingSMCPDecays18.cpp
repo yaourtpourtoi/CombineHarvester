@@ -463,7 +463,7 @@ int main(int argc, char** argv) {
 	{5, "mt_mua1_sig_2016"},
 	{6, "mt_mu0a1_sig_2016"},
       };
-    } 
+    }  
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2017"] = {
         {1, "tt_2017_zttEmbed"},
@@ -811,27 +811,27 @@ int main(int argc, char** argv) {
   });
   // these uncertainty that effectivly don't do anything will be removed at a later stage
 
-//  // If any shapes are identical then change these uncertainties to lnN - they will then be removed altogether in a latter step if the yields also match
-//  // Be careful with this part as you could miss bug in the code which might mean the systematic is not implemented properly - suggest this is kept commented until the very end
-//  cb.ForEachSyst([&](ch::Systematic *s) {
-//    if (s->type().find("shape") == std::string::npos) return;
-//      std::unique_ptr<TH1> nominal;
-//
-//      cb.cp().ForEachProc([&](ch::Process *proc){
-//         bool match_proc = (MatchingProcess(*proc,*s));
-//         if(match_proc) nominal = proc->ClonedShape(); 
-//       });
-//    auto up = s->ClonedShapeU();
-//    auto down = s->ClonedShapeD();
-//    bool match_up = false, match_down = false;
-//    match_up = CheckHistsMatch(up.get(), nominal.get(), 0.) ;
-//    match_down = CheckHistsMatch(down.get(), nominal.get(), 0.) ;
-//
-//    if(match_up && match_down) {
-//      std::cout << "Systematic teamplates match exactly for: \n" << *s << "\n" << "changing it to lnN!" << std::endl;
-//      s->set_type("lnN"); 
-//    }
-//   });
+  // If any shapes are identical then change these uncertainties to lnN - they will then be removed altogether in a latter step if the yields also match
+  // Be careful with this part as you could miss bug in the code which might mean the systematic is not implemented properly - suggest this is kept commented until the very end
+  cb.ForEachSyst([&](ch::Systematic *s) {
+    if (s->type().find("shape") == std::string::npos) return;
+      std::unique_ptr<TH1> nominal;
+
+      cb.cp().ForEachProc([&](ch::Process *proc){
+         bool match_proc = (MatchingProcess(*proc,*s));
+         if(match_proc) nominal = proc->ClonedShape(); 
+       });
+    auto up = s->ClonedShapeU();
+    auto down = s->ClonedShapeD();
+    bool match_up = false, match_down = false;
+    match_up = CheckHistsMatch(up.get(), nominal.get(), 0.) ;
+    match_down = CheckHistsMatch(down.get(), nominal.get(), 0.) ;
+
+    if(match_up && match_down) {
+      std::cout << "Systematic teamplates match exactly for: \n" << *s << "\n" << "changing it to lnN!" << std::endl;
+      s->set_type("lnN"); 
+    }
+   });
 
     if(mergeXbbb) {
       // if we are mergin bbb's we can't use autoMC stats
@@ -1265,6 +1265,28 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
      writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
      writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
+
+     for(auto year: years) {
+       writer.WriteCards("htt_tt_1_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({1}));
+       writer.WriteCards("htt_tt_2_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({2}));
+       writer.WriteCards("htt_tt_3_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({3}));
+       writer.WriteCards("htt_tt_4_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({4}));
+       writer.WriteCards("htt_tt_5_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({5}));
+       writer.WriteCards("htt_tt_6_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({6}));
+       writer.WriteCards("htt_tt_7_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({7}));
+       writer.WriteCards("htt_tt_8_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({8}));
+       writer.WriteCards("htt_tt_9_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({9}));
+       writer.WriteCards("htt_tt_10_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({10}));
+       writer.WriteCards("htt_tt_11_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({11}));
+       writer.WriteCards("htt_mt_1_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({1}));
+       writer.WriteCards("htt_mt_2_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({2}));
+       writer.WriteCards("htt_mt_3_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({3}));
+       writer.WriteCards("htt_mt_4_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({4}));
+       writer.WriteCards("htt_mt_5_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({5}));
+       writer.WriteCards("htt_mt_6_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({6}));
+
+     }
+
      //writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
      //writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
 
@@ -1280,6 +1302,16 @@ int main(int argc, char** argv) {
      writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
      writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
         
+     writer.WriteCards("htt_bkg", cb.cp().bin_id({1,2}));
+
+     cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3,7}, false).ForEachObj([&](ch::Object *obj){
+         obj->set_attribute("cat","stage2");
+      });
+     cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({3,4}, false).ForEachObj([&](ch::Object *obj){
+         obj->set_attribute("cat","stage2");
+      });
+    writer.WriteCards("htt_stage2", cb.cp().attr({"stage2"},"cat"));
+
     cb.PrintAll();
     cout << " done\n";
     
