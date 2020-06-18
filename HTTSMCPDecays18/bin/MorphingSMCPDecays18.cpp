@@ -681,7 +681,15 @@ int main(int argc, char** argv) {
     .SetPerformRebin(true)
     .SetVerbosity(1);
     if(auto_rebin) rebin.Rebin(cb, cb);
-  
+ 
+    // manually merge 2 highest NN score bins for ztt category in 2016
+    //std::vector<double> binning = {0.0,0.5,0.6,0.7,1.0};
+    //cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}).VariableRebin(binning);
+
+    //std::vector<double> binning_tt_bkg = {0.3,0.4,0.5,0.6,0.7,0.8};
+    //std::vector<double> binning_tt_bkg = {0.3,0.6,0.7,0.8,0.9,1.0};
+    //cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).VariableRebin(binning_tt_bkg);
+ 
   
     // At this point we can fix the negative bins
     std::cout << "Fixing negative bins\n";
@@ -730,6 +738,8 @@ int main(int argc, char** argv) {
   // convert systematics to lnN here
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
   cb.cp().RenameSystematic(cb,"CMS_eff_b_13TeV","CMS_btag_comb");
+
+  ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "ff_SS_closure", 0.);
 
   // for high pT tau ID uncertainties for tt channel, these can only affect normalizations in the MVA-DM exclusive categories
   ConvertShapesToLnN(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2},false), "CMS_eff_t_pThigh_MVADM0_13TeV", 0.);
@@ -869,12 +879,34 @@ int main(int argc, char** argv) {
       .SetFixNorm(false);
       bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
 
-      auto bbb_qqh = ch::BinByBinFactory()
+      //auto bbb_qqh = ch::BinByBinFactory()
+      //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
+      //.SetAddThreshold(0.0)
+      //.SetMergeThreshold(0.0)
+      //.SetFixNorm(false);
+      //bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
+
+
+      auto bbb_qqh_sm = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
       .SetAddThreshold(0.0)
-      .SetMergeThreshold(0.0)
+      .SetMergeThreshold(1.0)
       .SetFixNorm(false);
-      bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
+      bbb_qqh_sm.MergeAndAdd(cb.cp().signals().process({"qqH_sm_htt","WH_sm_htt","ZH_sm_htt"}),cb);
+
+      auto bbb_qqh_ps = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(1.0)
+      .SetFixNorm(false);
+      bbb_qqh_ps.MergeAndAdd(cb.cp().signals().process({"qqH_ps_htt","WH_ps_htt","ZH_ps_htt"}),cb);
+
+      auto bbb_qqh_mm = ch::BinByBinFactory()
+      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
+      .SetAddThreshold(0.0)
+      .SetMergeThreshold(1.0)
+      .SetFixNorm(false);
+      bbb_qqh_mm.MergeAndAdd(cb.cp().signals().process({"qqH_mm_htt","WH_mm_htt","ZH_mm_htt"}),cb);
 
 // neglect VH uncerts as they are a small contribution
 
@@ -1195,6 +1227,14 @@ int main(int argc, char** argv) {
     // remove the 13TeV labelling from all uncerts except lumi
     Remove13TeVFromNames(cb);
 
+    // For dyShape uncertainties we need to apply fixes in cases where these are converted to lnN as the conversion to lnN does not take into account the 0.1 scaling of the shape uncertainties
+    cb.cp().syst_name({"CMS_htt_dyShape"}).ForEachSyst([](ch::Systematic *sys) {
+        if (sys->type().find("lnN") != std::string::npos){
+          sys->set_value_d((sys->value_d()-1.)*0.1+1.);
+          sys->set_value_u((sys->value_u()-1.)*0.1+1.);
+        }
+    });
+
     // if lnN uncertainties have no effect then remove
     cb.FilterSysts([&](ch::Systematic *s){
       bool filter = s->type().find("lnN") != std::string::npos && ((s->asymm() && s->value_u()==1 && s->value_d()==1) || (!s->asymm() && s->value_u()==1));
@@ -1241,7 +1281,22 @@ int main(int argc, char** argv) {
 
      writer.WriteCards("htt_tt", cb.cp().channel({"tt_2016","tt_2018","tt_2017"}));
      writer.WriteCards("htt_mt", cb.cp().channel({"mt_2016","mt_2018","mt_2017"}));
+
+     writer.WriteCards("htt_bkg_mt_2016", cb.cp().channel({"mt_2016"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_mt_2017", cb.cp().channel({"mt_2017"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_mt_2018", cb.cp().channel({"mt_2018"}).bin_id({1,2}));
      
+     writer.WriteCards("htt_bkg_tt_2016", cb.cp().channel({"tt_2016"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_tt_2017", cb.cp().channel({"tt_2017"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_tt_2018", cb.cp().channel({"tt_2018"}).bin_id({1,2}));
+
+     writer.WriteCards("htt_bkg_tt", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_mt", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2}));
+
+
+     writer.WriteCards("htt_ztt", cb.cp().bin_id({1}));
+     writer.WriteCards("htt_fakes", cb.cp().bin_id({2}));
+
      for (auto chn : cb.channel_set()) {
      
        // per-channel
