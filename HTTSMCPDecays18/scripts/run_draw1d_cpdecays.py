@@ -163,14 +163,15 @@ def draw1d_cpdecays(
         # and then replace PS hypothesis in df_plot by PS entries here.
         # This is because, with PostFitShapesFromWorkspace, we don't have any
         # entries for PS signals when SM (alpha=0) 
-        df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
-        if df_plot_alt is not None:
-            df_plot = pd.concat([
-                df_plot,
-                df_plot_alt.loc[
-                    df_plot_alt.index.get_level_values("parent") == "H_ps"
-                ]
-            ], axis='index', sort=False)
+        if draw_signals:
+            df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
+            if df_plot_alt is not None:
+                df_plot = pd.concat([
+                    df_plot,
+                    df_plot_alt.loc[
+                        df_plot_alt.index.get_level_values("parent") == "H_ps"
+                    ]
+                ], axis='index', sort=False)
         if partial_blind:
             # Unblind first window of unrolled bins only (for now)
             data_mask = df_plot.index.get_level_values("parent") == "data_obs"
