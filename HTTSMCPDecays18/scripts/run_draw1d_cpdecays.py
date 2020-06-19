@@ -83,7 +83,7 @@ def draw1d_cpdecays(
 
     # The following channel kwargs config file define the 
     # merging for the plotting, eg. merge all SM higgs signals into H_sm.
-    # Should always use scripts/plot_kw_postfix.yaml when using ff and embedding
+    # Should always use scripts/plot_kw_postfit.yaml when using ff and embedding
     ch_kw = {}
     with open("scripts/plot_kw.yaml", "r") as f:
         ch_kw = yaml.safe_load(f)
@@ -100,7 +100,10 @@ def draw1d_cpdecays(
     # Histogram processes to load in
     # By default we use fake factors and embedding
     if embedding and ff:
-        processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes',]
+        if channel == "tt":
+            processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes','Wfakes',]
+        elif channel == "mt":
+            processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes',]
     elif ff:
         processes = ['data_obs', 'ZTT', 'ZL', 'TTT', 'VVT', 'jetFakes', 'EWKZ',]
     elif embedding:
@@ -116,8 +119,8 @@ def draw1d_cpdecays(
     if len(signals) > 0:
         # uncomment VH signals when ready
         processes.extend([
-            "ggH_sm_htt", "qqH_sm_htt", #"ZH_sm_htt", "WH_sm_htt",
-            "ggH_ps_htt", "qqH_ps_htt", #"ZH_ps_htt", "WH_ps_htt",
+            "ggH_sm_htt", "qqH_sm_htt", "ZH_sm_htt", "WH_sm_htt",
+            "ggH_ps_htt", "qqH_ps_htt", "ZH_ps_htt", "WH_ps_htt",
         ])
         
     # Draw categories (defined in nbins_kw in plotting.py):
@@ -141,20 +144,20 @@ def draw1d_cpdecays(
         if category in ["embed", "fakes"]:
             # MVA score plots for background categories
             if channel == "tt":
-                plot_var = "IC_15Mar2020_max_score"
+                plot_var = "BDT_score"
             elif channel == "mt":
                 plot_var = "NN_score"
             partial_blind = False
             unrolled = False
             norm_bins = True
-            signal_scale = 50.
         else:
             # 'unrolled' category plots
             plot_var = "Bin_number"
             partial_blind = True
             unrolled = True
-            norm_bins = False # x-axis is bin-number, no need to normalise bins
-            signal_scale = 1. # no need to scale on log plot
+            norm_bins = True 
+
+        signal_scale = 1. # no need to scale on log plot
 
         # Create dataframe to plot
         df_plot = create_df(datacard, directory, channel, processes, ch_kw)
@@ -181,10 +184,11 @@ def draw1d_cpdecays(
 
         # Always use mcstat=True and mcsyst=True when plotting systematic unc.
         draw_1d(
-            df_plot, plot_var, channel, year, blind=False, sigs=signals, 
+            df_plot, plot_var, channel, category, year, blind=False, sigs=signals, 
             signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,
+            logy=True,
         )
 
 if __name__ == "__main__":
