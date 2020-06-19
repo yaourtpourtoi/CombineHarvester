@@ -14,7 +14,7 @@ mpl.use('pdf')
 plt.style.use('cms')
 
 def create_df(
-    datacard, directory, channel, processes, ch_kw={},
+    datacard, directory, channel, processes, ch_kw={}, variations=[],
 ):
     df = pd.DataFrame()
     _file = uproot.open(datacard)
@@ -24,8 +24,8 @@ def create_df(
             print(f"Not found {process} in {_file[directory]}: set weights to 10^{{-10}}")
             # in CH we remove processes with 0 yield
             # can add them back here in this case (using near zero event weights)
-            # TO DO: can be implemented directly in CH (Morphing script)
-            # Take nbins from data hist in this case
+            # TO DO: do this in CH straight (morphing script)
+            # Take bin number from data in this case
             nbins = _file["{}/data_obs".format(directory)].numbins
             bin_edges = _file["{}/data_obs".format(directory)].edges
             df = pd.concat([df, pd.DataFrame({
@@ -38,40 +38,104 @@ def create_df(
             })], axis='index', sort=False)
             continue
         hist = _file["{}/{}".format(directory, process)]
+        # print(dir(hist))
         bins = hist.bins
         bin_edges = hist.edges
         nbins = hist.numbins
         weights = hist.values
+        weights_down = np.zeros_like(weights)
+        weights_up = np.zeros_like(weights)
         variance = hist.variances
-
+        variance_down = np.zeros_like(variance)
+        variance_up = np.zeros_like(variance)
+        # total syst uncertainty to add multiple variations if set
+        syst_variance_down = np.zeros_like(variance)
+        syst_variance_up = np.zeros_like(variance)
+        
+        skip_variation = ["data_obs"]#, "ggH_sm_htt125", "qqH_sm_htt125", "ZH_sm_htt125", "WH_sm_htt125",]
+        if len(variations) > 0 and process not in skip_variation:
+            for variation in variations:
+                try:
+                    process_down = f"{process}_{variation}Down"
+                    process_up = f"{process}_{variation}Up"
+                    hist_down = _file["{}/{}".format(directory, process_down)]
+                    hist_up = _file["{}/{}".format(directory, process_up)]
+                    weights_down = hist_down.values
+                    weights_up = hist_up.values
+                    variance_down = (hist_down.values - weights)**2
+                    variance_up = (hist_up.values - weights)**2
+                except KeyError:
+                    print(f"Not found {variation} for {process}: skipping")
+                
+                # total variance for systematic variations
+                # add each together (assuming uncorrelated)
+                syst_variance_down += variance_down
+                syst_variance_up += variance_up
+        
         df = pd.concat([df, pd.DataFrame({
             "varname0": ["var"] * nbins,
             "binvar0": bin_edges[:-1],
             "binvar1": bin_edges[1:],
             "sum_w": weights,
-            "sum_ww": variance,
-            "parent": hist.name.decode(),
+            "sum_w_up": weights_up,
+            "sum_w_down": weights_down,
+            "sum_ww": variance, # stat uncertainty from nominal template
+            "sum_ww_down": syst_variance_down+variance, # syst uncertainty down + stat (assumed Gaussian)
+            "sum_ww_up": syst_variance_up+variance, # syst uncertainty up + stat (assumed Gaussian)
+            "parent": hist.name.decode(), # same as 'process'
         })], axis='index', sort=False)
+        
     df.set_index(["parent","binvar0","binvar1"], inplace=True)
     
     df = dftools.transform.merge(df, ch_kw[channel])
     
     return df
 
-def draw_signal_ratio(ax, df_, sigs=["H_sm", "H_ps",],):
+def add_axis(ax):
+    def add_floating_axis1(ax1):
+        ax1.axis["lat"] = axis = ax1.new_floating_axis(0, 30)
+        axis.label.set_text(r"$\theta = 30^{\circ}$")
+        axis.label.set_visible(True)
+    
+        return axis
+    
+    ax1 = setup_axes(fig, rect=141)
+    axis = add_floating_axis1(ax1)
+    ax1.annotate(
+        d, (0.5, 1), (5, -5),
+        xycoords="axes fraction", textcoords="offset points",
+        va="top", ha="center"
+    )
+    
+def custom_cms_label(ax, label, lumi=35.9, energy=13, extra_label=''):
+    ax.text(
+        0, 1, r'$\mathbf{CMS}\ \mathit{'+label+'}$',
+        ha='left', va='bottom', transform=ax.transAxes,
+    )
+    ax.text(
+        1, 1, r'${:.0f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
+        ha='right', va='bottom', transform=ax.transAxes,
+    )
+    # label on centre top of axes
+    ax.text(
+        0.5, 1, extra_label,
+        ha='center', va='bottom', transform=ax.transAxes,
+    )
 
+def draw_signal_ratio(ax, df_, sigs=["H_sm", "H_ps",],):
+    
     df = df_.copy(deep=True)
     # do ratio with respect to first entry given in sigs list
     denom_mask = df.index.get_level_values("parent") != sigs[0]
-    binning = df.index.get_level_values("binvar0").unique()
+    low_edges = df.index.get_level_values("binvar0").unique()
     df["binwidth"] = df.reset_index().eval("binvar1-binvar0").values
-    bin_edges, bin_cents = dftools.draw.bin_lows_to_edges_cents(binning)
+    bin_edges, bin_cents = dftools.draw.bin_lows_to_edges_cents(low_edges)
     for sig_name in sigs:
         numer_mask = df.index.get_level_values("parent") != sig_name
         sig_ratio = df.loc[~numer_mask, "sum_w"].values / df.loc[~denom_mask, "sum_w"].values
         sig_ratio_ww = df.loc[~numer_mask, "sum_ww"].values / df.loc[~denom_mask, "sum_w"].values**2
         ax.hist(
-            binning, bins=list(binning)+[binning[-1] + df["binwidth"].values[0]], 
+            low_edges, bins=list(low_edges)+[low_edges[-1] + df["binwidth"].values[0]], 
             weights=sig_ratio, histtype='step', lw=1,
             color=process_kw["colours"][sig_name],
             ls=process_kw["linestyles"][sig_name],
@@ -85,153 +149,206 @@ def draw_signal_ratio(ax, df_, sigs=["H_sm", "H_ps",],):
             ls=process_kw["linestyles"][sig_name],
             alpha=0.2, zorder=1,
         )
+        
     return ax
 
 def draw_1d(
-    df_, plot_var, channel, year, blind, sigs=[], 
+    df_, plot_var, channel, category, year, blind, sigs=[], 
     signal_scale=1., ch_kw={}, process_kw={}, var_kw={}, 
     leg_kw={}, sig_kw={}, norm_mc=False, fractions=False,
-    unrolled=False, nbins=[[4], 14, "", ""], mcstat=True,
-    sig_ratio=False, norm_bins=False, mcsyst=True,
+    unrolled=False, nbins=[[4], 14, "inclusive", "inclusive"], mcstat=True,
+    sig_ratio=False, norm_bins=False, mcsyst=False,
+    mcstat_kw={}, logy=False, postfix="", sm_bkg_ratio=False,
+    combined=False,
 ):
     # to keep the original one the same
     df = df_.copy(deep=True)
-
-    # low edges
-    binning = df.index.get_level_values("binvar0").unique()
+    
+    # full binning
+    df["binwidth"] = df.reset_index().eval("binvar1-binvar0").values
+    low_edges = list(df.index.get_level_values("binvar0").unique())
+    binning = list(low_edges)+[low_edges[-1] + df["binwidth"].values[-1]]
+    scale_by_tenthou = False
     if norm_bins:
-        df["binwidth"] = df.reset_index().eval("binvar1-binvar0").values
         df["sum_w"] = df.eval("sum_w/binwidth")
         df["sum_ww"] = df.eval("sum_ww/(binwidth**2)")
-
+        df["sum_ww_down"] = df.eval("sum_ww_down/(binwidth**2)")
+        df["sum_ww_up"] = df.eval("sum_ww_up/(binwidth**2)")
+    
     with mpl.backends.backend_pdf.PdfPages(
-        f"plots/{plot_var}_{nbins[3]}_{channel}_{year}.pdf",
+        "plots/{}_{}_{}_{}_{}{}.pdf".format(
+            plot_var, nbins[3], channel, year, category, postfix
+        ),
         keep_empty=False,
     ) as pdf:
-        fig, ax = plt.subplots(
-            figsize=(2.9, 3.2), dpi=200,
-            nrows=2, ncols=1,
-            sharex=True, sharey=False,
-            gridspec_kw={"height_ratios": (3, 1), "hspace": 0.1, "wspace": 0.1},
-        )
-        if unrolled:
-            fig.set_size_inches(5.3, 3.2)
-
+        if not sig_ratio:
+            fig, ax = plt.subplots(
+                figsize=(2.8, 3.1), dpi=200,
+                nrows=2, ncols=1,
+                sharex=True, sharey=False,
+                gridspec_kw={"height_ratios": (2.5, 1), "hspace": 0.1, "wspace": 0.1},
+            )
+            if unrolled:
+                fig.set_size_inches(5.3, 3.2)
+        else:
+            fig, ax = plt.subplots(
+                figsize=(2.8, 4.1), dpi=200,
+                nrows=3, ncols=1,
+                sharex=True, sharey=False,
+                gridspec_kw={"height_ratios": (3, 1, 1), "hspace": 0.1, "wspace": 0.1},
+            )
+            if unrolled:
+                fig.set_size_inches(5.3, 4.2)
+    
         if year == "2016":
             lumi = 35.9
         elif year == "2017": 
             lumi = 41.5
         elif year == "2018": 
             lumi = 59.7
-
-        if unrolled:
+        
+        if unrolled and not combined:
             dftools.draw.cms_label(ax[0], "Preliminary", lumi=lumi, extra_label=nbins[2])
-        else:
+        elif not combined:
             dftools.draw.cms_label(ax[0], "Preliminary", lumi=lumi)
-
-        # To fix when y axis is too large, scientific notation starts showing 
-        # up in top left and overlaps with CMS logo
-        scale_by_tenthou = False
-        if not unrolled and (df["sum_w"] > 1e5).any():
-            scale_by_tenthou = True
-            df["sum_w"] = df.eval("sum_w/1e5")
-            df["sum_ww"] = df.eval("sum_ww/(1e5**2)")
-
-
+        # for all three years together (assume uncorrelated)
+        elif combined and unrolled: 
+            custom_cms_label(ax[0], "Preliminary", lumi=137, extra_label=nbins[2])
+        else:
+            custom_cms_label(ax[0], "Preliminary", lumi=137)
+            
+        
+        # to fix when y axis is too large 
+        # (scientific notation starts showing up)
+        if not unrolled and not logy and (df["sum_w"] > 1e5).any():
+            scale_by_tenthou = False
+            #df["sum_w"] = df.eval("sum_w/1e5")
+            #df["sum_ww"] = df.eval("sum_ww/(1e5**2)")
+            #df["sum_ww_down"] = df.eval("sum_ww_down/(1e5**2)")
+            #df["sum_ww_up"] = df.eval("sum_ww_up/(1e5**2)")
+            
+        
         data_mask = df.index.get_level_values("parent") != "data_obs"
-
+        
         df_data = df.loc[~data_mask,:]
         df_mc = df.loc[data_mask,:]
         if norm_mc:
             df_mc = df_data.sum() * df_mc / df_mc.sum() 
-
+            
         # scale signals if set
         sig_mask = ~df_mc.index.get_level_values("parent").isin(sigs)
         df_mc.loc[~sig_mask, "sum_w"] = df_mc.loc[~sig_mask, "sum_w"].copy(deep=True) * signal_scale
         df_mc.loc[~sig_mask, "sum_ww"] = df_mc.loc[~sig_mask, "sum_ww"].copy(deep=True) * signal_scale**2
-
+        
+        # get maximum bin content to add a legend that doesn't overlap
+        df_bkgs = df_mc.loc[sig_mask, :]
+        df_bkgs_sum = df_bkgs.groupby("binvar0").sum()
+            
+        # get max bin values for data and background MC
         ymax = max([
             df_data["sum_w"].max(), 
-            df_mc["sum_w"].max() 
+            df_bkgs_sum["sum_w"].max() 
         ])
         ymc_max = max([
-            df_mc["sum_w"].max(), 
+            df_bkgs_sum["sum_w"].max(), 
         ])
 
         if len(sigs) == 0:
             ymax *= 1.6
-            leg_kw = {
-                "offaxis": False, "fontsize": 9, "labelspacing":0.12,
-                "ncol": 2, "loc": 9, 
-            }
-        elif len(sigs) > 0:
+        elif len(sigs) > 0 and len(sigs) < 3:
             if channel == "tt":
                 ymax *= 1.6
             elif channel == "mt":
                 ymax *= 1.8
-            leg_kw = {
-                "offaxis": False, "fontsize": 7, "labelspacing":0.12,
-                "ncol": 2, "loc": 9, "framealpha": 0.6,
-            }
+        elif len(sigs) >= 3:
+            if channel == "tt":
+                ymax *= 1.7
+            elif channel == "mt":
+                ymax *= 1.8
+        leg_kw = {
+            "offaxis": False, "fontsize": 7, "labelspacing":0.12,
+            "ncol": 2, "loc": 9, "framealpha": 0.,
+        }
+        ratio_leg_kw = {
+            "fontsize": 7, "labelspacing":0.12,
+            "ncol": 2, "loc": 0, "framealpha": 0.,
+        }
         if unrolled:
             leg_kw = {
                 "offaxis": True, "fontsize": 9, "labelspacing":0.14,
             }
-
-        process_kw["labels"]["H_sm"] = r'$\mathrm{SM\ H} \rightarrow\tau\tau$'
-        process_kw["labels"]["H_ps"] = r'$\mathrm{PS\ H} \rightarrow\tau\tau$'
-        if signal_scale != 1.:
+            logy = True
+            
+        if signal_scale != 1. and not unrolled:
             process_kw["labels"]["H_sm"] = f'${signal_scale}\\times \\mathrm{{SM\ H}} \\rightarrow\\tau\\tau$'
             process_kw["labels"]["H_ps"] = f'${signal_scale}\\times \\mathrm{{PS\ H}} \\rightarrow\\tau\\tau$'
-
-        # For MC (stats) use poisson errors by default
-        # If using Gaussian errors (as we do for nuisance parameters) 
-        # use symmetric errors
+            process_kw["labels"]["ggH"] = f'${signal_scale}\\times gg\\mathrm{{H}} \\rightarrow\\tau\\tau$'
+            process_kw["labels"]["qqH"] = f'${signal_scale}\\times qq\\mathrm{{H}} \\rightarrow\\tau\\tau$'
+            process_kw["labels"]["VH"] = f'${signal_scale}\\times \\mathrm{{VH}} \\rightarrow\\tau\\tau$'
+         
+        # For MC use poisson errors by default
+        # If using Gaussian errors (like the one from CH PostFitShapes) use symmetric errors
+        # can use KW and set these only when using mcsyst
         mcsyst_kw = {}
+        mcstat_ratio_kw = {"label": "Bkg. stat. unc."}
         if mcsyst:
-            interval_func_custom = lambda x, variance:\
-                (x-np.sqrt(variance), x+np.sqrt(variance))
-            mcsyst_kw["interval_func"] = interval_func_custom
+            interval_func = lambda x, variance: (x-np.sqrt(variance), x+np.sqrt(variance))
+            mcsyst_kw["interval_func"] = interval_func
+            mcstat_ratio_kw["label"] = "Bkg. syst. unc."
 
         dftools.draw.data_mc(
             ax, df_data, df_mc, "binvar0", binning, 
-            log=unrolled, legend=True,
+            log=logy, legend=True,
             proc_kw=process_kw, legend_kw=leg_kw,
+            ratio_legend_kw=ratio_leg_kw,
             sigs=sigs,
             blind=blind,
             add_ratios=fractions, 
             mcstat=mcstat, 
             mcstat_top=mcstat,
+            mcstat_kw=mcstat_kw,
             **mcsyst_kw,
+            sig_kw=sig_kw, 
+            mcstat_ratio_kw=mcstat_ratio_kw,
+            variable_bin=True, # just to use full binning in case it's variable
         )
-
+        
         if not unrolled:
-            ax[0].set_ylim(0., ymax)
-            if blind:
+            if not logy:
+                ax[0].set_ylim(0., ymax)
+            elif logy and channel not in ["tt", "mt", "et"]:
+                ax[0].set_ylim(1e0, ymc_max*1e2)
+            elif logy and channel == "tt": 
+                ax[0].set_ylim(1e0, ymc_max*1e4)
+            elif logy and channel == "mt": 
+                ax[0].set_ylim(1e0, ymc_max*1e6)
+            elif blind:
                 ax[0].set_ylim(0., ymc_max*2.)
         ax[0].set_ylabel(r'Events')
-        if norm_bins and scale_by_tenthou:
-            ax[0].set_ylabel(r'$10^{5}\ \mathrm{events}\ /\ \mathrm{bin}$')
-        elif norm_bins:
-            ax[0].set_ylabel(r'Events / bin')
-        ax[1].set_ylabel(r'Ratio')
-
+        #if norm_bins and scale_by_tenthou:
+        #    ax[0].set_ylabel(r'$\times 10^5\ \mathrm{Events}\ /\ \mathrm{bin}$')
+        if norm_bins:
+            ax[0].set_ylabel(r'Events/bin')
+        #ax[1].set_ylabel(r'Ratio')
+        ax[1].set_ylabel(r'Data/Bkg.')
+        
+        first_xpos = 0.
         if unrolled:
-            #ax[0].set_ylim(1e-1, 1e3)
             ax[0].set_ylim(1e-1, ymc_max*10)
             ax[1].set_ylim(0, 2)
             ax[1].set_yticks([0.5, 1., 1.5])
-
-            binvar0_bins = len(binning)
+            
+            binvar0_bins = len(low_edges)
             vert_lines = list(range(nbins[1], binvar0_bins, int(nbins[1])))
-            ax[0].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=20)
-            ax[1].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=20)
-
-            ax[1].set_xticks(list(range(0, binvar0_bins, int(nbins[1]))))
-
+            ax[0].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=1)
+            ax[1].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=1)
+            
+            ax[1].set_xticks(list(range(0, binvar0_bins+int(nbins[1]), int(nbins[1]))))
+            
             # annotate windows (BDT score)
             widebin_cents = list(range(int(nbins[1]/2), binvar0_bins, int(nbins[1])))
             _, ypos = ax[0].transData.inverted().transform(ax[0].transAxes.transform((0, 0.95)))
+            first_xpos = widebin_cents[0]
             for idx, xpos in enumerate(widebin_cents):
                 if channel == "tt":
                     ftsize = 9
@@ -241,44 +358,94 @@ def draw_1d(
                     xpos, ypos, f"({nbins[0][idx]}, {nbins[0][idx+1]})", 
                     ha='center', va='top', fontsize=ftsize,
                 )
-
+                
         try:
+            # update general var_kw with channel-dependent ones
+            var_kw.update(var_kw_bychannel[channel])
             ax[1].set_xlabel(var_kw[plot_var])
         except KeyError:
             print(f"{plot_var} not defined in var_kw")
             ax[1].set_xlabel(plot_var.replace("_"," "))
-
-
+        
+        # for additional axis with SM vs PS ratio
         if sig_ratio:
-            # use function defined above for signal ratios
+            # use function for signal ratios
             draw_signal_ratio(ax[2], df_mc, sigs=sigs)
             if unrolled:
                 box = ax[2].get_position()
                 ax[2].set_position([box.x0, box.y0, box.width*0.8, box.height])
-            # set x axis label to bottom pad
+            # set label to bottom pad
             ax[1].set_xlabel("")
             try:
                 ax[2].set_xlabel(var_kw[plot_var])
             except KeyError:
                 print(f"{plot_var} not defined in var_kw")
                 ax[2].set_xlabel(plot_var.replace("_"," "))
-            ax[2].set_ylim(0.5, 1.5)
-            # ax[2].set_yticks([0.8, 1., 1.2])
-            ax[2].set_ylabel(r'Ratio')
+                
+            # for signal ratios that require larger ratio range
+            if nbins[3] in [
+                "rho-rho", "pi-rho", "pi-pi",
+                "mu-pi",
+            ]:
+                ax[2].set_ylim(0, 2)
+                ax[2].set_yticks([0., 0.5, 1., 1.5, 2.])
+            else: 
+                ax[2].set_ylim(0.5, 1.5)
+                ax[2].set_yticks([0.5, 1.0, 1.5])
+            #ax[2].set_yticks([0.5, 0.75, 1., 1.25, 1.5])
+            #ax[2].set_ylabel(r'Ratio')
+            ax[2].set_ylabel(r'Sig./SM')
+            
+            if unrolled:
+                ax[2].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=1)
+            
+        # for (sig+bkgs)/bkgs ratio
+        if sm_bkg_ratio and len(sigs) > 0:
+            # for signal+bkg/bkg ratio in BDT control plots
+            # unscale signal by signal_scale for this
+            df_bkgs = df_mc.loc[sig_mask, :]
+            df_bkgs_sum = df_bkgs.groupby("binvar0").sum()
+            sum_w_bkgs = df_bkgs_sum.loc[:,"sum_w"]
+            # loop over signals in reverse order to have SM on top
+            for sig in sigs[::-1]:
+                mask = df_mc.index.get_level_values("parent") != sig
+                df_sig = df_mc.loc[~(mask),:]
+                sum_w_sig = df_sig.loc[:,"sum_w"]/signal_scale
+                
+                # this will be the (sig+bkgs)/bkgs ratio for each sig
+                sm_bkgs_ratio = (sum_w_sig.values+sum_w_bkgs.values)/sum_w_bkgs.values
+                
+                ax[1].hist(
+                    low_edges, bins=binning, 
+                    weights=sm_bkgs_ratio, histtype='step', lw=1,
+                    color=process_kw["colours"][sig],
+                    zorder=1,
+                )
+                ax[1].set_ylabel(r'Ratio')
 
-
-        ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
         ax[1].set_ylim(0.6, 1.4)
+        ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
+        # temporarily rebin for ptmiss
+        #if plot_var in ['met']:
+        #    ax[1].set_xlim(0, 100)
+        #ax[1].set_ylim(0., 2.)
+        #ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
+        # for zmm noise jet
+        #ax[1].set_ylim(0., 2.5)
+        #ax[1].set_yticks([0., 0.5, 1., 1.5, 2., 2.5])
         if unrolled:
             ax[1].set_ylim(0., 2.)
             ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
+        if plot_var == 'pt_tt' and channel == "zmm":
+            ax[1].set_xlabel(r"$p_{\mathrm{T}}^{\mu\mu} (\mathrm{GeV})$")
+        if plot_var == 'm_vis' and channel == "zmm":
+            ax[1].set_xlabel(r"$m_{\mu\mu} (\mathrm{GeV})$")
+        #ax[1].set_xscale('function', functions=(lambda x: np.maximum(x, 0)**0.5, lambda x: x**2))
         fig.align_labels(ax)
-
-        print(f"Saving plots/{plot_var}_{nbins[3]}_{channel}_{year}")
         pdf.savefig(fig, bbox_inches='tight')
 
 ##################### KWs
-
+ 
 var_kw = {
     "m_vis": r'$m_{\tau_{h}\tau_{h}} (\mathrm{GeV})$',
     "svfit_mass": r'$m_{\tau\tau} (\mathrm{GeV})$',
@@ -311,13 +478,71 @@ var_kw = {
     "met": r'$p_{\mathrm{T}}^{\mathrm{miss}} (\mathrm{GeV})$',
     "residual_pt": r'$(\vec{p}_{\mathrm{MET}} + \vec{p}_\mathrm{jet} + \vec{p}_\mathrm{Z})_{\mathrm{T}}\ (\mathrm{GeV})$',
     "IC_15Mar2020_max_score": r'BDT score',
+    "IC_11May2020_max_score": r'BDT score',
+    "IC_01Jun2020_max_score": r'BDT score',
     "NN_score": r'NN score',
     "Bin_number": r'Bin number',
+    "jmva_1": r'PU jet ID',
+    "jmva_2": r'PU jet ID',
+    "aco_angle_1": r'$\phi\mbox{*}_{\mathcal{CP}}$',
+}
+
+var_kw_bychannel = {
+    "tt": {
+        "m_vis": r'$m_{\tau_{h}\tau_{h}} (\mathrm{GeV})$',
+        "pt_vis": r'$p_{\mathrm{T}}^{\tau_h\tau_h} (\mathrm{GeV})$',
+        "pt_1": r'$p_{\mathrm{T}}^{\tau_{h_{1}}} (\mathrm{GeV})$',
+        "pt_2": r'$p_{\mathrm{T}}^{\tau_{h_{2}}} (\mathrm{GeV})$',
+        "eta_1": r'$\eta_{\tau_{h_{1}}}$',
+        "eta_2": r'$\eta_{\tau_{h_{2}}}$',
+    },
+    "mt": {
+        "m_vis": r'$m_{\tau_{\mu}\tau_{h}} (\mathrm{GeV})$',
+        "pt_vis": r'$p_{\mathrm{T}}^{\tau_\mu\tau_h} (\mathrm{GeV})$',
+        "pt_1": r'$p_{\mathrm{T}}^{\tau_{\mu}} (\mathrm{GeV})$',
+        "pt_2": r'$p_{\mathrm{T}}^{\tau_{h}} (\mathrm{GeV})$',
+        "eta_1": r'$\eta_{\tau_{\mu}}$',
+        "eta_2": r'$\eta_{\tau_{h}}$',
+    },
+    "et": {
+        "m_vis": r'$m_{\tau_{e}\tau_{h}} (\mathrm{GeV})$',
+        "pt_vis": r'$p_{\mathrm{T}}^{\tau_e\tau_h} (\mathrm{GeV})$',
+        "pt_1": r'$p_{\mathrm{T}}^{\tau_{e}} (\mathrm{GeV})$',
+        "pt_2": r'$p_{\mathrm{T}}^{\tau_{h}} (\mathrm{GeV})$',
+        "eta_1": r'$\eta_{\tau_{e}}$',
+        "eta_2": r'$\eta_{\tau_{h}}$',
+    },
+    "em": {
+        "m_vis": r'$m_{\tau_{e}\tau_{\mu}} (\mathrm{GeV})$',
+        "pt_vis": r'$p_{\mathrm{T}}^{\tau_e\tau_\mu} (\mathrm{GeV})$',
+        "pt_1": r'$p_{\mathrm{T}}^{\tau_{e}} (\mathrm{GeV})$',
+        "pt_2": r'$p_{\mathrm{T}}^{\tau_{\mu}} (\mathrm{GeV})$',
+        "eta_1": r'$\eta_{\tau_{e}}$',
+        "eta_2": r'$\eta_{\tau_{\mu}}$',
+    },
+    "zmm": {
+        "m_vis": r'$m_{\mu\mu}} (\mathrm{GeV})$',
+        "pt_vis": r'$p_{\mathrm{T}}^{\tau_e\tau_\mu} (\mathrm{GeV})$',
+        "pt_tt": r'$p_{\mathrm{T}}^{\mu\mu} (\mathrm{GeV})$',
+        "pt_1": r'$p_{\mathrm{T}}^{\mu_1}} (\mathrm{GeV})$',
+        "pt_2": r'$p_{\mathrm{T}}^{\mu_2}} (\mathrm{GeV})$',
+        "eta_1": r'$\eta_{\mu_1}$',
+        "eta_2": r'$\eta_{\mu_2}$',
+    },
+    "zee": {
+        "m_vis": r'$m_{ee}} (\mathrm{GeV})$',
+        "pt_vis": r'$p_{\mathrm{T}}^{\tau_e\tau_e} (\mathrm{GeV})$',
+        "pt_tt": r'$p_{\mathrm{T}}^{ee} (\mathrm{GeV})$',
+        "pt_1": r'$p_{\mathrm{T}}^{e_1}} (\mathrm{GeV})$',
+        "pt_2": r'$p_{\mathrm{T}}^{e_2}} (\mathrm{GeV})$',
+        "eta_1": r'$\eta_{e_1}$',
+        "eta_2": r'$\eta_{e_2}$',
+    },
 }
 
 process_kw={
     "labels": {
-        "SMTotal": "SM Total", 
+        "SMTotal": "Bkg. Total", 
         #"Backgrounds": "Bkgs", 
         "Backgrounds": "Minors", 
         "Minors": "Minors", 
@@ -340,20 +565,20 @@ process_kw={
         "SMTotal": 'black', 
         "Backgrounds": "#d9d9d9", 
         "Minors": "#d9d9d9",
-        "ZL": "#64C0E8",
+        "ZL": "#93C6D6",
         "QCD": "#ffb8c9",
-        "TT": "#9B98CC",
-        "Electroweak": "#DE5A6A",
-        "ZTT": "#E8AD46",
-        "ZMM": "#64C0E8",
-        "ZEE": "#64C0E8",
+        "TT": "#C9AEED",
+        "Electroweak": "#fb8072",
+        "ZTT": "#fdb462",
+        "ZMM": "#93C6D6",
+        "ZEE": "#93C6D6",
         "jetFakes": "#addd8e",
-        "EmbedZTT": "#E8AD46",
-        "ggH": "#ef3b2c",
+        "EmbedZTT": "#fdb462", 
+        "ggH": "#BB4D00",
         "qqH": "#2171b5",
-        "VH": "#c994c7",
-        "H_sm": "#253494",
-        "H_ps": "#006837",
+        "VH": "#82AEB1",
+        "H_sm": "#253494", # dark blue
+        "H_ps": "#006837", # darker green
     },
     "linestyles": {
         "H_sm": "--",
@@ -376,21 +601,13 @@ nbins_kw = {
         11: [[0., 0.7, 0.8, 1.], 4, r'$a_{1}^{3\mathrm{pr}} a_{1}^{1\mathrm{pr}}$', "a1-0a1"], # a1-0a1
     },
     "mt": {
-        #1: [[None], 1, "embed", "embed"], # embed
-        #2: [[None], 1, "fakes", "fakes"], # fakes
-        #3: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 10, r'$\mu\rho$', "mu-rho"], # mu-rho
-        #4: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 8, r'$\mu\pi$', "mu-pi"], # mu-pi
-        #5: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1"], # mu-a1
-        #6: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu3a1
-
         1: [[None], 1, "embed", "embed"], # embed
         2: [[None], 1, "fakes", "fakes"], # fakes
         3: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 10, r'$\mu\rho$', "mu-rho"], # mu-rho
         4: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 8, r'$\mu\pi$', "mu-pi"], # mu-pi
         5: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1"], # mu-a1
         6: [[0.0, 0.45, 0.6, 0.8, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu-0a1
-    },
-}
+    },}
 
 nllscan_kw = {
     "tt": {
@@ -415,5 +632,11 @@ nllscan_kw = {
         4: [r'$\mu\pi$', "mu-pi", "#E8AD46"], # mu-pi
         5: [r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1", "#addd8e"], # mu-a1
         6: [r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1", "#c994c7"], # mu-0a1
+    },
+    "years": {
+        0: [r"Combined", "combined", "#DE5A6A"],
+        1: [r"2016", "2016", "#2ca25f"],
+        2: [r"2017", "2017", "#9B98CC"],
+        3: [r"2018", "2018", "#E8AD46"],
     },
 }
