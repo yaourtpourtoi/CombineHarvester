@@ -144,7 +144,7 @@ def draw1d_cpdecays(
         if category in ["embed", "fakes"]:
             # MVA score plots for background categories
             if channel == "tt":
-                plot_var = "IC_15Mar2020_max_score"
+                plot_var = "BDT_score"
             elif channel == "mt":
                 plot_var = "NN_score"
             partial_blind = False

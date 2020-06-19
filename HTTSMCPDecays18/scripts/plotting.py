@@ -480,6 +480,7 @@ var_kw = {
     "IC_15Mar2020_max_score": r'BDT score',
     "IC_11May2020_max_score": r'BDT score',
     "IC_01Jun2020_max_score": r'BDT score',
+    "BDT_score": r'BDT score',
     "NN_score": r'NN score',
     "Bin_number": r'Bin number',
     "jmva_1": r'PU jet ID',
