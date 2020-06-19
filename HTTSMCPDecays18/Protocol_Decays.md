@@ -245,6 +245,7 @@ Run following set-up commands (after sourcing cmsenv as usual):
 
     pip3 install --user --upgrade numpy
     pip3 install --user dftools pysge oyaml uproot
+    pip3 install --user --upgrade dftools
 
 Alternatively, use your private python3 conda environment.
 
