@@ -945,6 +945,11 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_qcd_syst_njets1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_qcd_met_closure_syst_njets2", "shape", SystMap<>::init(1.00));
 
+        // only need these uncertainties once using the dR corrected FFs
+        cb.cp().process({"jetFakes"}).channel({"tt_2016"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2016", "lnN", SystMap<>::init(1.04));
+        cb.cp().process({"jetFakes"}).channel({"tt_2017"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2017", "lnN", SystMap<>::init(1.07));
+        cb.cp().process({"jetFakes"}).channel({"tt_2018"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2018", "lnN", SystMap<>::init(1.06));
+
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_sub_syst", "shape", SystMap<>::init(1.00));
 
 
@@ -989,7 +994,7 @@ namespace ch {
         cb.cp().process({"Wfakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_mc", "lnN", SystMap<>::init(1.3));
 
         // additional uncertainty covering non-closures in same-sign data as a function of BDT score
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_SS_closure", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_SS_closure", "shape", SystMap<>::init(1.00));
         // this uncertainty would make the ff_tt_mvadm2_closure uncertainty below redundant!
 
         // additional 5% per sub-leading MVA-DM=2 tau for tt channel to cover non-closures - note this uncertainty is 3% when rounging up for both channels
@@ -1112,12 +1117,6 @@ namespace ch {
         cb.cp().process({"WH_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt"}).AddSyst(cb,"pdf_Higgs_qqbar", "lnN", SystMap<>::init(1.019));
         cb.cp().process({"ZH_htt""ZH_sm_htt","ZH_ps_htt","ZH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}).AddSyst(cb,"pdf_Higgs_qqbar", "lnN", SystMap<>::init(1.016));
 
-        //cb.cp().channel({"tt_2016"}).process({"jetFakes"}).AddSyst(cb, "rate_fakes_tt_2016", "rateParam", SystMap<>::init(1.0));
-        //cb.GetParameter("rate_fakes_tt_2016")->set_range(0.2, 1.8); 
-        //cb.cp().channel({"tt_2017"}).process({"jetFakes"}).AddSyst(cb, "rate_fakes_tt_2017", "rateParam", SystMap<>::init(1.0));
-        //cb.GetParameter("rate_fakes_tt_2017")->set_range(0.2, 1.8); 
-        //cb.cp().channel({"tt_2018"}).process({"jetFakes"}).AddSyst(cb, "rate_fakes_tt_2018", "rateParam", SystMap<>::init(1.0));
-        //cb.GetParameter("rate_fakes_tt_2018")->set_range(0.2, 1.8);        
         
         
     }
