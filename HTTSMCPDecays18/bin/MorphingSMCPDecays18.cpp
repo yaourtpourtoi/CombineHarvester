@@ -404,7 +404,8 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt","mt"};
+    /* VString chns = {"tt","mt"}; */
+    VString chns = {"tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -560,13 +561,17 @@ int main(int argc, char** argv) {
     if(control) {
       for (string y : years) {
         cats["tt_"+y] = {
-          {1, "tt_"+y+"_m_vis"},
-          {2, "tt_"+y+"_svfit_mass"},
-          {3, "tt_"+y+"_pt_1"},
-          {4, "tt_"+y+"_pt_2"},
-          {5, "tt_"+y+"_n_jets"},
-          {6, "tt_"+y+"_met"},
-          {7, "tt_"+y+"_mjj"},
+          {1, "tt_"+y+"_jdeta"},
+          {2, "tt_"+y+"_jpt_1"},
+          {3, "tt_"+y+"_m_vis"},
+          {4, "tt_"+y+"_met"},
+          {5, "tt_"+y+"_mjj"},
+          {6, "tt_"+y+"_n_jets"},
+          {7, "tt_"+y+"_pt_1"},
+          {8, "tt_"+y+"_pt_tt"},
+          {9, "tt_"+y+"_pt_vis"},
+          {10, "tt_"+y+"_svfit_mass"},
+          /* {4, "tt_"+y+"_pt_2"}, */
         };
       }
     }
@@ -1303,69 +1308,86 @@ int main(int argc, char** argv) {
        writer.WriteCards(chn, cb.cp().channel({chn}));
        // And per-channel-category
      }
-     writer.WriteCards("htt_tt_1_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}));
-     writer.WriteCards("htt_tt_2_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}));
-     writer.WriteCards("htt_tt_3_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_tt_4_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_tt_5_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5}));
-     writer.WriteCards("htt_tt_6_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,6}));
-     writer.WriteCards("htt_tt_7_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7}));
-     writer.WriteCards("htt_tt_8_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,8}));
-     writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
-     writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
-     writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
-     writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
-     writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
-     writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
-     writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
+     if (!control) {
+       writer.WriteCards("htt_tt_1_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}));
+       writer.WriteCards("htt_tt_2_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}));
+       writer.WriteCards("htt_tt_3_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3}));
+       writer.WriteCards("htt_tt_4_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4}));
+       writer.WriteCards("htt_tt_5_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5}));
+       writer.WriteCards("htt_tt_6_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,6}));
+       writer.WriteCards("htt_tt_7_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7}));
+       writer.WriteCards("htt_tt_8_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,8}));
+       writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
+       writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
+       writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
+       writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
+       writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
+       writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
+       writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
+       writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
+       writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
 
-     for(auto year: years) {
-       writer.WriteCards("htt_tt_1_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({1}));
-       writer.WriteCards("htt_tt_2_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({2}));
-       writer.WriteCards("htt_tt_3_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({3}));
-       writer.WriteCards("htt_tt_4_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({4}));
-       writer.WriteCards("htt_tt_5_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({5}));
-       writer.WriteCards("htt_tt_6_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({6}));
-       writer.WriteCards("htt_tt_7_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({7}));
-       writer.WriteCards("htt_tt_8_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({8}));
-       writer.WriteCards("htt_tt_9_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({9}));
-       writer.WriteCards("htt_tt_10_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({10}));
-       writer.WriteCards("htt_tt_11_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({11}));
-       writer.WriteCards("htt_mt_1_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({1}));
-       writer.WriteCards("htt_mt_2_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({2}));
-       writer.WriteCards("htt_mt_3_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({3}));
-       writer.WriteCards("htt_mt_4_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({4}));
-       writer.WriteCards("htt_mt_5_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({5}));
-       writer.WriteCards("htt_mt_6_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({6}));
+       for(auto year: years) {
+         writer.WriteCards("htt_tt_1_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({1}));
+         writer.WriteCards("htt_tt_2_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({2}));
+         writer.WriteCards("htt_tt_3_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({3}));
+         writer.WriteCards("htt_tt_4_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({4}));
+         writer.WriteCards("htt_tt_5_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({5}));
+         writer.WriteCards("htt_tt_6_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({6}));
+         writer.WriteCards("htt_tt_7_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({7}));
+         writer.WriteCards("htt_tt_8_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({8}));
+         writer.WriteCards("htt_tt_9_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({9}));
+         writer.WriteCards("htt_tt_10_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({10}));
+         writer.WriteCards("htt_tt_11_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({11}));
+         writer.WriteCards("htt_mt_1_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({1}));
+         writer.WriteCards("htt_mt_2_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({2}));
+         writer.WriteCards("htt_mt_3_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({3}));
+         writer.WriteCards("htt_mt_4_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({4}));
+         writer.WriteCards("htt_mt_5_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({5}));
+         writer.WriteCards("htt_mt_6_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({6}));
 
+       }
+
+       //writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
+       //writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
+
+       //writer.WriteCards("htt_mt_2017_3_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,3}));
+       //writer.WriteCards("htt_mt_2017_4_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,4}));
+       //writer.WriteCards("htt_mt_2017_5_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,5}));
+       //writer.WriteCards("htt_mt_2018_3_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,3}));
+       //writer.WriteCards("htt_mt_2018_4_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,4}));
+       //writer.WriteCards("htt_mt_2018_5_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,5}));
+
+       writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
+       writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
+       writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
+       writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
+          
+       writer.WriteCards("htt_bkg", cb.cp().bin_id({1,2}));
+
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3,7}, false).ForEachObj([&](ch::Object *obj){
+           obj->set_attribute("cat","stage2");
+       });
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({3,4}, false).ForEachObj([&](ch::Object *obj){
+           obj->set_attribute("cat","stage2");
+       });
+       writer.WriteCards("htt_stage2", cb.cp().attr({"stage2"},"cat"));
      }
-
-     //writer.WriteCards("htt_mt_allWith5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5}));
-     //writer.WriteCards("htt_mt_allWith6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,6}));
-
-     //writer.WriteCards("htt_mt_2017_3_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,3}));
-     //writer.WriteCards("htt_mt_2017_4_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,4}));
-     //writer.WriteCards("htt_mt_2017_5_13TeV", cb.cp().channel({"mt_2017"}).bin_id({1,2,5}));
-     //writer.WriteCards("htt_mt_2018_3_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,3}));
-     //writer.WriteCards("htt_mt_2018_4_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,4}));
-     //writer.WriteCards("htt_mt_2018_5_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,5}));
-
-     writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
-     writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
-     writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
-        
-     writer.WriteCards("htt_bkg", cb.cp().bin_id({1,2}));
-
-     cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3,7}, false).ForEachObj([&](ch::Object *obj){
-         obj->set_attribute("cat","stage2");
-      });
-     cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({3,4}, false).ForEachObj([&](ch::Object *obj){
-         obj->set_attribute("cat","stage2");
-      });
-    writer.WriteCards("htt_stage2", cb.cp().attr({"stage2"},"cat"));
+     else{
+       for(auto year: years) {
+         writer.WriteCards("htt_tt_1_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({1}));
+         writer.WriteCards("htt_tt_2_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({2}));
+         writer.WriteCards("htt_tt_3_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({3}));
+         writer.WriteCards("htt_tt_4_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({4}));
+         writer.WriteCards("htt_tt_5_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({5}));
+         writer.WriteCards("htt_tt_6_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({6}));
+         writer.WriteCards("htt_tt_7_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({7}));
+         writer.WriteCards("htt_tt_8_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({8}));
+         writer.WriteCards("htt_tt_9_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({9}));
+         writer.WriteCards("htt_tt_10_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({10}));
+         writer.WriteCards("htt_tt_11_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({11}));
+       }
+     }
 
     cb.PrintAll();
     cout << " done\n";

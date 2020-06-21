@@ -989,7 +989,7 @@ namespace ch {
         cb.cp().process({"Wfakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_mc", "lnN", SystMap<>::init(1.3));
 
         // additional uncertainty covering non-closures in same-sign data as a function of BDT score
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_SS_closure", "shape", SystMap<>::init(1.00));
+        // cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_SS_closure", "shape", SystMap<>::init(1.00));
         // this uncertainty would make the ff_tt_mvadm2_closure uncertainty below redundant!
 
         // additional 5% per sub-leading MVA-DM=2 tau for tt channel to cover non-closures - note this uncertainty is 3% when rounging up for both channels
