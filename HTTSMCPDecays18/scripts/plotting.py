@@ -11,7 +11,7 @@ import scipy
 import uproot
 from tqdm.auto import tqdm
 mpl.use('pdf')
-plt.style.use('cms')
+#plt.style.use('cms')
 
 def create_df(
     datacard, directory, channel, processes, ch_kw={}, variations=[],
@@ -600,6 +600,7 @@ nbins_kw = {
         9: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$\pi a_{1}^{3\mathrm{pr}}$', "pi-a1"], # pi-a1
         10: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$\pi a_{1}^{1\mathrm{pr}}$', "pi-0a1"], # pi-0a1
         11: [[0., 0.7, 0.8, 1.], 4, r'$a_{1}^{3\mathrm{pr}} a_{1}^{1\mathrm{pr}}$', "a1-0a1"], # a1-0a1
+        100: [[None], 1, "embed", "embed"], # Higgs MVA
     },
     "mt": {
         1: [[None], 1, "embed", "embed"], # embed
@@ -608,6 +609,7 @@ nbins_kw = {
         4: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 8, r'$\mu\pi$', "mu-pi"], # mu-pi
         5: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1"], # mu-a1
         6: [[0.0, 0.45, 0.6, 0.8, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu-0a1
+        100: [[None], 1, "embed", "embed"], # Higgs MVA
     },}
 
 nllscan_kw = {
