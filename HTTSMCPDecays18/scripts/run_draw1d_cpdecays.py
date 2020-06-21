@@ -124,12 +124,12 @@ def draw1d_cpdecays(
         ])
         
     # Draw categories (defined in nbins_kw in plotting.py):
-    # 1-2: backgrounds, 3+: higgs categories
+    # 1-2: backgrounds, 3+: signal (higgs) categories
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
-        bins_to_plot = list(range(100,101)) #was 12
+        bins_to_plot = list(range(1,12))
     elif channel == "mt":
-        bins_to_plot = list(range(100,101))#was 7
+        bins_to_plot = list(range(1,7))
     for bin_number in bins_to_plot:
 
         category = nbins_kw[channel][bin_number][3]
@@ -147,15 +147,28 @@ def draw1d_cpdecays(
                 plot_var = "BDT_score"
             elif channel == "mt":
                 plot_var = "NN_score"
-            partial_blind = True
+            partial_blind = False
+            blind = False
+            unrolled = False
+            norm_bins = True
+        elif "signal" in category:
+            # signal inclusive category, added blind option
+            if channel == "tt":
+                plot_var = "BDT_score"
+            elif channel == "mt":
+                plot_var = "NN_score"
+            partial_blind = False
+            blind = True # blind all of data for signal category
             unrolled = False
             norm_bins = True
         else:
             # 'unrolled' category plots
             plot_var = "Bin_number"
-            partial_blind = True
+            partial_blind = True # unblind only first window of 'unrolled'
+            blind = False
             unrolled = True
-            norm_bins = True 
+            norm_bins = True
+
 
         signal_scale = 1. # no need to scale on log plot
 
@@ -184,7 +197,7 @@ def draw1d_cpdecays(
 
         # Always use mcstat=True and mcsyst=True when plotting systematic unc.
         draw_1d(
-            df_plot, plot_var, channel, category, year, blind=False, sigs=signals, 
+            df_plot, plot_var, channel, category, year, blind=blind, sigs=signals, 
             signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,
