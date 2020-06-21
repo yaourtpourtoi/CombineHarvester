@@ -454,6 +454,8 @@ int main(int argc, char** argv) {
         {9, "tt_2016_higgs_Pi_A1_Mixed"},
         {10, "tt_2016_higgs_Pi_0A1_Mixed"},
         {11, "tt_2016_higgs_A1_0A1"},
+	{100, "tt_2016_higgs"}, //Merijn 2006	
+
         //{11, "tt_2016_higgs_other"},
       };
       cats["mt_2016"] = {
@@ -463,6 +465,8 @@ int main(int argc, char** argv) {
 	{4, "mt_mupi_sig_2016"},
 	{5, "mt_mua1_sig_2016"},
 	{6, "mt_mu0a1_sig_2016"},
+        {100, "mt_sig_2016"}, //Merijn 2006	
+	
       };
     }  
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -478,6 +482,7 @@ int main(int argc, char** argv) {
         {9, "tt_2017_higgs_Pi_A1_Mixed"},
         {10, "tt_2017_higgs_Pi_0A1_Mixed"},
         {11, "tt_2017_higgs_A1_0A1"},
+        {100, "tt_2017_higgs"}, //Merijn 2006		
         //{11, "tt_2017_higgs_other"},
       };
       cats["mt_2017"] = {
@@ -487,6 +492,7 @@ int main(int argc, char** argv) {
         {4, "mt_mupi_sig_2017"},
         {5, "mt_mua1_sig_2017"},
         {6, "mt_mu0a1_sig_2017"},
+        {100, "mt_sig_2017"}, //Merijn 2006	
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -501,7 +507,8 @@ int main(int argc, char** argv) {
         {8, "tt_2018_higgs_Pi_Pi"},
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
         {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
-        {11, "tt_2018_higgs_A1_0A1"},
+        {11, "tt_2018_higgs_A1_0A1"},	
+        {100, "tt_2018_higgs"}, //Merijn 2006	
         //{11, "tt_2018_higgs_other"},
       };
       cats["mt_2018"] = {
@@ -511,6 +518,7 @@ int main(int argc, char** argv) {
         {4, "mt_mupi_sig_2018"},
         {5, "mt_mua1_sig_2018"},
         {6, "mt_mu0a1_sig_2018"},
+        {100, "mt_sig_2018"}, //Merijn 2006	
       };
     }
     
@@ -1389,8 +1397,18 @@ int main(int argc, char** argv) {
        }
      }
 
+
+         writer.WriteCards("htt_bkg_tt_signalmva_2018", cb.cp().channel({"tt_2018"}).bin_id({1,2,100})); //merijn 2006
+     writer.WriteCards("htt_bkg_tt_signalmva_2017", cb.cp().channel({"tt_2017"}).bin_id({1,2,100})); //merijn 2006
+      writer.WriteCards("htt_bkg_tt_signalmva_2016", cb.cp().channel({"t_2016"}).bin_id({1,2,100})); //merijn 2006
+
+      writer.WriteCards("htt_bkg_mt_signalmva_2018", cb.cp().channel({"mt_2018"}).bin_id({1,2,100})); //merijn 2006
+      writer.WriteCards("htt_bkg_mt_signalmva_2017", cb.cp().channel({"mt_2017"}).bin_id({1,2,100})); //merijn 2006
+      writer.WriteCards("htt_bkg_mt_signalmva_2016", cb.cp().channel({"mt_2016"}).bin_id({1,2,100})); //merijn 2006
+
     cb.PrintAll();
     cout << " done\n";
     
     
 }
+
