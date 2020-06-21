@@ -1378,7 +1378,7 @@ int main(int argc, char** argv) {
 
          writer.WriteCards("htt_bkg_tt_signalmva_2018", cb.cp().channel({"tt_2018"}).bin_id({1,2,100})); //merijn 2006
      writer.WriteCards("htt_bkg_tt_signalmva_2017", cb.cp().channel({"tt_2017"}).bin_id({1,2,100})); //merijn 2006
-      writer.WriteCards("htt_bkg_tt_signalmva_2016", cb.cp().channel({"t_2016"}).bin_id({1,2,100})); //merijn 2006
+      writer.WriteCards("htt_bkg_tt_signalmva_2016", cb.cp().channel({"tt_2016"}).bin_id({1,2,100})); //merijn 2006
 
       writer.WriteCards("htt_bkg_mt_signalmva_2018", cb.cp().channel({"mt_2018"}).bin_id({1,2,100})); //merijn 2006
       writer.WriteCards("htt_bkg_mt_signalmva_2017", cb.cp().channel({"mt_2017"}).bin_id({1,2,100})); //merijn 2006
