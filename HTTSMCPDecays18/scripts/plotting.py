@@ -11,7 +11,7 @@ import scipy
 import uproot
 from tqdm.auto import tqdm
 mpl.use('pdf')
-#plt.style.use('cms')
+plt.style.use('cms')
 
 def create_df(
     datacard, directory, channel, processes, ch_kw={}, variations=[],
