@@ -127,9 +127,9 @@ def draw1d_cpdecays(
     # 1-2: backgrounds, 3+: higgs categories
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
-        bins_to_plot = list(range(1, 12))
+        bins_to_plot = list(range(100,101)) #was 12
     elif channel == "mt":
-        bins_to_plot = list(range(1,7))
+        bins_to_plot = list(range(100,101))#was 7
     for bin_number in bins_to_plot:
 
         category = nbins_kw[channel][bin_number][3]
@@ -147,7 +147,7 @@ def draw1d_cpdecays(
                 plot_var = "BDT_score"
             elif channel == "mt":
                 plot_var = "NN_score"
-            partial_blind = False
+            partial_blind = True
             unrolled = False
             norm_bins = True
         else:
