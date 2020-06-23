@@ -76,7 +76,7 @@ def draw1d_cpdecays(
 
     # Plotting SM and PS template
     signals = []
-    if alt_datacard is not None and draw_signals:
+    if draw_signals:
         # signals = ["H_sm", "H_ps"]
         signals = ["H_sm", "Bestfit"]
 
@@ -118,7 +118,6 @@ def draw1d_cpdecays(
         ]
 
     if len(signals) > 0:
-        # uncomment VH signals when ready
         processes.extend([
             "TotalSig",
             "ggH_sm_htt", "qqH_sm_htt", "ZH_sm_htt", "WH_sm_htt",
@@ -183,15 +182,15 @@ def draw1d_cpdecays(
         # and then replace PS hypothesis in df_plot by PS entries here.
         # This is because, with PostFitShapesFromWorkspace, we don't have any
         # entries for PS signals when SM (alpha=0) 
-        if draw_signals:
-            df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
-            if df_plot_alt is not None:
-                df_plot = pd.concat([
-                    df_plot,
-                    df_plot_alt.loc[
-                        df_plot_alt.index.get_level_values("parent") == "H_ps"
-                    ]
-                ], axis='index', sort=False)
+        #if draw_signals:
+        #    df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
+        #    if df_plot_alt is not None:
+        #        df_plot = pd.concat([
+        #            df_plot,
+        #            df_plot_alt.loc[
+        #                df_plot_alt.index.get_level_values("parent") == "H_ps"
+        #            ]
+        #        ], axis='index', sort=False)
         if partial_blind:
             # Unblind first window of unrolled bins only (for now)
             data_mask = df_plot.index.get_level_values("parent") == "data_obs"
