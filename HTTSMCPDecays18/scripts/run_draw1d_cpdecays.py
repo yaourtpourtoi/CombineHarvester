@@ -204,7 +204,7 @@ def draw1d_cpdecays(
             signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,
-            logy=True, sm_bkg_ratio=True,
+            logy=True, sm_bkg_ratio=True, postfix=mode,
         )
 
 if __name__ == "__main__":
