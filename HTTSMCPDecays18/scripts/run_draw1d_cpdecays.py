@@ -164,7 +164,7 @@ def draw1d_cpdecays(
         else:
             # 'unrolled' category plots
             plot_var = "Bin_number"
-            partial_blind = True # unblind only first window of 'unrolled'
+            partial_blind = False # unblind only first window of 'unrolled'
             blind = False
             unrolled = True
             norm_bins = True
