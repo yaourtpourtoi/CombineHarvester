@@ -78,7 +78,7 @@ def draw1d_cpdecays(
     signals = []
     if draw_signals:
         # signals = ["H_sm", "H_ps"]
-        signals = ["H_sm", "Bestfit"]
+        signals = ["Bestfit"]
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
 
@@ -120,7 +120,7 @@ def draw1d_cpdecays(
     if len(signals) > 0:
         processes.extend([
             "TotalSig",
-            "ggH_sm_htt", "qqH_sm_htt", "ZH_sm_htt", "WH_sm_htt",
+            # "ggH_sm_htt", "qqH_sm_htt", "ZH_sm_htt", "WH_sm_htt",
             # "ggH_ps_htt", "qqH_ps_htt", "ZH_ps_htt", "WH_ps_htt",
         ])
         
