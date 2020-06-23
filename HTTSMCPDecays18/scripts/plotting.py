@@ -182,7 +182,7 @@ def draw_1d(
         df["sum_ww_up"] = df.eval("sum_ww_up/(binwidth**2)")
     
     with mpl.backends.backend_pdf.PdfPages(
-        "plots/{}_{}_{}_{}_{}{}.pdf".format(
+        "plots/{}_{}_{}_{}_{}_{}.pdf".format(
             plot_var, nbins[3], channel, year, category, postfix
         ),
         keep_empty=False,
@@ -446,8 +446,8 @@ def draw_1d(
         if unrolled:
             ax[1].set_ylim(0., 2.)
             ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
-            ax[1].set_ylim(0.6, 1.4)
-            ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
+            # ax[1].set_ylim(0.6, 1.4)
+            # ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
         if plot_var == 'pt_tt' and channel == "zmm":
             ax[1].set_xlabel(r"$p_{\mathrm{T}}^{\mu\mu} (\mathrm{GeV})$")
         if plot_var == 'm_vis' and channel == "zmm":
