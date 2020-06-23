@@ -288,6 +288,10 @@ def draw_1d(
             leg_kw = {
                 "offaxis": True, "fontsize": 9, "labelspacing":0.14,
             }
+            ratio_leg_kw = {
+                "fontsize": 9, "labelspacing":0.12,
+                "ncol": 2, "loc": 0, "framealpha": 0.7,
+            }
             logy = True
             
         if signal_scale != 1. and not unrolled:
