@@ -77,7 +77,8 @@ def draw1d_cpdecays(
     # Plotting SM and PS template
     signals = []
     if alt_datacard is not None and draw_signals:
-        signals = ["H_sm", "H_ps"]
+        # signals = ["H_sm", "H_ps"]
+        signals = ["H_sm", "Bestfit"]
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
 
@@ -119,17 +120,20 @@ def draw1d_cpdecays(
     if len(signals) > 0:
         # uncomment VH signals when ready
         processes.extend([
+            "TotalSig",
             "ggH_sm_htt", "qqH_sm_htt", "ZH_sm_htt", "WH_sm_htt",
-            "ggH_ps_htt", "qqH_ps_htt", "ZH_ps_htt", "WH_ps_htt",
+            # "ggH_ps_htt", "qqH_ps_htt", "ZH_ps_htt", "WH_ps_htt",
         ])
         
     # Draw categories (defined in nbins_kw in plotting.py):
     # 1-2: backgrounds, 3+: signal (higgs) categories
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
-        bins_to_plot = list(range(1,12))
+        # bins_to_plot = list(range(1,12))
+        bins_to_plot = [1,2,4,5,6,8,9,10,11]
     elif channel == "mt":
-        bins_to_plot = list(range(1,7))
+        # bins_to_plot = list(range(1,7))
+        bins_to_plot = [1,2,5,6]
     for bin_number in bins_to_plot:
 
         category = nbins_kw[channel][bin_number][3]
@@ -167,7 +171,7 @@ def draw1d_cpdecays(
             partial_blind = False # unblind only first window of 'unrolled'
             blind = False
             unrolled = True
-            norm_bins = True
+            norm_bins = False
 
 
         signal_scale = 1. # no need to scale on log plot
