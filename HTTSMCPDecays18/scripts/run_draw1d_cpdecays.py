@@ -78,6 +78,7 @@ def draw1d_cpdecays(
     signals = []
     if alt_datacard is not None and draw_signals:
         signals = ["H_sm", "H_ps"]
+        signals = ["H_sm"]
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
 
@@ -128,12 +129,12 @@ def draw1d_cpdecays(
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
         bins_to_plot = list(range(1, 12))
+        bins_to_plot = [1,2,4,5,6,8,9,10,11] # delete §me!
     elif channel == "mt":
         bins_to_plot = list(range(1,7))
+        bins_to_plot = [1,2,5,6] # delete §me!
     for bin_number in bins_to_plot:
-
         category = nbins_kw[channel][bin_number][3]
-
         # Initialise empty and change depending on category bellow
         plot_var = ""
 
@@ -154,6 +155,7 @@ def draw1d_cpdecays(
             # 'unrolled' category plots
             plot_var = "Bin_number"
             partial_blind = True
+            partial_blind = False
             unrolled = True
             norm_bins = True 
 
@@ -183,8 +185,10 @@ def draw1d_cpdecays(
             df_plot.loc[data_mask & blind_mask, "sum_w"] = np.nan
 
         # Always use mcstat=True and mcsyst=True when plotting systematic unc.
+        category_=category
+        if 'fakes' not in category and 'ztt' not in category: category_='higgs'
         draw_1d(
-            df_plot, plot_var, channel, category, year, blind=False, sigs=signals, 
+            df_plot, plot_var, channel, category_, year, blind=False, sigs=signals, 
             signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,

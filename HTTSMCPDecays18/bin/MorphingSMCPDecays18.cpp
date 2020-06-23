@@ -686,9 +686,11 @@ int main(int argc, char** argv) {
     //std::vector<double> binning = {0.0,0.5,0.6,0.7,1.0};
     //cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}).VariableRebin(binning);
 
-    //std::vector<double> binning_tt_bkg = {0.3,0.4,0.5,0.6,0.7,0.8};
+    //std::vector<double> binning_tt_bkg = {0.3,0.4,0.5,0.6,0.7,0.8,0.9};
+    //std::vector<double> binning_tt_bkg = {0.3,0.4,0.5,0.6,0.7,0.8,0.9};
     //std::vector<double> binning_tt_bkg = {0.3,0.6,0.7,0.8,0.9,1.0};
     //cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2}).VariableRebin(binning_tt_bkg);
+    //cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).VariableRebin(binning_tt_bkg);
  
   
     // At this point we can fix the negative bins
@@ -1331,8 +1333,8 @@ int main(int argc, char** argv) {
        writer.WriteCards("htt_tt_7_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({7}));
        writer.WriteCards("htt_tt_8_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({8}));
        writer.WriteCards("htt_tt_9_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({9}));
-       writer.WriteCards("htt_tt_10_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({10}));
-       writer.WriteCards("htt_tt_11_"+year+"13TeV", cb.cp().channel({"tt_"+year}).bin_id({11}));
+       writer.WriteCards("htt_tt_10_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({10}));
+       writer.WriteCards("htt_tt_11_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({11}));
        writer.WriteCards("htt_mt_1_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({1}));
        writer.WriteCards("htt_mt_2_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({2}));
        writer.WriteCards("htt_mt_3_"+year+"_13TeV", cb.cp().channel({"mt_"+year}).bin_id({3}));

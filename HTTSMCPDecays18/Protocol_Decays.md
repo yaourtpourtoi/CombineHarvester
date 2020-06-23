@@ -210,6 +210,12 @@ Make impact plot:
 
     plotImpacts.py -i impacts.json -o impacts
 
+# this seems to help convergence:
+
+combineTool.py -M Impacts -d output/pas_2206/htt_stage2/125/ws.root -m 125 --robustFit 1 --doInitialFit --setParameters alpha=0,muV=1,muggH=1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --setParameterRanges muV=-10,10:muggH,-10,10:alpha=-180,180 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP
+
+combineTool.py -M Impacts -d ../output/pas_2206/cmb/125/ws.root -m 125 --robustFit 1 --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0,muV=1,muggH=1  --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --setParameterRanges muV=-10,10:muggH,-10,10:alpha=-180,180 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --merge 1 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0"
+
 # Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
 
 This is useful if you want to compare data/MC agreement in these completly unblinded categories
