@@ -76,9 +76,9 @@ def draw1d_cpdecays(
 
     # Plotting SM and PS template
     signals = []
-    if alt_datacard is not None and draw_signals:
-        signals = ["H_sm", "H_ps"]
-        signals = ["H_sm"]
+    if draw_signals:
+        # signals = ["H_sm", "H_ps"]
+        signals = ["H_sm", "Bestfit"]
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
 
@@ -118,21 +118,21 @@ def draw1d_cpdecays(
         ]
 
     if len(signals) > 0:
-        # uncomment VH signals when ready
         processes.extend([
+            "TotalSig",
             "ggH_sm_htt", "qqH_sm_htt", "ZH_sm_htt", "WH_sm_htt",
-            "ggH_ps_htt", "qqH_ps_htt", "ZH_ps_htt", "WH_ps_htt",
+            # "ggH_ps_htt", "qqH_ps_htt", "ZH_ps_htt", "WH_ps_htt",
         ])
         
     # Draw categories (defined in nbins_kw in plotting.py):
-    # 1-2: backgrounds, 3+: higgs categories
+    # 1-2: backgrounds, 3+: signal (higgs) categories
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
-        bins_to_plot = list(range(1, 12))
-        bins_to_plot = [1,2,4,5,6,8,9,10,11] # delete §me!
+        # bins_to_plot = list(range(1,12))
+        bins_to_plot = [1,2,4,5,6,8,9,10,11]
     elif channel == "mt":
-        bins_to_plot = list(range(1,7))
-        bins_to_plot = [1,2,5,6] # delete §me!
+        # bins_to_plot = list(range(1,7))
+        bins_to_plot = [1,2,5,6]
     for bin_number in bins_to_plot:
         category = nbins_kw[channel][bin_number][3]
         # Initialise empty and change depending on category bellow
@@ -149,15 +149,27 @@ def draw1d_cpdecays(
             elif channel == "mt":
                 plot_var = "NN_score"
             partial_blind = False
+            blind = False
+            unrolled = False
+            norm_bins = True
+        elif "signal" in category:
+            # signal inclusive category, added blind option
+            if channel == "tt":
+                plot_var = "BDT_score"
+            elif channel == "mt":
+                plot_var = "NN_score"
+            partial_blind = False
+            blind = True # blind all of data for signal category
             unrolled = False
             norm_bins = True
         else:
             # 'unrolled' category plots
             plot_var = "Bin_number"
-            partial_blind = True
-            partial_blind = False
+            partial_blind = False # unblind only first window of 'unrolled'
+            blind = False
             unrolled = True
-            norm_bins = True 
+            norm_bins = False
+
 
         signal_scale = 1. # no need to scale on log plot
 
@@ -168,15 +180,15 @@ def draw1d_cpdecays(
         # and then replace PS hypothesis in df_plot by PS entries here.
         # This is because, with PostFitShapesFromWorkspace, we don't have any
         # entries for PS signals when SM (alpha=0) 
-        if draw_signals:
-            df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
-            if df_plot_alt is not None:
-                df_plot = pd.concat([
-                    df_plot,
-                    df_plot_alt.loc[
-                        df_plot_alt.index.get_level_values("parent") == "H_ps"
-                    ]
-                ], axis='index', sort=False)
+        #if draw_signals:
+        #    df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
+        #    if df_plot_alt is not None:
+        #        df_plot = pd.concat([
+        #            df_plot,
+        #            df_plot_alt.loc[
+        #                df_plot_alt.index.get_level_values("parent") == "H_ps"
+        #            ]
+        #        ], axis='index', sort=False)
         if partial_blind:
             # Unblind first window of unrolled bins only (for now)
             data_mask = df_plot.index.get_level_values("parent") == "data_obs"
@@ -192,7 +204,7 @@ def draw1d_cpdecays(
             signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,
-            logy=True,
+            logy=True, sm_bkg_ratio=True,
         )
 
 if __name__ == "__main__":

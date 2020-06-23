@@ -18,6 +18,9 @@ def create_df(
 ):
     df = pd.DataFrame()
     _file = uproot.open(datacard)
+    bkg_processes = [
+        proc for proc in processes if "sm_htt" not in proc and "ps_htt" not in proc and "data_obs" not in proc
+    ]
     for process in processes:
         print(f"Loading {process}")
         if process not in _file[directory]:
@@ -38,7 +41,6 @@ def create_df(
             })], axis='index', sort=False)
             continue
         hist = _file["{}/{}".format(directory, process)]
-        # print(dir(hist))
         bins = hist.bins
         bin_edges = hist.edges
         nbins = hist.numbins
@@ -46,6 +48,10 @@ def create_df(
         weights_down = np.zeros_like(weights)
         weights_up = np.zeros_like(weights)
         variance = hist.variances
+        if process in bkg_processes:
+            variance = (
+                _file["{}/TotalBkg".format(directory)].variances/len(bkg_processes)
+            )
         variance_down = np.zeros_like(variance)
         variance_up = np.zeros_like(variance)
         # total syst uncertainty to add multiple variations if set
@@ -271,11 +277,15 @@ def draw_1d(
         }
         ratio_leg_kw = {
             "fontsize": 7, "labelspacing":0.12,
-            "ncol": 2, "loc": 0, "framealpha": 0.,
+            "ncol": 2, "loc": 0, "framealpha": 0.7,
         }
         if unrolled:
             leg_kw = {
                 "offaxis": True, "fontsize": 9, "labelspacing":0.14,
+            }
+            ratio_leg_kw = {
+                "fontsize": 9, "labelspacing":0.12,
+                "ncol": 2, "loc": 0, "framealpha": 0.7,
             }
             logy = True
             
@@ -436,6 +446,8 @@ def draw_1d(
         if unrolled:
             ax[1].set_ylim(0., 2.)
             ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
+            ax[1].set_ylim(0.6, 1.4)
+            ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
         if plot_var == 'pt_tt' and channel == "zmm":
             ax[1].set_xlabel(r"$p_{\mathrm{T}}^{\mu\mu} (\mathrm{GeV})$")
         if plot_var == 'm_vis' and channel == "zmm":
@@ -443,6 +455,13 @@ def draw_1d(
         #ax[1].set_xscale('function', functions=(lambda x: np.maximum(x, 0)**0.5, lambda x: x**2))
         fig.align_labels(ax)
         pdf.savefig(fig, bbox_inches='tight')
+
+    #if not fractions:
+    #    fig.savefig("plots/{}_{}_{}_{}_{}.png".format(plot_var, nbins[3], channel, year, category), bbox_inches='tight')
+    #    fig.savefig("plots/{}_{}_{}_{}_{}.pdf".format(plot_var, nbins[3], channel, year, category), bbox_inches='tight')
+    #else:
+    #    fig.savefig("plots/{}_{}_{}_{}_{}_fractions.png".format(plot_var, nbins[3], channel, year, category), bbox_inches='tight')
+    #    fig.savefig("plots/{}_{}_{}_{}_{}_fractions.pdf".format(plot_var, nbins[3], channel, year, category), bbox_inches='tight')
 
 ##################### KWs
  
@@ -480,7 +499,6 @@ var_kw = {
     "IC_15Mar2020_max_score": r'BDT score',
     "IC_11May2020_max_score": r'BDT score',
     "IC_01Jun2020_max_score": r'BDT score',
-    "BDT_score": r'BDT score',
     "NN_score": r'NN score',
     "Bin_number": r'Bin number',
     "jmva_1": r'PU jet ID',
@@ -561,29 +579,43 @@ process_kw={
         "VH": r'$\mathrm{VH} \rightarrow\tau\tau$',
         "H_sm": r'$\mathrm{SM\ H} \rightarrow\tau\tau$',
         "H_ps": r'$\mathrm{PS\ H} \rightarrow\tau\tau$',
+        "Bestfit": r'$\mathrm{Bestfit\ H} \rightarrow\tau\tau$',
     },
     "colours": {
         "SMTotal": 'black', 
         "Backgrounds": "#d9d9d9", 
         "Minors": "#d9d9d9",
+        #"ZL": "#64C0E8",
         "ZL": "#93C6D6",
         "QCD": "#ffb8c9",
+        #"TT": "#9B98CC",
         "TT": "#C9AEED",
+        #"Electroweak": "#DE5A6A",
         "Electroweak": "#fb8072",
+        #"ZTT": "#E8AD46",
         "ZTT": "#fdb462",
+        #"ZMM": "#64C0E8",
         "ZMM": "#93C6D6",
+        #"ZEE": "#64C0E8",
         "ZEE": "#93C6D6",
         "jetFakes": "#addd8e",
+        #"EmbedZTT": "#E8AD46",
         "EmbedZTT": "#fdb462", 
+        #"ggH": "#ef3b2c",
         "ggH": "#BB4D00",
         "qqH": "#2171b5",
+        #"VH": "#c994c7",
         "VH": "#82AEB1",
+        #"H_sm": "#4292c6",
         "H_sm": "#253494", # dark blue
+        #"H_ps": "#2ca25f", # dark green
         "H_ps": "#006837", # darker green
+        "Bestfit": "#DE5A6A",
     },
     "linestyles": {
         "H_sm": "--",
         "H_ps": "-",
+        "Bestfit": "-.",
     },
 }
 
@@ -594,12 +626,15 @@ nbins_kw = {
         3: [[0., 0.7, 0.8, 0.9, 1.], 10, r'$\rho\rho$', "rho-rho"], # rho-rho
         4: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{1\mathrm{pr}}\rho + a_{1}^{1\mathrm{pr}}a_{1}^{1\mathrm{pr}}$', "0a1-rho_0a1-0a1"], # 0a1-rho + 0a1-0a1
         5: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{3\mathrm{pr}}\rho$', "a1-rho"], # a1-rho
+        #6: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{3\mathrm{pr}}a_{1}^{3\mathrm{pr}}$', "a1-a1"], # a1-a1
         6: [[0., 0.7, 0.8, 1.], 4, r'$a_{1}^{3\mathrm{pr}}a_{1}^{3\mathrm{pr}}$', "a1-a1"], # a1-a1
         7: [[0., 0.7, 0.8, 0.9, 1.], 10, r'$\pi\rho$', "pi-rho"], # pi-rho
         8: [[0., 0.7, 0.8, 1.], 4, r'$\pi\pi$', "pi-pi"], # pi-pi
         9: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$\pi a_{1}^{3\mathrm{pr}}$', "pi-a1"], # pi-a1
         10: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$\pi a_{1}^{1\mathrm{pr}}$', "pi-0a1"], # pi-0a1
+        #11: [[0., 0.7, 0.8, 0.9, 1.], 4, r'$a_{1}^{3\mathrm{pr}} a_{1}^{1\mathrm{pr}}$', "a1-0a1"], # a1-0a1
         11: [[0., 0.7, 0.8, 1.], 4, r'$a_{1}^{3\mathrm{pr}} a_{1}^{1\mathrm{pr}}$', "a1-0a1"], # a1-0a1
+        100: [[None], 1, "signal", "signal"],
     },
     "mt": {
         1: [[None], 1, "embed", "embed"], # embed
@@ -607,7 +642,9 @@ nbins_kw = {
         3: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 10, r'$\mu\rho$', "mu-rho"], # mu-rho
         4: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 8, r'$\mu\pi$', "mu-pi"], # mu-pi
         5: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1"], # mu-a1
+        #6: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu-0a1
         6: [[0.0, 0.45, 0.6, 0.8, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu-0a1
+        100: [[None], 1, "signal", "signal"],
     },}
 
 nllscan_kw = {

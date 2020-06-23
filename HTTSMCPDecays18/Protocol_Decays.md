@@ -282,19 +282,11 @@ To plot 2D scans of kappa (related to Yukawa couplings) use option `--mode 2d_ka
 First create workspace for category/merged category of interest using above command.
 Then run PostFitShapesFromWorkspace using the workspace.
 
-For prefit both of these steps need to be done with `alpha=0` and `alpha=90` as initial values
-such that we can plot both SM and PS distributions on prefit plots.
-To change these need to do (using vim or any other text editor):
-
-    vim ../CombinePdfs/python/CPMixtureDecays.py
-
-Change `alpha[0,-90,90] --> alpha[90,-90,90]` for PS and rerun command for workspace creation with different workspace name (`ws.root --> ws_ps.root`), eg:
-
     combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/test_cp/cmb/* -o ws_ps.root --parallel 8
 
-Otherwise, only using Asmiov of SM (`alpha=0`).
 
 ### Producing prefit shapes
+Just use one workspace and produce shapes using `--freeze` option:
 
 For `alpha=0` prefit:
 
@@ -302,9 +294,7 @@ For `alpha=0` prefit:
 
 For `alpha=90` prefit:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws_ps.root --print -o shapes_eff_ps.root
-
-(You can just use the same workspace for the above and use --freeze alpha=90)
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print --freeze alpha=90 -o shapes_eff_ps.root
 
 For multiple channels, can accelerate prefit shapes by looping over folders and
 create workspace + PostFitShapes for separate bins.
