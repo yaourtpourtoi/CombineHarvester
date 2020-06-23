@@ -21,7 +21,6 @@ def create_df(
     bkg_processes = [
         proc for proc in processes if "sm_htt" not in proc and "ps_htt" not in proc and "data_obs" not in proc
     ]
-    sig_processes = [proc for proc in processes if "sm_htt" in proc or "ps_htt" in proc]
     for process in processes:
         print(f"Loading {process}")
         if process not in _file[directory]:
@@ -48,14 +47,10 @@ def create_df(
         weights = hist.values
         weights_down = np.zeros_like(weights)
         weights_up = np.zeros_like(weights)
-        variance = hist.variances # taking data_obs uncertainty from usual
-        if process in bkg_processes: # taking bkgs unc. from TotalBkg/#bkgs
+        variance = hist.variances
+        if process in bkg_processes:
             variance = (
                 _file["{}/TotalBkg".format(directory)].variances/len(bkg_processes)
-            )
-        elif process in sig_processes: # taking sig. unc. from TotalSig/#sigs
-            variance = (
-                _file["{}/TotalSig".format(directory)].variances/len(sig_processes)
             )
         variance_down = np.zeros_like(variance)
         variance_up = np.zeros_like(variance)
@@ -584,6 +579,7 @@ process_kw={
         "VH": r'$\mathrm{VH} \rightarrow\tau\tau$',
         "H_sm": r'$\mathrm{SM\ H} \rightarrow\tau\tau$',
         "H_ps": r'$\mathrm{PS\ H} \rightarrow\tau\tau$',
+        "Bestfit": r'$\mathrm{Bestfit\ H} \rightarrow\tau\tau$',
     },
     "colours": {
         "SMTotal": 'black', 
@@ -614,10 +610,12 @@ process_kw={
         "H_sm": "#253494", # dark blue
         #"H_ps": "#2ca25f", # dark green
         "H_ps": "#006837", # darker green
+        "Bestfit": "#DE5A6A",
     },
     "linestyles": {
         "H_sm": "--",
         "H_ps": "-",
+        "Bestfit": "-.",
     },
 }
 
