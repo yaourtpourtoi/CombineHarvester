@@ -22,8 +22,9 @@ def parse_arguments():
 
     epilog = (
         "Examples:\n "
+
         "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
-        "--channel tt --mode single --plot-name alpha_cmb \n "
+        "--channel tt --mode alpha --plot-name alpha_cmb \n "
 
         "python3 scripts/draw_nll_scans.py --input-folder output/01042020 "
         "--channel tt --mode split_by_category --plot-name alpha_tt_split "
@@ -261,6 +262,8 @@ def prepare_results(ax, results, pc_level, parameter, pos, observed):
         print(result)
         unc_hi = result[1] - bestfit[0]
         unc_lo = bestfit[0] + result[0]
+        if parameter not in ["alpha"]:
+            unc_lo = result[0] - bestfit[0]
         hi_string = f"{unc_hi:.0f}"
         lo_string = f"{unc_lo:.0f}"
         if parameter not in ["alpha"]:
@@ -275,15 +278,13 @@ def prepare_results(ax, results, pc_level, parameter, pos, observed):
     full_strings = []
     for idx, string in enumerate(label_strings):
         if parameter not in ["alpha"]:
-            if abs(float(string[0])) == abs(float(string[1])):
-               full_string = f"{bestfit[0]:.2f} \\pm {abs(float(string[0]))}\\ "
-            else:
-               full_string = (f"{bestfit[0]:.2f}_{{-{string[0]}}}^{{+{string[1]}}}\\ ")
+            decimal_place = 2
         else:
-            if abs(float(string[0])) == abs(float(string[1])):
-                full_string = f"{bestfit[0]:.0f} \\pm {abs(float(string[0])):.0f}\\ "
-            else:
-               full_string = (f"{bestfit[0]:.0f}_{{{string[0]}}}^{{+{string[1]}}}\\ ")
+            decimal_place = 0
+        if abs(float(string[0])) == abs(float(string[1])):
+            full_string = f"{bestfit[0]:.{decimal_place}f} \\pm {abs(float(string[0])):.{decimal_place}f}\\ "
+        else:
+           full_string = (f"{bestfit[0]:.{decimal_place}f}_{{{string[0]}}}^{{+{string[1]}}}\\ ")
         # full_string = (f"{bestfit[0]:.2f}_{{-{string[0]}}}^{{+{string[1]}}}\\ ")
         # if parameter not in ["alpha"]:
         #     full_string = (f"{bestfit[0]:.2f}_{{-{string[0]}}}^{{+{string[1]}}}\\ ")
@@ -335,12 +336,15 @@ def single_parameter_scan(input_folder, parameter, cat, plot_name, observed, add
     ''' New function to do scans of all parameters including observed scans '''
 
     boundaries = []
+    extra_kw = dict()
     if parameter == "alpha":
         boundaries = [(-90,0), (0,90)]
-    elif parameter in ["muggH", "muV", "mutautau"]:
+    elif parameter in ["muggH", "muV",]:
         boundaries = [(0,1), (1,2)]
-    else:
-        boundaries = [(0,1), (1,2)]
+        extra_kw.update(bestfit_guess=[1.])
+    elif parameter in ["mutautau"]:
+        boundaries = [(0,0.8), (0.8,2)]
+        extra_kw.update(bestfit_guess=[1.])
     with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
         fig, ax = plt.subplots(
             figsize=(4,3), dpi=200,
@@ -362,12 +366,16 @@ def single_parameter_scan(input_folder, parameter, cat, plot_name, observed, add
             nsigs.append(scipy.stats.norm.ppf((1+pc)/2))
         if observed:
             scan_kw = dict(color=nllscan_kw["mt"][3][2])
-            scan_kw.update(ls='--')
+            scan_kw.update(ms=0, ls='--')
             line_kw = dict(lw=0)
+            marker_kw=dict(ms=0)
+
         results = dftools.draw.nllscan(
             xvalues, yvalues, ax=ax, nsigs=nsigs, 
             left_bracket=boundaries[0], right_bracket=boundaries[1],
-            marker_kw=scan_kw, spline_kw=scan_kw, line_kw=line_kw,
+            marker_kw=scan_kw, spline_kw=scan_kw, 
+            # line_kw=line_kw, 
+            **extra_kw,
         )
         if observed:
             scan_kw = dict(color=nllscan_kw["tt"][0][2])
@@ -388,7 +396,7 @@ def single_parameter_scan(input_folder, parameter, cat, plot_name, observed, add
             ax.set_xlim(0, 2)
             ax.set_ylim(0., None)
             ax.text(0.05, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
-            ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
+            # ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
             #ax.text(0.55, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
             #ax.text(0.55, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
         else:
@@ -397,9 +405,13 @@ def single_parameter_scan(input_folder, parameter, cat, plot_name, observed, add
             ax.text(0.05, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
             # ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
 
-        prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.85], observed=False)
+        if parameter == "alpha":
+            prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.88], observed=False)
+        else: 
+            prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.7], observed=False)
+
         if observed:
-            prepare_results(ax, results_obs, pc_level, parameter, pos=[0.5,0.65], observed=True)
+            prepare_results(ax, results_obs, pc_level, parameter, pos=[0.5,0.68], observed=True)
         # Add significance of SM vs PS discrimination
         significance = np.sqrt(
             scipy.stats.chi2.ppf(
@@ -658,7 +670,8 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         
         pos = ax.imshow(
             z, origin='lower', interpolation='bicubic',
-            extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]],
+            # extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]],
+            extent=[xbins.min(), xbins.max(), ybins.min(), ybins.max()],
             aspect='auto', cmap="Blues_r",
             vmin=0., vmax=25.,
         )

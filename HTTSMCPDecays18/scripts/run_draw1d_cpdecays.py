@@ -78,7 +78,7 @@ def draw1d_cpdecays(
     signals = []
     if draw_signals:
         # signals = ["H_sm", "H_ps"]
-        signals = ["Bestfit"]
+        signals = ["Bestfit", "H_ps"]
 
     leg_kw = {"offaxis": True, "fontsize": 9, "labelspacing":0.12,}
 
@@ -128,11 +128,11 @@ def draw1d_cpdecays(
     # 1-2: backgrounds, 3+: signal (higgs) categories
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
-        # bins_to_plot = list(range(1,12))
-        bins_to_plot = [1,2,4,5,6,8,9,10,11]
+        bins_to_plot = list(range(1,12))
+        # bins_to_plot = [1,2,4,5,6,8,9,10,11]
     elif channel == "mt":
-        # bins_to_plot = list(range(1,7))
-        bins_to_plot = [1,2,5,6]
+        bins_to_plot = list(range(1,7))
+        # bins_to_plot = [1,2,5,6]
     for bin_number in bins_to_plot:
         category = nbins_kw[channel][bin_number][3]
         # Initialise empty and change depending on category bellow
@@ -180,15 +180,18 @@ def draw1d_cpdecays(
         # and then replace PS hypothesis in df_plot by PS entries here.
         # This is because, with PostFitShapesFromWorkspace, we don't have any
         # entries for PS signals when SM (alpha=0) 
-        #if draw_signals:
-        #    df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
-        #    if df_plot_alt is not None:
-        #        df_plot = pd.concat([
-        #            df_plot,
-        #            df_plot_alt.loc[
-        #                df_plot_alt.index.get_level_values("parent") == "H_ps"
-        #            ]
-        #        ], axis='index', sort=False)
+        if draw_signals:
+            df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
+            if df_plot_alt is not None:
+                df_plot_alt.reset_index(inplace=True)
+                df_plot_alt.loc[df_plot_alt["parent"] == "Bestfit", "parent"] = "H_ps"
+                df_plot_alt.set_index(["parent","binvar0","binvar1"], inplace=True)
+                df_plot = pd.concat([
+                    df_plot,
+                    df_plot_alt.loc[
+                        df_plot_alt.index.get_level_values("parent") == "H_ps"
+                    ]
+                ], axis='index', sort=False)
         if partial_blind:
             # Unblind first window of unrolled bins only (for now)
             data_mask = df_plot.index.get_level_values("parent") == "data_obs"
