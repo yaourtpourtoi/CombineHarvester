@@ -81,6 +81,11 @@ def parse_arguments():
         default=False,
         help="If set, add observed parameter scan",
     )
+    parser.add_argument(
+        "--threesig", action="store_true",
+        default=False,
+        help="If set, add 99.7% CL to 2D scans",
+    )
 
     return parser.parse_args()
 
@@ -624,7 +629,7 @@ def split_by_year_scan(input_folder, plot_name, y_scale="linear"):
         pdf.savefig(fig, bbox_inches='tight')
         pass
 
-def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
+def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threesig=False):
     """
     Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
     This is specifically for 2D scans of kappas (ie. reduced Yukawa couplings)
@@ -653,8 +658,8 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         f = uproot.open(path)["limit"]
         df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
             namedecode="utf-8")
-        #df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
-        df = df.query("quantileExpected > -1")
+        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        #df = df.query("quantileExpected > -1")
         df = df.loc[~df.duplicated(),:]
         df = df.sort_values(by=[parameter1, parameter0])
         custom_cms_label(ax, "Preliminary", lumi=137)
@@ -696,13 +701,14 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
             levels=[scipy.stats.chi2.ppf(0.95, df=2)],
             colors=['black'], linestyles='dashed',
         )
-        #ax.contour(
-        #    scipy.ndimage.zoom(X, 4),
-        #    scipy.ndimage.zoom(Y, 4),
-        #    scipy.ndimage.zoom(z, 4),
-        #    levels=[scipy.stats.chi2.ppf(0.997, df=2)],
-        #    colors=['black'], linestyles='dotted',
-        #)
+        if threesig:
+          ax.contour(
+              scipy.ndimage.zoom(X, 4),
+              scipy.ndimage.zoom(Y, 4),
+              scipy.ndimage.zoom(z, 4),
+              levels=[scipy.stats.chi2.ppf(0.997, df=2)],
+              colors=['black'], linestyles='dashdot',
+          )
         bf = (
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter1],
@@ -713,23 +719,46 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         )
         ax.plot(
             1, 0, '*', color='#e31a1c',
-            ms=4, label="SM",
+            ms=5, label="SM",
         )
         handles, labels = ax.get_legend_handles_labels()
-        handles = handles[::-1] + [
-            mpl.lines.Line2D([0], [0], color='black', lw=1),
-            mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
-        ]
-        labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
-        ax.legend(
-            handles, labels,
-            loc=3, labelspacing=0.1, borderpad=0.2,
-            fancybox=True, edgecolor='#d9d9d9',
-            framealpha=0., handlelength=1.,
-        )
+        if threesig:
+          handles = handles[::-1]
+          labels = labels[::-1]
+          legend_two = ax.legend(
+              handles, labels,
+              loc=2, labelspacing=0.15, borderpad=0.2,
+              fancybox=True, edgecolor='#d9d9d9',
+              framealpha=0., handlelength=1.,
+          )
+          ax.add_artist(legend_two)
+          handles = [
+              mpl.lines.Line2D([0], [0], color='black', lw=1),
+              mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
+              mpl.lines.Line2D([0], [0], color='black', lw=1, ls='-.'),
+          ]
+          labels = [r'$68\%$ CI', r'$95\%$ CI',r'$99.7\%$ CI']
+          ax.legend(
+              handles, labels,
+              loc=3, labelspacing=0.15, borderpad=0.2,
+              fancybox=True, edgecolor='#d9d9d9',
+              framealpha=0., handlelength=1.,
+          )
+        else:
+          handles = handles[::-1] + [
+              mpl.lines.Line2D([0], [0], color='black', lw=1),
+              mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
+          ]
+          labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
+          ax.legend(
+              handles, labels,
+              loc=3, labelspacing=0.1, borderpad=0.2,
+              fancybox=True, edgecolor='#d9d9d9',
+              framealpha=0., handlelength=1.,
+          )
 
         ax.text(
-            0.75, 0.05, r"$\mu_{gg\mathrm{H}}^{\tau\tau} = \mu_{V}^{\tau\tau} = 1$",
+            0.75, 0.05, r"$\mu_{gg\mathrm{H}} = \mu_{\mathrm{V}} = 1$",
             ha='center', va='bottom', transform=ax.transAxes,
         )
 
@@ -740,7 +769,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         print(f"Saving figure as plots/{plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
-def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, observed, add_significance):
+def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, observed, add_significance, threesig):
     if mode == "single":
         single_scan(input_folder, cat, nsigmas, plot_name, add_significance)
     elif mode == "split_by_category":
@@ -756,7 +785,7 @@ def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, observed
     elif mode == "alpha":
         single_parameter_scan(input_folder, "alpha", cat, plot_name, observed, add_significance)
     elif mode == "2d_kappa":
-        scan_2d_kappa(input_folder, cat, plot_name)
+        scan_2d_kappa(input_folder, cat, plot_name, threesig)
 
 if __name__ == "__main__":
     main(**vars(parse_arguments()))
