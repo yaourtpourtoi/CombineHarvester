@@ -15,7 +15,7 @@ from plotting import (
     process_kw,
     nllscan_kw,
 )
-mpl.use('pdf')
+# mpl.use('pdf')
 plt.style.use('cms')
 
 def parse_arguments():
@@ -345,117 +345,118 @@ def single_parameter_scan(input_folder, parameter, cat, plot_name, observed, add
     elif parameter in ["mutautau"]:
         boundaries = [(0,0.8), (0.8,2)]
         extra_kw.update(bestfit_guess=[1.])
-    with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
-        fig, ax = plt.subplots(
-            figsize=(4,3), dpi=200,
-        )
+    # with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
+    fig, ax = plt.subplots(
+        figsize=(4,3), dpi=200,
+    )
 
-        path = f"{input_folder}/{cat}/125/higgsCombine.{parameter}.MultiDimFit.mH125.root"
-        xvalues, yvalues = prepare_scan(path, parameter)
-        if observed:
-            path = f"{input_folder}/{cat}/125/higgsCombine.{parameter}.observed.MultiDimFit.mH125.root"
-            xvalues_obs, yvalues_obs = prepare_scan(path, parameter)
+    path = f"{input_folder}/{cat}/125/higgsCombine.{parameter}.MultiDimFit.mH125.root"
+    xvalues, yvalues = prepare_scan(path, parameter)
+    if observed:
+        path = f"{input_folder}/{cat}/125/higgsCombine.{parameter}.observed.MultiDimFit.mH125.root"
+        xvalues_obs, yvalues_obs = prepare_scan(path, parameter)
 
+    scan_kw = dict(color=nllscan_kw["tt"][0][2])
+    # either specify sigma or do using percent level
+    pc_level = [0.68, 0.95]
+    if parameter not in ["alpha"]:
+        pc_level = [0.68]
+    nsigs = []
+    for pc in pc_level:
+        nsigs.append(scipy.stats.norm.ppf((1+pc)/2))
+    if observed:
+        scan_kw = dict(color=nllscan_kw["mt"][3][2])
+        scan_kw.update(ms=0, ls='--')
+        line_kw = dict(lw=0)
+        marker_kw=dict(ms=0)
+
+    results = dftools.draw.nllscan(
+        xvalues, yvalues, ax=ax, nsigs=nsigs, 
+        left_bracket=boundaries[0], right_bracket=boundaries[1],
+        marker_kw=scan_kw, spline_kw=scan_kw, 
+        # line_kw=line_kw, 
+        **extra_kw,
+    )
+    if observed:
         scan_kw = dict(color=nllscan_kw["tt"][0][2])
-        # either specify sigma or do using percent level
-        pc_level = [0.68, 0.95]
-        if parameter not in ["alpha"]:
-            pc_level = [0.68]
-        nsigs = []
-        for pc in pc_level:
-            nsigs.append(scipy.stats.norm.ppf((1+pc)/2))
-        if observed:
-            scan_kw = dict(color=nllscan_kw["mt"][3][2])
-            scan_kw.update(ms=0, ls='--')
-            line_kw = dict(lw=0)
-            marker_kw=dict(ms=0)
-
-        results = dftools.draw.nllscan(
-            xvalues, yvalues, ax=ax, nsigs=nsigs, 
+        results_obs = dftools.draw.nllscan(
+            xvalues_obs, yvalues_obs, ax=ax, nsigs=nsigs, 
             left_bracket=boundaries[0], right_bracket=boundaries[1],
-            marker_kw=scan_kw, spline_kw=scan_kw, 
-            # line_kw=line_kw, 
-            **extra_kw,
+            marker_kw=scan_kw, spline_kw=scan_kw,
         )
-        if observed:
-            scan_kw = dict(color=nllscan_kw["tt"][0][2])
-            results_obs = dftools.draw.nllscan(
-                xvalues_obs, yvalues_obs, ax=ax, nsigs=nsigs, 
-                left_bracket=boundaries[0], right_bracket=boundaries[1],
-                marker_kw=scan_kw, spline_kw=scan_kw,
-            )
-        custom_cms_label(ax, "Preliminary", lumi=137)
-        if parameter == "alpha":
-            ax.set_xticks([-90, -45, 0, 45, 90])
-            ax.set_xlim(-90., 90)
-            ax.set_ylim(0., None)
-            
-            ax.text(-85, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
-            ax.text(-85, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
-        elif parameter == "mutautau":
-            ax.set_xlim(0, 2)
-            ax.set_ylim(0., None)
-            ax.text(0.05, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
-            # ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
-            #ax.text(0.55, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
-            #ax.text(0.55, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
-        else:
-            ax.set_xlim(0, 2)
-            ax.set_ylim(0., None)
-            ax.text(0.05, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
-            # ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
+    custom_cms_label(ax, "Preliminary", lumi=137)
+    if parameter == "alpha":
+        ax.set_xticks([-90, -45, 0, 45, 90])
+        ax.set_xlim(-90., 90)
+        ax.set_ylim(0., None)
+        
+        ax.text(-85, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
+        ax.text(-85, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
+    elif parameter == "mutautau":
+        ax.set_xlim(0, 2)
+        ax.set_ylim(0., None)
+        ax.text(0.05, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
+        # ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
+        #ax.text(0.55, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
+        #ax.text(0.55, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
+    else:
+        ax.set_xlim(0, 2)
+        ax.set_ylim(0., None)
+        ax.text(0.05, 1.01, r'$68\%$', ha='left', va='bottom', color='gray')
+        # ax.text(0.05, 3.92, r'$95\%$', ha='left', va='bottom', color='gray')
 
-        if parameter == "alpha":
-            prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.88], observed=False)
-        else: 
-            prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.7], observed=False)
+    if parameter == "alpha":
+        prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.88], observed=False)
+    else: 
+        prepare_results(ax, results, pc_level, parameter, pos=[0.5,0.7], observed=False)
 
-        if observed:
-            prepare_results(ax, results_obs, pc_level, parameter, pos=[0.5,0.68], observed=True)
-        # Add significance of SM vs PS discrimination
+    if observed:
+        prepare_results(ax, results_obs, pc_level, parameter, pos=[0.5,0.68], observed=True)
+    # Add significance of SM vs PS discrimination
+    significance = np.sqrt(
+        scipy.stats.chi2.ppf(
+            scipy.stats.chi2.cdf(
+                [max(yvalues)],
+            1),
+        1)
+    )[0]
+    sig_label = r"$0^+ \mathrm{vs}\ 0^- =$\ "+f"{significance:.2f}$\sigma$"
+    print(f"SM vs PS significance is {sig_label}")
+    if observed:
         significance = np.sqrt(
             scipy.stats.chi2.ppf(
                 scipy.stats.chi2.cdf(
-                    [max(yvalues)],
+                    [max(yvalues_obs)],
                 1),
             1)
         )[0]
         sig_label = r"$0^+ \mathrm{vs}\ 0^- =$\ "+f"{significance:.2f}$\sigma$"
         print(f"SM vs PS significance is {sig_label}")
-        if observed:
-            significance = np.sqrt(
-                scipy.stats.chi2.ppf(
-                    scipy.stats.chi2.cdf(
-                        [max(yvalues_obs)],
-                    1),
-                1)
-            )[0]
-            sig_label = r"$0^+ \mathrm{vs}\ 0^- =$\ "+f"{significance:.2f}$\sigma$"
-            print(f"SM vs PS significance is {sig_label}")
 
-        if add_significance:
-            ax.text(
-                0.5, 0.65,
-                sig_label,
-                ha='center', va='bottom',
-                transform=ax.transAxes,
-            )
+    if add_significance:
+        ax.text(
+            0.5, 0.65,
+            sig_label,
+            ha='center', va='bottom',
+            transform=ax.transAxes,
+        )
     
-        if parameter == "alpha":
-            ax.set_xlabel(r"$\phi_{\tau\tau} (\mathrm{degrees})$")
-        elif parameter == "muggH":
-            ax.set_xlabel(r"$\mu_{gg\mathrm{H}}^{\tau\tau}$")
-        elif parameter == "muV":
-            ax.set_xlabel(r"$\mu_{\mathrm{V}}^{\tau\tau}$")
-            ax.set_ylim(0, 3.2)
-        elif parameter == "mutautau":
-            ax.set_xlabel(r"$\mu^{\tau\tau}$")
-            #ax.set_ylim(0, 6.2)
-            #ax.set_xlim(0.5, 1.5)
-        #ax.set_ylim(0, 6)
-        #ax.set_xlim(-2, 2)
-        ax.set_ylabel(r"$-2\Delta\log\mathcal{L}$")
-        pdf.savefig(fig, bbox_inches='tight')
+    if parameter == "alpha":
+        ax.set_xlabel(r"$\phi_{\tau\tau} (\mathrm{degrees})$")
+    elif parameter == "muggH":
+        ax.set_xlabel(r"$\mu_{gg\mathrm{H}}^{\tau\tau}$")
+    elif parameter == "muV":
+        ax.set_xlabel(r"$\mu_{\mathrm{V}}^{\tau\tau}$")
+        ax.set_ylim(0, 3.2)
+    elif parameter == "mutautau":
+        ax.set_xlabel(r"$\mu^{\tau\tau}$")
+        #ax.set_ylim(0, 6.2)
+        #ax.set_xlim(0.5, 1.5)
+    #ax.set_ylim(0, 6)
+    #ax.set_xlim(-2, 2)
+    ax.set_ylabel(r"$-2\Delta\log\mathcal{L}$")
+    plt.savefig(f"plots/{plot_name}.png", bbox_inches='tight')
+    # pdf.savefig(fig, bbox_inches='tight')
 
 def split_by_category_scan(input_folder, channel, plot_name, y_scale="linear"):
     """
@@ -693,6 +694,13 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
             scipy.ndimage.zoom(z, 4),
             levels=[scipy.stats.chi2.ppf(0.95, df=2)],
             colors=['black'], linestyles='dashed',
+        )
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            levels=[scipy.stats.chi2.ppf(0.997, df=2)],
+            colors=['black'], linestyles='dashdot',
         )
         bf = (
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
