@@ -645,12 +645,11 @@ namespace ch {
  
          cb.cp().process(JoinStr({sig_procs, all_mc_bkgs, embed, /*{"jetFakes", "QCD"}*/})).channel({"et","et_2016","et_2017","et_2018","em","em_2016","em_2017","em_2018","ttbar","ttbar_2016","ttbar_2017","ttbar_2018"}).AddSyst(cb, 
                                               "CMS_scale_e_13TeV", "shape", SystMap<>::init(1.00)); 
-
  
        // // Decay Mode based TES Settings
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,4}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,3,6}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,3,4,6}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,5}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
@@ -659,7 +658,7 @@ namespace ch {
 
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,7,8,9,10}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,3,4,5,7,10,11}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,                                        
+        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,3,4,5,7,8,9,10,11}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,                                        
                                                 "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed})).bin_id({1,2,5,6,9,11}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
@@ -998,9 +997,9 @@ namespace ch {
         // this uncertainty would make the ff_tt_mvadm2_closure uncertainty below redundant!
 
         // additional 5% per sub-leading MVA-DM=2 tau for tt channel to cover non-closures - note this uncertainty is 3% when rounging up for both channels
-        //
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({4}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
-        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({10}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
+       
+        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({4}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
+        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({10}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
 
         // prefiring
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","mt","mt_2016","mt_2017","et","et_2016","et_2017"}).AddSyst(cb,

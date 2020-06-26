@@ -653,7 +653,8 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         f = uproot.open(path)["limit"]
         df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
             namedecode="utf-8")
-        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        #df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        df = df.query("quantileExpected > -1")
         df = df.loc[~df.duplicated(),:]
         df = df.sort_values(by=[parameter0, parameter1])
         custom_cms_label(ax, "Preliminary", lumi=137)
@@ -685,6 +686,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
             scipy.ndimage.zoom(z, 4),
             #z,
             levels=[scipy.stats.chi2.ppf(0.68, df=2)],
+            #levels=[scipy.stats.chi2.ppf(0.95, df=2)],
             colors=['black'],
         )
         ax.contour(
@@ -694,6 +696,13 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
             levels=[scipy.stats.chi2.ppf(0.95, df=2)],
             colors=['black'], linestyles='dashed',
         )
+        #ax.contour(
+        #    scipy.ndimage.zoom(X, 4),
+        #    scipy.ndimage.zoom(Y, 4),
+        #    scipy.ndimage.zoom(z, 4),
+        #    levels=[scipy.stats.chi2.ppf(0.997, df=2)],
+        #    colors=['black'], linestyles='dotted',
+        #)
         bf = (
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
             df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter1],

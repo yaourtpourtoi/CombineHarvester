@@ -438,10 +438,10 @@ def draw_1d(
         ax[1].set_ylim(0.9, 1.1)
         ax[1].set_yticks([0.9, 1., 1.1])
         if unrolled:
-            # ax[1].set_ylim(0., 2.)
-            # ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
-            ax[1].set_ylim(0.7, 1.3)
-            ax[1].set_yticks([0.7, 1., 1.3])
+            ax[1].set_ylim(0., 2.)
+            ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
+            #ax[1].set_ylim(0.7, 1.3)
+            #ax[1].set_yticks([0.7, 1., 1.3])
         if plot_var == 'pt_tt' and channel == "zmm":
             ax[1].set_xlabel(r"$p_{\mathrm{T}}^{\mu\mu} (\mathrm{GeV})$")
         if plot_var == 'm_vis' and channel == "zmm":

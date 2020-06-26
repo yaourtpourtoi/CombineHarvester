@@ -404,8 +404,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    /* VString chns = {"tt","mt"}; */
-    VString chns = {"tt"};
+    VString chns = {"tt","mt"}; 
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -454,7 +453,7 @@ int main(int argc, char** argv) {
         {9, "tt_2016_higgs_Pi_A1_Mixed"},
         {10, "tt_2016_higgs_Pi_0A1_Mixed"},
         {11, "tt_2016_higgs_A1_0A1"},
-	{100, "tt_2016_higgs"}, //Merijn 2006	
+	//{100, "tt_2016_higgs"}, //Merijn 2006	
 
         //{11, "tt_2016_higgs_other"},
       };
@@ -465,7 +464,7 @@ int main(int argc, char** argv) {
 	{4, "mt_mupi_sig_2016"},
 	{5, "mt_mua1_sig_2016"},
 	{6, "mt_mu0a1_sig_2016"},
-        {100, "mt_sig_2016"}, //Merijn 2006	
+        //{100, "mt_sig_2016"}, //Merijn 2006	
 	
       };
     }  
@@ -482,7 +481,7 @@ int main(int argc, char** argv) {
         {9, "tt_2017_higgs_Pi_A1_Mixed"},
         {10, "tt_2017_higgs_Pi_0A1_Mixed"},
         {11, "tt_2017_higgs_A1_0A1"},
-        {100, "tt_2017_higgs"}, //Merijn 2006		
+        //{100, "tt_2017_higgs"}, //Merijn 2006		
         //{11, "tt_2017_higgs_other"},
       };
       cats["mt_2017"] = {
@@ -492,7 +491,7 @@ int main(int argc, char** argv) {
         {4, "mt_mupi_sig_2017"},
         {5, "mt_mua1_sig_2017"},
         {6, "mt_mu0a1_sig_2017"},
-        {100, "mt_sig_2017"}, //Merijn 2006	
+        //{100, "mt_sig_2017"}, //Merijn 2006	
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -508,7 +507,7 @@ int main(int argc, char** argv) {
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
         {10, "tt_2018_higgs_Pi_0A1_Mixed"}, 
         {11, "tt_2018_higgs_A1_0A1"},	
-        {100, "tt_2018_higgs"}, //Merijn 2006	
+        //{100, "tt_2018_higgs"}, //Merijn 2006	
         //{11, "tt_2018_higgs_other"},
       };
       cats["mt_2018"] = {
@@ -518,7 +517,7 @@ int main(int argc, char** argv) {
         {4, "mt_mupi_sig_2018"},
         {5, "mt_mua1_sig_2018"},
         {6, "mt_mu0a1_sig_2018"},
-        {100, "mt_sig_2018"}, //Merijn 2006	
+        //{100, "mt_sig_2018"}, //Merijn 2006	
       };
     }
     

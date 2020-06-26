@@ -248,6 +248,7 @@ for key in output_file.GetListOfKeys():
     if dirname.replace(year,'201$') not in cp_bins: continue
     print 'Making SS closure systematic for: ', dirname 
     directory = output_file.Get(dirname)
+    if not isinstance(original_file.Get(dirname+'_ss'),ROOT.TDirectory): continue
     directory_ss = original_file.Get(dirname+'_ss')
     nom = directory.Get('jetFakes')
     ss = directory_ss.Get('jetFakes')
