@@ -45,6 +45,8 @@ def create_df(
         bin_edges = hist.edges
         nbins = hist.numbins
         weights = hist.values
+        if process == "data_obs":
+            weights[weights == 0.] = 1e-10 # for data entry of 0 set to 1e-10 (so log(value) is defined)
         weights_down = np.zeros_like(weights)
         weights_up = np.zeros_like(weights)
         variance = hist.variances
