@@ -435,21 +435,13 @@ def draw_1d(
                 )
                 ax[1].set_ylabel(r'Ratio')
 
-        ax[1].set_ylim(0.6, 1.4)
-        ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
-        # temporarily rebin for ptmiss
-        #if plot_var in ['met']:
-        #    ax[1].set_xlim(0, 100)
-        #ax[1].set_ylim(0., 2.)
-        #ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
-        # for zmm noise jet
-        #ax[1].set_ylim(0., 2.5)
-        #ax[1].set_yticks([0., 0.5, 1., 1.5, 2., 2.5])
+        ax[1].set_ylim(0.9, 1.1)
+        ax[1].set_yticks([0.9, 1., 1.1])
         if unrolled:
-            ax[1].set_ylim(0., 2.)
-            ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
-            # ax[1].set_ylim(0.6, 1.4)
-            # ax[1].set_yticks([0.6, 0.8, 1., 1.2, 1.4])
+            # ax[1].set_ylim(0., 2.)
+            # ax[1].set_yticks([0., 0.5, 1., 1.5, 2.])
+            ax[1].set_ylim(0.7, 1.3)
+            ax[1].set_yticks([0.7, 1., 1.3])
         if plot_var == 'pt_tt' and channel == "zmm":
             ax[1].set_xlabel(r"$p_{\mathrm{T}}^{\mu\mu} (\mathrm{GeV})$")
         if plot_var == 'm_vis' and channel == "zmm":
@@ -612,12 +604,17 @@ process_kw={
         "H_sm": "#253494", # dark blue
         #"H_ps": "#2ca25f", # dark green
         "H_ps": "#006837", # darker green
-        "Bestfit": "#DE5A6A",
+        "Bestfit": "#253494", # dark blue
     },
     "linestyles": {
-        "H_sm": "--",
-        "H_ps": "-",
-        "Bestfit": "-.",
+        "H_sm": "-",
+        "H_ps": "--",
+        "Bestfit": "-",
+    },
+    "zorder": {
+        "H_sm": 3,
+        "H_ps": 2,
+        "Bestfit": 3,
     },
 }
 
