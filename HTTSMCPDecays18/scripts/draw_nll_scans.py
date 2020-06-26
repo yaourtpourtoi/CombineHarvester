@@ -655,7 +655,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
             namedecode="utf-8")
         df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
         df = df.loc[~df.duplicated(),:]
-        df = df.sort_values(by=[parameter0, parameter1])
+        df = df.sort_values(by=[parameter1, parameter0])
         custom_cms_label(ax, "Preliminary", lumi=137)
         
         xbins = df[parameter0].unique()
