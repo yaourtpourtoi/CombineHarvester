@@ -666,7 +666,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
         # some nans...remove by setting to high value (high NLL)
         # this is only a temp. fix, hopefully fix to Physics model will remove these
-        z[np.isnan(z)] = 300
+        z[np.isnan(z)] = 100
         # print(z)
         
         pos = ax.imshow(
