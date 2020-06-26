@@ -704,23 +704,39 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",):
         )
         ax.plot(
             1, 0, '*', color='#e31a1c',
-            ms=4, label="SM",
+            ms=5, label="SM",
         )
+
+        # split legend into two parts
         handles, labels = ax.get_legend_handles_labels()
-        handles = handles[::-1] + [
+        handles = handles[::-1]
+        labels = labels[::-1]
+        leg1 = ax.legend(
+            handles, labels,
+            loc=2, labelspacing=0.1, borderpad=0.2,
+            fancybox=True, edgecolor='#d9d9d9',
+            framealpha=0., handlelength=1.,
+        )
+        
+        # second part
+        handles = [
             mpl.lines.Line2D([0], [0], color='black', lw=1),
             mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
+            mpl.lines.Line2D([0], [0], color='black', lw=1, ls='-.'),
         ]
-        labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
-        ax.legend(
+        labels = [r'$68\%$ CI', r'$95\%$ CI', r'$99.7\%$ CI']
+        leg2 = ax.legend(
             handles, labels,
             loc=3, labelspacing=0.1, borderpad=0.2,
             fancybox=True, edgecolor='#d9d9d9',
             framealpha=0., handlelength=1.,
         )
 
+        # add back first legend to axis
+        ax.add_artist(leg1)
+
         ax.text(
-            0.75, 0.05, r"$\mu_{gg\mathrm{H}}^{\tau\tau} = \mu_{V}^{\tau\tau} = 1$",
+            0.75, 0.05, r"$\mu_{gg\mathrm{H}}^{\tau\tau} = \mu_{\mathrm{V}}^{\tau\tau} = 1$",
             ha='center', va='bottom', transform=ax.transAxes,
         )
 
