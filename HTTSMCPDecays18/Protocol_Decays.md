@@ -31,6 +31,10 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
     Useful option to save all nuisance parameter values when performing MultiDimFit (and doesn't seem to cost extra runtime):
     --saveSpecifiedNuis all
 
+for this fit and others when running on data it helps to define fall back algorithms with higher tolerance, e.g:
+
+--cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --cminFallbackAlgo Minuit2,Migrad,0:1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10
+
 # Plot scan
 
 1D scans can be plotted using scripts/plot1DScan.py script.
