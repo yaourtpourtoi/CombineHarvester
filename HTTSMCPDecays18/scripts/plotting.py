@@ -169,6 +169,8 @@ def draw_1d(
     mcstat_kw={}, logy=False, postfix="", sm_bkg_ratio=False,
     combined=False,
 ):
+    year_ = year
+    if year == 'cmb': year_ = 2018
     # to keep the original one the same
     df = df_.copy(deep=True)
     
@@ -185,7 +187,7 @@ def draw_1d(
     
     with mpl.backends.backend_pdf.PdfPages(
         "plots/{}_{}_{}_{}_{}_{}.pdf".format(
-            plot_var, nbins[3], channel, year, category, postfix
+            plot_var, nbins[3], channel, year_, category, postfix
         ),
         keep_empty=False,
     ) as pdf:
@@ -214,13 +216,15 @@ def draw_1d(
             lumi = 41.5
         elif year == "2018": 
             lumi = 59.7
+        else: 
+          lumi = 137
         
-        if unrolled and not combined:
+        if unrolled and not combined and lumi != 137:
             dftools.draw.cms_label(ax[0], "Preliminary", lumi=lumi, extra_label=nbins[2])
-        elif not combined:
+        elif not combined and lumi !=137:
             dftools.draw.cms_label(ax[0], "Preliminary", lumi=lumi)
         # for all three years together (assume uncorrelated)
-        elif combined and unrolled: 
+        elif (combined or lumi==137) and unrolled : 
             custom_cms_label(ax[0], "Preliminary", lumi=137, extra_label=nbins[2])
         else:
             custom_cms_label(ax[0], "Preliminary", lumi=137)

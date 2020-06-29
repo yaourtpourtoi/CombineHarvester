@@ -56,6 +56,10 @@ def parse_arguments():
         "--no-embedding", action="store_true", default=False,
         help="Don't use embedded samples",
     )
+    parser.add_argument(
+        "--cmb_years", action="store_true", default=False,
+        help="Do combined years",
+    )
 
     arguments = parser.parse_args()
 
@@ -71,7 +75,7 @@ def parse_arguments():
 
 def draw1d_cpdecays(
     channel, year, draw_signals, signal_scale, ff, embedding, mode,
-    datacard, alt_datacard,
+    datacard, alt_datacard, cmb_years,
 ):
 
     # Plotting SM and PS template
@@ -102,9 +106,9 @@ def draw1d_cpdecays(
     # By default we use fake factors and embedding
     if embedding and ff:
         if channel == "tt":
-            processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes','Wfakes',]
+            processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes','Wfakes']
         elif channel == "mt":
-            processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes',]
+            processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes']
     elif ff:
         processes = ['data_obs', 'ZTT', 'ZL', 'TTT', 'VVT', 'jetFakes', 'EWKZ',]
     elif embedding:
@@ -129,10 +133,10 @@ def draw1d_cpdecays(
     # correspond to CH bins defined in Morphing scripts
     if channel == "tt":
         bins_to_plot = list(range(1,12))
-        # bins_to_plot = [1,2,4,5,6,8,9,10,11]
+        bins_to_plot = [1,2,3,7]
     elif channel == "mt":
         bins_to_plot = list(range(1,7))
-        # bins_to_plot = [1,2,5,6]
+        bins_to_plot = [1,2,3,4]
     for bin_number in bins_to_plot:
         category = nbins_kw[channel][bin_number][3]
         # Initialise empty and change depending on category bellow
@@ -181,7 +185,8 @@ def draw1d_cpdecays(
         # This is because, with PostFitShapesFromWorkspace, we don't have any
         # entries for PS signals when SM (alpha=0) 
         if draw_signals:
-            df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
+            if cmb_years: df_plot_alt = create_df(alt_datacard, directory, channel, ['TotalSigPS'], ch_kw)
+            else: df_plot_alt = create_df(alt_datacard, directory, channel, processes, ch_kw)
             if df_plot_alt is not None:
                 df_plot_alt.reset_index(inplace=True)
                 df_plot_alt.loc[df_plot_alt["parent"] == "Bestfit", "parent"] = "H_ps"
@@ -202,8 +207,10 @@ def draw1d_cpdecays(
         # Always use mcstat=True and mcsyst=True when plotting systematic unc.
         category_=category
         if 'fakes' not in category and 'ztt' not in category: category_='higgs'
+        year_ = year
+        if cmb_years: year_='cmb'
         draw_1d(
-            df_plot, plot_var, channel, category_, year, blind=False, sigs=signals, 
+            df_plot, plot_var, channel, category_, year_, blind=False, sigs=signals, 
             signal_scale=signal_scale, ch_kw=ch_kw, process_kw=process_kw, 
             var_kw=var_kw, leg_kw=leg_kw, unrolled=unrolled, norm_bins=norm_bins,
             nbins=nbins_kw[channel][bin_number], mcstat=True, mcsyst=True,
