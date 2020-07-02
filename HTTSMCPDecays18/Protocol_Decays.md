@@ -294,11 +294,11 @@ Just use one workspace and produce shapes using `--freeze` option:
 
 For `alpha=0` prefit:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print -o shapes_eff_sm.root
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print --total-shapes-bin=true  -o shapes_eff_sm.root
 
 For `alpha=90` prefit:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print --freeze alpha=90 -o shapes_eff_ps.root
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print --total-shapes-bin=true --freeze alpha=90 -o shapes_eff_ps.root
 
 For multiple channels, can accelerate prefit shapes by looping over folders and
 create workspace + PostFitShapes for separate bins.
@@ -319,11 +319,11 @@ Add `--postfit --sampling -f <fit_result>` to PostFitShapesFromWorkspace command
 
 this will produce all plots at once in one root file but it tends to be slow:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root -o shapes_eff.root --print --postfit --sampling -f output/30032020_ps/cmb/125/multidimfit.bestfit.root:fit_mdf 
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root -o shapes_eff.root --print --postfit --sampling --total-shapes-bin=true -f output/30032020_ps/cmb/125/multidimfit.bestfit.root:fit_mdf 
 
 it is better to produce shapes seperate for each year to speed this up (e.g for tt in 2016):
 
-    PostFitShapesFromWorkspace -m 125 -d output/pas_1202/tt_2016/125/combined.txt.cmb -w output/pas_1202/tt_2016/125/ws.root -o shapes_tt_2016.root --print --postfit --sampling -f output/pas_1206_v2/cmb/125/multidimfit.bestfit.root:fit_mdf
+    PostFitShapesFromWorkspace -m 125 -d output/pas_1202/tt_2016/125/combined.txt.cmb -w output/pas_1202/tt_2016/125/ws.root -o shapes_tt_2016.root --print --postfit --sampling --total-shapes-bin=true -f output/pas_1206_v2/cmb/125/multidimfit.bestfit.root:fit_mdf
 
 If this is still too slow you can produce the shapes for each channel seperatly instead
 

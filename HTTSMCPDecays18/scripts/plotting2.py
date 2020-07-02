@@ -1,4 +1,5 @@
 import ROOT as R
+import math
 COL_STORE = []
 
 def SetTDRStyle():
@@ -520,5 +521,118 @@ def propoganda_plot(sm,ps,best,bkg,data,plot_name):
     legend.AddEntry(sm,'#phi_{#tau#tau} = 0^{#circ}',"l")
     legend.AddEntry(ps,'#phi_{#tau#tau} = 90^{#circ}',"l")
     legend.Draw("same")
+
+    c1.SaveAs(plot_name+'.pdf')
+
+def propoganda_plot_phicp(sm,ps,best,bkg,data,plot_name,mode=1):
+
+    title='#rho#rho + #pi#rho + #mu#rho'
+    if mode == 2:
+      title='#rho#rho'
+    if mode == 3:
+      title='#pi#rho'
+    if mode == 4:
+      title='#mu#rho' 
+    if mode == 5:
+      title = 'others'
+
+    latex = R.TLatex()
+    latex.SetNDC()
+    latex.SetTextAngle(0)
+    latex.SetTextColor(R.kBlack)
+    latex.SetTextFont(42)
+    latex.SetTextSize(0.06)
+
+
+    def ConvertToEqualBins(h):
+      hnew = R.TH1D(h.GetName()+'_new','',h.GetNbinsX(),0,360)
+      for i in range(1,h.GetNbinsX()+1):
+        hnew.SetBinContent(i,h.GetBinContent(i))
+        hnew.SetBinError(i,h.GetBinError(i))
+      return hnew
+                                   
+    sm = ConvertToEqualBins(sm)
+    ps = ConvertToEqualBins(ps)
+    best = ConvertToEqualBins(best)    
+
+    bkg = ConvertToEqualBins(bkg)
+    data = ConvertToEqualBins(data)
+
+    data.GetXaxis().SetTitleOffset(1.0)
+    data.GetXaxis().SetTitleSize(0.05)
+    data.GetYaxis().SetTitle('A #times S/(S+B) Weighted Events / bin')
+    data.GetXaxis().SetTitle('#phi_{CP} (degrees)')
+    data.GetYaxis().SetTitleSize(0.05)
+
+
+    c1 = R.TCanvas()
+
+    R.gROOT.SetBatch(R.kTRUE)
+    R.TH1.AddDirectory(False)
+    ModTDRStyle(r=0.04, l=0.14)
+
+    pads=OnePad()
+    pads[0].cd()
+
+    hs = R.THStack("hs","")
+
+    data.SetMarkerStyle(20)
+    data.SetLineColor(1)
+    miny=0.
+    maxe=0.
+    for i in range(1,bkg.GetNbinsX()+1):
+     e = bkg.GetBinError(i)
+     if e> maxe: maxe=e
+    miny=-maxe*1.4
+    for i in range(1,data.GetNbinsX()+1): 
+      x=data.GetBinContent(i) - data.GetBinError(i)
+      if x < miny: miny=x 
+    if miny<data.GetMinimum(): data.SetMinimum(miny)
+    if mode ==5: data.SetMaximum(data.GetMaximum()*1.8)
+    data.Draw("E")
+
+    sm.SetLineWidth(2)
+    sm.SetLineColor(R.kBlue)
+    sm.SetMarkerSize(0)
+    sm.SetFillStyle(0)
+
+    ps.SetLineWidth(2)
+    ps.SetLineColor(R.kRed)
+    ps.SetMarkerSize(0)
+    ps.SetFillStyle(0)
+
+    hs.Add(ps)
+    hs.Add(sm)
+    #hs.Add(best)
+
+    hs.Draw("nostack hist same")
+
+    bkg.SetFillColor(CreateTransparentColor(12,0.4))
+    bkg.SetLineColor(CreateTransparentColor(12,0.4))
+    bkg.SetMarkerSize(0)
+    bkg.SetMarkerColor(CreateTransparentColor(12,0.4))
+
+    bkg.Draw("e2same")
+    data.Draw("E same")
+
+
+    DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 11, 0.001, -0.07, 0.2, 1.5, '', 1.0)
+    DrawTitle(pads[0], '137 fb^{-1} (13 TeV)', 3)
+
+    #Setup legend
+    legend = PositionedLegend(0.25,0.3,3,0.02,0.08)
+    legend.SetTextFont(42)
+    legend.SetTextSize(0.05)
+    legend.SetFillColor(0)
+    legend.SetFillStyle(0)
+
+    legend.AddEntry(data,'Data #minus Bkg.',"lep")
+    legend.AddEntry(bkg,'Bkg. uncert.',"f")
+    legend.AddEntry(sm,'#phi_{#tau#tau} = 0^{#circ}',"l")
+    legend.AddEntry(ps,'#phi_{#tau#tau} = 90^{#circ}',"l")
+    legend.Draw("same")
+
+
+    latex.DrawLatex(0.2, 0.85, title)
 
     c1.SaveAs(plot_name+'.pdf')

@@ -23,6 +23,7 @@
 #include "CombineHarvester/CombinePdfs/interface/MorphFunctions.h"
 #include "CombineHarvester/HTTSMCPDecays18/interface/HttSystematics_SMRun2.h"
 #include "CombineHarvester/CombineTools/interface/JsonTools.h"
+#include "CombineHarvester/CombineTools/interface/TFileIO.h"
 #include "RooWorkspace.h"
 #include "RooRealVar.h"
 #include "TH2.h"
@@ -345,6 +346,7 @@ int main(int argc, char** argv) {
     string input_folder_mm="USCMS/";
     string scale_sig_procs="";
     string postfix="";
+    std::string fitresult_file="";
     bool ttbar_fit = false;
     unsigned no_shape_systs = 0;
     bool do_embedding = true;
@@ -353,6 +355,7 @@ int main(int argc, char** argv) {
     bool mergeXbbb = false; 
     bool mergeSymm = false; 
     bool control = false; 
+    bool prop_plot = false;
     unsigned backgroundOnly = 0; 
 
     string era;
@@ -365,6 +368,7 @@ int main(int argc, char** argv) {
     ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
     ("postfix", po::value<string>(&postfix)->default_value(postfix))
+    ("fitresult_file", po::value<string>(&fitresult_file)->default_value(fitresult_file))
     ("output_folder", po::value<string>(&output_folder)->default_value("sm_run2"))
     ("no_shape_systs", po::value<unsigned>(&no_shape_systs)->default_value(no_shape_systs))
     ("do_embedding", po::value<bool>(&do_embedding)->default_value(true))
@@ -375,6 +379,7 @@ int main(int argc, char** argv) {
     ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
     ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
     ("control", po::value<bool>(&control)->default_value(false))
+    ("prop_plot", po::value<bool>(&prop_plot)->default_value(false))
     ("backgroundOnly", po::value<unsigned>(&backgroundOnly)->default_value(0));
 
 
@@ -439,7 +444,7 @@ int main(int argc, char** argv) {
     ch::CombineHarvester cb;
     
     map<string,Categories> cats;
-    
+
     if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2016"] = {
         {1, "tt_2016_zttEmbed"},
@@ -1336,6 +1341,20 @@ int main(int argc, char** argv) {
        writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
        writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
 
+       writer.WriteCards("htt_tt_3_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3}));
+       writer.WriteCards("htt_tt_4_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({4}));
+       writer.WriteCards("htt_tt_5_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({5}));
+       writer.WriteCards("htt_tt_6_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({6}));
+       writer.WriteCards("htt_tt_7_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({7}));
+       writer.WriteCards("htt_tt_8_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({8}));
+       writer.WriteCards("htt_tt_9_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({9}));
+       writer.WriteCards("htt_tt_10_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({10}));
+       writer.WriteCards("htt_tt_11_only_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({11}));
+       writer.WriteCards("htt_mt_3_only_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({3}));
+       writer.WriteCards("htt_mt_4_only_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4}));
+       writer.WriteCards("htt_mt_5_only_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5}));
+       writer.WriteCards("htt_mt_6_only_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({6}));
+
      for(auto year: years) {
        writer.WriteCards("htt_tt_1_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({1}));
        writer.WriteCards("htt_tt_2_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({2}));
@@ -1380,6 +1399,25 @@ int main(int argc, char** argv) {
            obj->set_attribute("cat","stage2");
        });
        writer.WriteCards("htt_stage2", cb.cp().attr({"stage2"},"cat"));
+
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3,7}).ForEachObj([&](ch::Object *obj){
+           obj->set_attribute("cat","best_cats");
+       });
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({1,3}).ForEachObj([&](ch::Object *obj){
+           obj->set_attribute("cat","best_cats");
+       });
+       writer.WriteCards("htt_best_cats", cb.cp().attr({"best_cats"},"cat"));
+       writer.WriteCards("htt_worst_cats", cb.cp().attr({"best_cats"},"cat",false));
+
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({5}).ForEachObj([&](ch::Object *obj){
+           obj->set_attribute("cat","a1");
+       });
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({5,6,9,11}).ForEachObj([&](ch::Object *obj){
+           obj->set_attribute("cat","a1");
+       });
+
+       writer.WriteCards("htt_a1", cb.cp().attr({"a1"},"cat"));
+
      }
      else{
        for(auto year: years) {
@@ -1408,7 +1446,217 @@ int main(int argc, char** argv) {
 
     cb.PrintAll();
     cout << " done\n";
-    
+
+    // make propoganda plot here:
+
+  if (prop_plot) {
+
+    auto bin_set = cb.cp().bin_id({1,2}, false).bin_set();
+  
+    // if fit result is given then load this to get postfit values for signal/background yields
+  
+    RooFitResult* fitresult = nullptr;
+    if (fitresult_file.length()) {
+      using ch::syst::SystMap;
+      cb.cp().process({"ggH_mm_htt"}).AddSyst(cb, "muggH","rateParam",SystMap<>::init(1.0));
+      cb.cp().process({"qqH_mm_htt"}).AddSyst(cb, "muV","rateParam",SystMap<>::init(1.0));
+      fitresult =
+          new RooFitResult(ch::OpenFromTFile<RooFitResult>(fitresult_file));
+      auto fitparams = ch::ExtractFitParameters(*fitresult);
+      cb.UpdateParameters(fitparams);
+    }
+  
+    TH1F proto1("proto1", "proto1", 10, 0,360);
+    TH1F proto2("proto2", "proto2", 4, 0,360);
+    TH1F proto3("proto3", "proto3", 8, 0,360);
+  
+    // first define a map to define how many phiCP bins (x-axis) bins are used for each category 
+    std::map<std::string, int> xbins_map;
+    for(auto year: years) {
+      xbins_map["htt_mt_"+year+"_3_13TeV"] = 10;
+      xbins_map["htt_mt_"+year+"_4_13TeV"] = 8;
+      xbins_map["htt_mt_"+year+"_5_13TeV"] = 4;
+      xbins_map["htt_mt_"+year+"_6_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_3_13TeV"] = 10;
+      xbins_map["htt_tt_"+year+"_4_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_5_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_6_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_7_13TeV"] = 10;
+      xbins_map["htt_tt_"+year+"_8_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_9_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_10_13TeV"] = 4;
+      xbins_map["htt_tt_"+year+"_11_13TeV"] = 4;
+    }
+  
+    for (auto const& bin : bin_set) {
+      double phase_shift = false;
+      if(bin.find("_mt_") != std::string::npos) phase_shift = true;
+      if(bin.find("_tt_") != std::string::npos && (bin.find("_5_")!=std::string::npos || bin.find("_6_")!=std::string::npos ||  bin.find("_9_")!=std::string::npos || bin.find("_11_")!=std::string::npos) ) phase_shift = true;
+      int nxbins = (xbins_map.find(bin))->second;
+      ch::CombineHarvester cmb_bin = std::move(cb.cp().bin({bin}));
+      double muV = cb.GetParameter("muV")->val();
+      double muggH = cb.GetParameter("muggH")->val();
+      TH1F bkg = cmb_bin.cp().backgrounds().GetShape();
+
+      TH1F sm_sig = cmb_bin.cp().signals().process({"ggH_sm_htt"}).GetShape();
+      TH1F ps_sig = cmb_bin.cp().signals().process({"ggH_ps_htt"}).GetShape();
+
+      TH1F sm_sig_vbf = cmb_bin.cp().signals().process({"qqH_sm_htt","WH_sm_htt","ZH_sm_htt"}).GetShape();
+      TH1F ps_sig_vbf = cmb_bin.cp().signals().process({"qqH_ps_htt","WH_ps_htt","ZH_ps_htt"}).GetShape();
+
+
+      sm_sig_vbf.Scale(muV);
+      ps_sig_vbf.Scale(muV);
+      sm_sig.Scale(muggH);
+      ps_sig.Scale(muggH);
+      
+      sm_sig.Add(&sm_sig_vbf);
+      ps_sig.Add(&ps_sig_vbf);
+
+      std::map<int, double> wt_mapping;
+      double s_sb=0.;
+      double A_ave=0.;
+      for (int b = 1; b <= bkg.GetNbinsX(); ++b) {
+        if((b-1) % nxbins ==0) {
+          double i_sm = sm_sig.Integral(b,b+nxbins-1);
+          double i_ps = ps_sig.Integral(b,b+nxbins-1);
+          double i_bkg = bkg.Integral(b,b+nxbins-1);
+          double i_sig = (i_sm+i_ps)/2;
+          s_sb = i_sig/(i_sig+i_bkg);
+          double A_tot=0.;
+          for(int i=b; i<b+nxbins; ++i) {
+            double b_sm = sm_sig.GetBinContent(i);
+            double b_ps = ps_sig.GetBinContent(i);
+            A_tot += std::fabs(b_sm-b_ps)/(b_sm+b_ps);
+          }
+          A_ave = A_tot/nxbins;
+        }
+        wt_mapping[b] = s_sb*A_ave;
+      }
+  
+      cmb_bin.ForEachObs([&](ch::Observation *e) {
+        TH1 const * old_h = e->shape();
+        std::unique_ptr<TH1> new_h;
+        if( (bin.find("_mt_") != std::string::npos && bin.find("_3_") != std::string::npos) || (bin.find("_tt_") != std::string::npos && bin.find("_3_") != std::string::npos) || (bin.find("_tt_") != std::string::npos && bin.find("_7_") != std::string::npos) ) {
+          new_h = ch::make_unique<TH1F>(TH1F(proto1));
+        } else {
+          if (bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos) new_h = ch::make_unique<TH1F>(TH1F(proto3));
+          else new_h = ch::make_unique<TH1F>(TH1F(proto2));
+        }
+   
+        for (int b = 1; b <= old_h->GetNbinsX(); ++b) {
+          int new_bin = (b-1) % nxbins +1;
+          if(phase_shift) {
+            new_bin+=nxbins/2;
+            if (new_bin > nxbins) new_bin-=nxbins;
+          }
+          double wt = (wt_mapping.find(b))->second;
+          new_h->SetBinContent(
+              new_bin,
+              new_h->GetBinContent(new_bin) + wt*old_h->GetBinContent(b));
+        }
+  
+        // for mu+pi channel we need to rebin to 4 bin histogram
+        if(bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos) new_h->Rebin();
+  
+        new_h->Scale(e->rate());
+        e->set_shape(std::move(new_h), true);
+      });
+  
+      cmb_bin.ForEachProc([&](ch::Process *e) {
+        TH1 const * old_h = e->shape();
+        std::unique_ptr<TH1> new_h;
+        if( (bin.find("_mt_") != std::string::npos && bin.find("_3_") != std::string::npos) || (bin.find("_tt_") != std::string::npos && bin.find("_3_") != std::string::npos) || (bin.find("_tt_") != std::string::npos && bin.find("_7_") != std::string::npos) ) {
+          new_h = ch::make_unique<TH1F>(TH1F(proto1));
+        } else {
+          if (bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos) new_h = ch::make_unique<TH1F>(TH1F(proto3));
+          else new_h = ch::make_unique<TH1F>(TH1F(proto2));
+        }
+  
+        for (int b = 1; b <= old_h->GetNbinsX(); ++b) {
+          int new_bin = (b-1) % nxbins +1;
+          if(phase_shift) {
+            new_bin+=nxbins/2;
+            if (new_bin > nxbins) new_bin-=nxbins;
+          }
+          double wt = (wt_mapping.find(b))->second;
+          new_h->SetBinContent(
+              new_bin,
+              new_h->GetBinContent(new_bin) + wt*old_h->GetBinContent(b));
+        }
+  
+        // for mu+pi channel we need to rebin to 4 bin histogram
+        if(bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos) new_h->Rebin();
+  
+        new_h->Scale(e->rate());
+        e->set_shape(std::move(new_h), true);
+      });
+  
+      cmb_bin.ForEachSyst([&](ch::Systematic *e) {
+        if (e->type() != "shape") return;
+  
+        TH1D *old_hu = (TH1D*)e->ClonedShapeU().get()->Clone();
+        TH1D *old_hd = (TH1D*)e->ClonedShapeD().get()->Clone();
+  
+        float val_u = e->value_u(); 
+        float val_d = e->value_d();
+        TH1D *old_nom = new TH1D();
+        //TH1D *new_nom = new TH1D();
+        cb.cp().ForEachProc([&](ch::Process *proc){
+           bool match_proc = (MatchingProcess(*proc,*e));
+           if(match_proc) {
+             old_nom = (TH1D*)proc->ClonedShape().get()->Clone();
+           } 
+        });
+  
+        std::unique_ptr<TH1> new_hd;
+        std::unique_ptr<TH1> new_hu;
+  
+        if( (bin.find("_mt_") != std::string::npos && bin.find("_3_") != std::string::npos) || (bin.find("_tt_") != std::string::npos && bin.find("_3_") != std::string::npos) || (bin.find("_tt_") != std::string::npos && bin.find("_7_") != std::string::npos) ) {
+          new_hu = ch::make_unique<TH1F>(TH1F(proto1));
+          new_hd = ch::make_unique<TH1F>(TH1F(proto1));
+        } else {
+          if (bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos) {
+            new_hd = ch::make_unique<TH1F>(TH1F(proto3));
+            new_hu = ch::make_unique<TH1F>(TH1F(proto3));
+          }
+          else {
+            new_hd = ch::make_unique<TH1F>(TH1F(proto2));
+            new_hu = ch::make_unique<TH1F>(TH1F(proto2));
+          }
+        }
+  
+        for (int b = 1; b <= old_hd->GetNbinsX(); ++b) {
+          int new_bin = (b-1) % nxbins +1;
+          if(phase_shift) {
+            new_bin+=nxbins/2;
+            if (new_bin > nxbins) new_bin-=nxbins;
+          }
+          double wt = (wt_mapping.find(b))->second;
+   
+  
+          new_hd->SetBinContent(
+              new_bin,
+              new_hd->GetBinContent(new_bin) + val_d*wt*old_hd->GetBinContent(b));
+          new_hu->SetBinContent(
+              new_bin,
+              new_hu->GetBinContent(new_bin) + val_u*wt*old_hu->GetBinContent(b));
+        }
+        // for mu+pi channel we need to rebin to 4 bin histogram
+        if(bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos){
+           new_hu->Rebin();
+           new_hd->Rebin();
+        }
+        e->set_shapes(std::move(new_hu), std::move(new_hd), nullptr);
+      });
+  
+    } // end of loop over bins
+      
+    writer.WriteCards("plot_best", cb.cp().bin_id({1,2},false).attr({"best_cats"},"cat"));
+    writer.WriteCards("plot_worst", cb.cp().bin_id({1,2},false).attr({"best_cats"},"cat", false));
+    writer.WriteCards("plot_cmb", cb.cp().bin_id({1,2},false));
+
+  }
     
 }
 
