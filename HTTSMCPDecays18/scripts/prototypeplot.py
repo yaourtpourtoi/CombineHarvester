@@ -33,6 +33,8 @@ for key in f.GetListOfKeys():
 
       # ignore categories not sensitive to CP
       if '_1_' in cat or '_2_' in cat or 'prefit' in cat: continue
+      if '_mt_' in cat: continue
+
 
       bkg = f.Get('%(cat)s/TotalBkg' % vars())
       proc = f.Get('%(cat)s/TotalProcs' % vars())
@@ -73,6 +75,8 @@ for key in f.GetListOfKeys():
 
 bins = np.array([-0.3,-0.1,-0.05,0.05,0.1,0.3]) # 5 bin option
 bins = np.array([-0.3,-0.07,0.07,0.3]) # 3 bin option
+bins = np.array([-0.3,-0.09,0.,0.09,0.3]) # 4 bin option
+#bins = np.array([-0.3,-0.10,-0.06,0.06,0.10,0.3]) # 4 bin option
 nbins=len(bins)-1
 h = ROOT.TH1D('h','',nbins, bins)
 h_sm = ROOT.TH1D('h_sm','',nbins, bins)
@@ -153,6 +157,9 @@ hs.Add(h_sm)
 hs.Add(h_ps)
 hs.Add(h_data)
 hs.Add(h_bkg)
+
+#for i in range(1,h_bkg.GetNbinsX()+1):
+#  h_bkg.SetBinContent(i,h_data.GetBinContent(i))
 
 plot.propoganda_plot(h_sm,h_ps,h_best,h_bkg,h_data,'propoganda')
 

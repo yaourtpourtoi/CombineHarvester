@@ -1543,6 +1543,10 @@ int main(int argc, char** argv) {
           if (bin.find("_mt_") != std::string::npos && bin.find("_4_") != std::string::npos) new_h = ch::make_unique<TH1F>(TH1F(proto3));
           else new_h = ch::make_unique<TH1F>(TH1F(proto2));
         }
+        for (int i=0; i<=new_h->GetNbinsX();++i) {
+          new_h->SetBinContent(i,0.);
+          new_h->SetBinError(i,0.);
+        }
    
         for (int b = 1; b <= old_h->GetNbinsX(); ++b) {
           int new_bin = (b-1) % nxbins +1;
@@ -1554,6 +1558,9 @@ int main(int argc, char** argv) {
           new_h->SetBinContent(
               new_bin,
               new_h->GetBinContent(new_bin) + wt*old_h->GetBinContent(b));
+          new_h->SetBinError(
+              new_bin,
+              sqrt(pow(new_h->GetBinError(new_bin),2) + pow(wt*old_h->GetBinError(b),2)));
         }
   
         // for mu+pi channel we need to rebin to 4 bin histogram
@@ -1651,7 +1658,13 @@ int main(int argc, char** argv) {
       });
   
     } // end of loop over bins
-      
+    
+    std::cout << "!!!!!!!!" << std::endl;
+    auto s = cb.cp().bin_id({1,2},false).attr({"best_cats"},"cat").GetObservedShape();
+  
+    writer.WriteCards("plot_mt_3", cb.cp().bin_id({3}).channel({"mt_2016","mt_2017","mt_2018"}));
+    writer.WriteCards("plot_tt_3", cb.cp().bin_id({3}).channel({"tt_2016","tt_2017","tt_2018"}));
+    writer.WriteCards("plot_tt_7", cb.cp().bin_id({7}).channel({"tt_2016","tt_2017","tt_2018"}));
     writer.WriteCards("plot_best", cb.cp().bin_id({1,2},false).attr({"best_cats"},"cat"));
     writer.WriteCards("plot_worst", cb.cp().bin_id({1,2},false).attr({"best_cats"},"cat", false));
     writer.WriteCards("plot_cmb", cb.cp().bin_id({1,2},false));

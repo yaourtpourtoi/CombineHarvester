@@ -551,16 +551,15 @@ def propoganda_plot_phicp(sm,ps,best,bkg,data,plot_name,mode=1):
         hnew.SetBinError(i,h.GetBinError(i))
       return hnew
                                    
-    sm = ConvertToEqualBins(sm)
-    ps = ConvertToEqualBins(ps)
-    best = ConvertToEqualBins(best)    
-
-    bkg = ConvertToEqualBins(bkg)
-    data = ConvertToEqualBins(data)
+    #sm = ConvertToEqualBins(sm)
+    #ps = ConvertToEqualBins(ps)
+    #best = ConvertToEqualBins(best)    
+    #bkg = ConvertToEqualBins(bkg)
+    #data = ConvertToEqualBins(data)
 
     data.GetXaxis().SetTitleOffset(1.0)
     data.GetXaxis().SetTitleSize(0.05)
-    data.GetYaxis().SetTitle('A #times S/(S+B) Weighted Events / bin')
+    data.GetYaxis().SetTitle('A#times S/(S+B) Weighted Events / bin')
     data.GetXaxis().SetTitle('#phi_{CP} (degrees)')
     data.GetYaxis().SetTitleSize(0.05)
 
