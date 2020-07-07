@@ -590,13 +590,17 @@ def propoganda_plot_phicp(sm,ps,best,bkg,data,plot_name,mode=1):
     if mode ==5: data.SetMaximum(data.GetMaximum()*1.8)
     data.Draw("E")
 
-    sm.SetLineWidth(2)
-    sm.SetLineColor(R.kBlue)
+    col_sm = R.TColor().GetColor('#253494') 
+    col_ps = R.TColor().GetColor('#006837') 
+    col_mix = R.TColor().GetColor('#D62839') 
+
+    sm.SetLineWidth(3)
+    sm.SetLineColor(col_sm)
     sm.SetMarkerSize(0)
     sm.SetFillStyle(0)
 
-    ps.SetLineWidth(2)
-    ps.SetLineColor(R.kRed)
+    ps.SetLineWidth(3)
+    ps.SetLineColor(col_ps)
     ps.SetMarkerSize(0)
     ps.SetFillStyle(0)
 

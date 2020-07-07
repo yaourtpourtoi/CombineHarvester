@@ -400,5 +400,6 @@
   "ff_mt_wjets_met_closure_syst_njets2": 0.0,
   "ff_mt_wjets_l_pt_closure_syst_njets2": 0.0,
   "ff_mt_ttbar_syst": 0.0,
-  "ff_SS_closure": 0.0
+  "ff_SS_closure": 0.0,
+  "CMS_IPsignifCalib_13TeV": 0.0
 }

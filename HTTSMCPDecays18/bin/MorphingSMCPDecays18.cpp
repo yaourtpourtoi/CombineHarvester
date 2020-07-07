@@ -1409,10 +1409,10 @@ int main(int argc, char** argv) {
        writer.WriteCards("htt_best_cats", cb.cp().attr({"best_cats"},"cat"));
        writer.WriteCards("htt_worst_cats", cb.cp().attr({"best_cats"},"cat",false));
 
-       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({5}).ForEachObj([&](ch::Object *obj){
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({1,2,5}).ForEachObj([&](ch::Object *obj){
            obj->set_attribute("cat","a1");
        });
-       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({5,6,9,11}).ForEachObj([&](ch::Object *obj){
+       cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5,6,9,11}).ForEachObj([&](ch::Object *obj){
            obj->set_attribute("cat","a1");
        });
 

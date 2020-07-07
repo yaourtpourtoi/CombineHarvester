@@ -127,7 +127,8 @@ T2W
 
 run fits
 
-    combineTool.py -m 125 -M MultiDimFit  -d output/ztt_validation/htt_tt_3_13TeV/125/ws.root  --there -n .r_ztt --saveFitResult --setParameterRanges r=0.999,1.001
+    combineTool.py -m 125 -M MultiDimFit  -d output/ztt_validation/cmb/125/ws.root  --there -n .r_ztt --saveFitResult --setParameterRanges r=0.999,1.001 --expectSignal 1 --cminDefaultMinimizerStrategy=0
+
 
 make plots
 

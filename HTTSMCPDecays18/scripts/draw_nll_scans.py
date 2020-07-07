@@ -725,42 +725,6 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
 
         # split legend into two parts
         handles, labels = ax.get_legend_handles_labels()
-<<<<<<< HEAD
-        if threesig:
-          handles = handles[::-1]
-          labels = labels[::-1]
-          legend_two = ax.legend(
-              handles, labels,
-              loc=2, labelspacing=0.15, borderpad=0.2,
-              fancybox=True, edgecolor='#d9d9d9',
-              framealpha=0., handlelength=1.,
-          )
-          ax.add_artist(legend_two)
-          handles = [
-              mpl.lines.Line2D([0], [0], color='black', lw=1),
-              mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
-              mpl.lines.Line2D([0], [0], color='black', lw=1, ls='-.'),
-          ]
-          labels = [r'$68\%$ CI', r'$95\%$ CI',r'$99.7\%$ CI']
-          ax.legend(
-              handles, labels,
-              loc=3, labelspacing=0.15, borderpad=0.2,
-              fancybox=True, edgecolor='#d9d9d9',
-              framealpha=0., handlelength=1.,
-          )
-        else:
-          handles = handles[::-1] + [
-              mpl.lines.Line2D([0], [0], color='black', lw=1),
-              mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
-          ]
-          labels = labels[::-1] + [r'$68\%$ CI', r'$95\%$ CI']
-          ax.legend(
-              handles, labels,
-              loc=3, labelspacing=0.1, borderpad=0.2,
-              fancybox=True, edgecolor='#d9d9d9',
-              framealpha=0., handlelength=1.,
-          )
-=======
         handles = handles[::-1]
         labels = labels[::-1]
         leg1 = ax.legend(
