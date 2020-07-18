@@ -87,7 +87,7 @@ class CPMixture(PhysicsModel):
 
         #self.modelBuilder.doVar('mutautau[1,0,10]')
         self.modelBuilder.doVar('mutautau[1]')
-        self.modelBuilder.doVar('muV[1,0,10]')
+        self.modelBuilder.doVar('muV[1,0,4]')
         if not self.useRate and not self.kappa:
            self.modelBuilder.doVar('muggH[1,0,10]')
         if not self.VBFangle: self.modelBuilder.doVar('f[0,-1,1]')
@@ -117,7 +117,8 @@ class CPMixture(PhysicsModel):
   
           self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a1, a3)')
           self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a1, a3)')
-          self.modelBuilder.factory_('expr::mm_scaling("2*@0*@1", a1, a3)')
+          self.modelBuilder.factory_('expr::mm_scaling_sync("2*@0*@1", a1, a3)')
+          self.modelBuilder.factory_('expr::mm_scaling("@0*@1", a1, a3)')
  
         else: 
           for c in ['em', 'et', 'mt', 'tt']:
@@ -126,7 +127,8 @@ class CPMixture(PhysicsModel):
    
             self.modelBuilder.factory_('expr::sm_scaling_%s("@0*@0 - @0*@1", a1_%s, a3_%s)' % (c, c, c))
             self.modelBuilder.factory_('expr::ps_scaling_%s("@1*@1 - @0*@1", a1_%s, a3_%s)' % (c, c, c))
-            self.modelBuilder.factory_('expr::mm_scaling_%s("2*@0*@1", a1_%s, a3_%s)' % (c, c, c)) 
+            self.modelBuilder.factory_('expr::mm_scaling_%s("@0*@1", a1_%s, a3_%s)' % (c, c, c)) 
+            self.modelBuilder.factory_('expr::mm_scaling_sync_%s("2*@0*@1", a1_%s, a3_%s)' % (c, c, c)) 
         
         # For the 0jet and boosted categories since all templates should be the same for SM, MM, and PS sum together all the templates but weight by event numbers in the samples
 
@@ -188,35 +190,37 @@ class CPMixture(PhysicsModel):
             elif '_mt_' in bin_: chan = 'mt'
             elif '_tt_' in bin_: chan = 'tt'
 
-            if "ggHsm" in process or "ggH2jsm" in process:
+            if "ggH_sm" in process or "ggH2jsm" in process or 'reweighted_ggH_htt_0PM' == process:
                 scalings.append('sm_scaling')
-            elif "ggHps" in process or "ggH2jps" in process:
+            elif "ggH_ps" in process or "ggH2jps" in process or 'reweighted_ggH_htt_0M' == process:
                 scalings.append('ps_scaling')
-            elif "ggHmm" in process or "ggH2jmm" in process:
+            elif "ggH_mm" in process or "ggH2jmm" in process:
                 scalings.append('mm_scaling')
+            elif 'reweighted_ggH_htt_0Mf05ph0' == process:
+                scalings.append('mm_scaling_sync')
             elif 'ggH_ph' in process:
                 scalings.append('muggH_mutautau')
 
             if self.ChannelCompatibility: scalings.append('%s' % chan)
 
-        if ('qqH' in process or 'WH' in process or 'ZH' in process) and 'hww' not in process:
-            if "qqHsm" in process:
+        if ('qqH' in process or 'WH' in process or 'ZH' in process or 'vbf125_powheg' in process or 'wh125_powheg' in process or 'zh125_powheg' in process) and 'hww' not in process:
+            if "qqH_sm" in process:
                 scalings.append('vbf_sm_scaling')
-            elif "qqHps" in process:
+            elif "qqH_ps" in process:
                 scalings.append('vbf_ps_scaling')
-            elif "qqHmm" in process:
+            elif "qqH_mm" in process:
                 scalings.append('vbf_mm_scaling')
-            elif "WHsm" in process:
+            elif "WH_sm" in process:
                 scalings.append('wh_sm_scaling')
-            elif "WHps" in process:
+            elif "WH_ps" in process:
                 scalings.append('wh_ps_scaling')
-            elif "WHmm" in process:
+            elif "WH_mm" in process:
                 scalings.append('wh_mm_scaling')
-            elif "ZHsm" in process:
+            elif "ZH_sm" in process:
                 scalings.append('zh_sm_scaling')
-            elif "ZHps" in process:
+            elif "ZH_ps" in process:
                 scalings.append('zh_ps_scaling')
-            elif "ZHmm" in process:
+            elif "ZH_mm" in process:
                 scalings.append('zh_mm_scaling')
             else:
                scalings.append('muV_mutautau')
@@ -224,22 +228,22 @@ class CPMixture(PhysicsModel):
         if scalings:
             scaling = '_'.join(scalings)
 
-            if self.sm_fix:
+            if self.sm_fix and False:
                 if "_1_13TeV" in bin_ or "_2_13TeV" in bin_:
                     # simply this by only take SM template for 0 and 1 jet categories
-                    if "ggHsm" in process: scaling = "muggH_mutautau"
+                    if "ggH_sm" in process or 'reweighted_ggH_htt_0PM' in process: scaling = "muggH_mutautau"
                     else: scaling = "Zero"
 
                     #year = '2016'
                     #if '2017' in bin_: year = '2017' 
-                    #if "ggHsm" in process: scaling = "muggH_mutautau_sm_01jetnorm_%s" % year
+                    #if "ggH_sm" in process: scaling = "muggH_mutautau_sm_01jetnorm_%s" % year
                     #else: scaling = "Zero"
-                    #elif "ggHmm" in process: scaling = "muggH_mutautau_mm_01jetnorm_%s" % year
-                    #elif "ggHps" in process: scaling = "muggH_mutautau_ps_01jetnorm_%s" % year
+                    #elif "ggH_mm" in process: scaling = "muggH_mutautau_mm_01jetnorm_%s" % year
+                    #elif "ggH_ps" in process: scaling = "muggH_mutautau_ps_01jetnorm_%s" % year
                     
-                    #if "ggHsm" in process: scaling = "muggH_mutautau"
-                    #elif "ggHmm" in process: scaling = "Zero" 
-                    #elif "ggHps" in process: scaling = "Zero"
+                    #if "ggH_sm" in process: scaling = "muggH_mutautau"
+                    #elif "ggH_mm" in process: scaling = "Zero" 
+                    #elif "ggH_ps" in process: scaling = "Zero"
 
             if "ggH_ph_htt" in process: scaling = "muggH_mutautau"
 
