@@ -232,7 +232,7 @@ def main(args):
     lumi = args.lumi
     era = args.file_dir.split("_")[2]
     if args.combined_yrs:
-        lumi = "77.8 fb^{-1} (13 TeV)"
+        lumi = "137 fb^{-1} (13 TeV)"
     elif era == "2016":
         lumi = "35.9 fb^{-1} (13 TeV)"
     elif era == "2017":
@@ -502,26 +502,33 @@ def main(args):
         if args.combined_yrs:
             if era == "2016":
                 sighist.Add(getHistogram(histo_file,'TotalSig', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone())
+                sighist.Add(getHistogram(histo_file,'TotalSig', file_dir.replace(era,"2018"), mode, args.no_signal, log_x)[0].Clone())
     else:
         [sighist,binname] = getHistogram(histo_file,'TotalSig', file_dir, mode, args.no_signal, log_x)
         if args.combined_yrs:
             if era == "2016":
                 sighist.Add(getHistogram(histo_file,'TotalSig', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone())
+                sighist.Add(getHistogram(histo_file,'TotalSig', file_dir.replace(era,"2018"), mode, args.no_signal, log_x)[0].Clone())
     if args.file_alt != "": 
       [sighistPS,binnamePS] = getHistogram(histo_file_alt,'TotalSig', file_dir, mode, args.no_signal, log_x)
       if args.combined_yrs:
             if era == "2016":
                 sighistPS.Add(getHistogram(histo_file_alt,'TotalSig', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone()) 
+                sighistPS.Add(getHistogram(histo_file_alt,'TotalSig', file_dir.replace(era,"2018"), mode, args.no_signal, log_x)[0].Clone()) 
     if int(bin_number) in [1,2]:
         [sighistPS,binnamePS] = getHistogram(histo_file,'TotalSig', file_dir, mode, args.no_signal, log_x)
         if args.combined_yrs:
             if era == "2016":
-                sighistPS.Add(getHistogram(histo_file_alt,'TotalSig', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone()) 
+                sighistPS.Add(getHistogram(histo_file,'TotalSig', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone()) 
+                sighistPS.Add(getHistogram(histo_file,'TotalSig', file_dir.replace(era,"2018"), mode, args.no_signal, log_x)[0].Clone()) 
     elif args.file_alt != "":
         [sighistPS,binnamePS] = getHistogram(histo_file_alt,'TotalSig', file_dir, mode, args.no_signal, log_x)
+        #[sighistPS,binnamePS] = getHistogram(histo_file_alt,'ggH_ps_htt', file_dir, mode, args.no_signal, log_x)
         if args.combined_yrs:
             if era == "2016":
                 sighistPS.Add(getHistogram(histo_file_alt,'TotalSig', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone())
+                sighistPS.Add(getHistogram(histo_file_alt,'TotalSig', file_dir.replace(era,"2018"), mode, args.no_signal, log_x)[0].Clone())
+                #sighistPS.Add(getHistogram(histo_file_alt,'ggH_ps_htt', file_dir.replace(era,"2017"), mode, args.no_signal, log_x)[0].Clone())
     if int(bin_number) in [1,2]:
         sighists.append(sighist)
     elif args.file_alt != "":
@@ -538,7 +545,8 @@ def main(args):
     bkghist = getHistogram(histo_file,'TotalBkg',file_dir, mode, logx=log_x)[0]
     if args.combined_yrs:
         if era == "2016":
-            bkghist.Add(getHistogram(histo_file,'TotalBkg', file_dir.replace(era,"2017"), mode, log_x)[0].Clone())
+            bkghist = getHistogram(histo_file,'TotalBkg',mode, mode, logx=log_x)[0]
+            #bkghist.Add(getHistogram(histo_file,'TotalBkg', file_dir.replace(era,"2017"), mode, log_x)[0].Clone())
     sbhist = bkghist.Clone()
     sbhist.Add(sighist)
     sbhist_PS = bkghist.Clone()
@@ -549,6 +557,7 @@ def main(args):
         if args.combined_yrs:
             if era == "2016":
                 total_datahist.Add(getHistogram(histo_file,'data_obs', file_dir.replace(era,"2017"), mode, log_x)[0].Clone())
+                total_datahist.Add(getHistogram(histo_file,'data_obs', file_dir.replace(era,"2018"), mode, log_x)[0].Clone())
     else:
         total_datahist = getHistogram(histo_file,"TotalProcs",file_dir, mode, logx=log_x)[0].Clone()
         for bin_ in range(1,total_datahist.GetNbinsX()+1):
@@ -611,7 +620,7 @@ def main(args):
                 6: 5.46, 7: 6.05, 8: 6.02, 9: 6.46 
                 }
         for i in range (1,blind_datahist.GetNbinsX()+1):
-            if blind_datahist.GetBinContent(i) < 10 and blind_datahist.GetBinContent(i) >= 0:
+            if blind_datahist.GetBinContent(i) < 9.5 and blind_datahist.GetBinContent(i) >= 0:
                 new_err = proper_errs_dict[round(blind_datahist.GetBinContent(i))]
                 blind_datahist.SetBinError(i, new_err)
     #Set classical frequentist asymmetric errors
@@ -659,13 +668,13 @@ def main(args):
     print data_y_noscale
     data_y = np.array([blind_datahist.GetBinContent(x)*1./blind_datahist.GetBinWidth(x) for x in range(1,blind_datahist.GetNbinsX()+1)])
     err_y_lo = np.array(
-            [proper_errs_dict[round(x)][0]/blind_datahist.GetBinWidth(w) if x<10 and x>=0
+            [proper_errs_dict[round(x)][0]/blind_datahist.GetBinWidth(w) if x<9.5 and x>=0
                 else 0.0 if x<0
                 else np.sqrt(round(x))/blind_datahist.GetBinWidth(w) 
                 for x,w in zip(data_y_noscale, range(1,blind_datahist.GetNbinsX()+1))]
             )
     err_y_hi = np.array(
-            [proper_errs_dict[round(x)][1]/blind_datahist.GetBinWidth(w) if x<10 and x>=0
+            [proper_errs_dict[round(x)][1]/blind_datahist.GetBinWidth(w) if x<9.5 and x>=0
                 else 0.0 if x<0
                 else np.sqrt(round(x))/blind_datahist.GetBinWidth(w)
                 for x,w in zip(data_y_noscale, range(1,blind_datahist.GetNbinsX()+1))]
@@ -693,10 +702,14 @@ def main(args):
                 isHist = True
                 if not uniform:
                     h = getHistogram(histo_file,k, file_dir,mode, logx=log_x)[0]
-                    if args.combined_yrs: h.Add(getHistogram(histo_file,k, file_dir.replace(era,"2017"),mode, logx=log_x)[0])
+                    if args.combined_yrs: 
+                      h.Add(getHistogram(histo_file,k, file_dir.replace(era,"2017"),mode, logx=log_x)[0])
+                      h.Add(getHistogram(histo_file,k, file_dir.replace(era,"2018"),mode, logx=log_x)[0])
                 else :
                     htemp = getHistogram(histo_file,k,file_dir, mode,logx=log_x)[0]
-                    if args.combined_yrs: htemp.Add(getHistogram(histo_file,k,file_dir.replace(era,"2017"), mode,logx=log_x)[0])
+                    if args.combined_yrs: 
+                      htemp.Add(getHistogram(histo_file,k,file_dir.replace(era,"2017"), mode,logx=log_x)[0])
+                      htemp.Add(getHistogram(histo_file,k,file_dir.replace(era,"2018"), mode,logx=log_x)[0])
                     h = ROOT.TH1F(k,k,htemp.GetNbinsX(),0,htemp.GetNbinsX())
                     for bp in range(0,htemp.GetNbinsX()):
                         h.SetBinContent(bp+1,htemp.GetBinContent(bp+1))
@@ -707,10 +720,14 @@ def main(args):
                     isHist = True
                     if not uniform:
                         h.Add(getHistogram(histo_file,k, file_dir,mode,logx=log_x)[0])
-                        if args.combined_yrs: h.Add(getHistogram(histo_file,k, file_dir.replace(era,"2017"),mode,logx=log_x)[0])
+                        if args.combined_yrs: 
+                          h.Add(getHistogram(histo_file,k, file_dir.replace(era,"2017"),mode,logx=log_x)[0])
+                          h.Add(getHistogram(histo_file,k, file_dir.replace(era,"2018"),mode,logx=log_x)[0])
                     else :
                         htemp = getHistogram(histo_file,k,file_dir, mode,logx=log_x)[0]
-                        if args.combined_yrs: htemp.Add(getHistogram(histo_file,k,file_dir.replace(era,"2017"), mode,logx=log_x)[0])
+                        if args.combined_yrs: 
+                          htemp.Add(getHistogram(histo_file,k,file_dir.replace(era,"2017"), mode,logx=log_x)[0])
+                          htemp.Add(getHistogram(histo_file,k,file_dir.replace(era,"2018"), mode,logx=log_x)[0])
                         htemp2 = ROOT.TH1F(k,k,htemp.GetNbinsX(),0,htemp.GetNbinsX())
                         for bp in range(0,htemp.GetNbinsX()):
                             htemp2.SetBinContent(bp+1,htemp.GetBinContent(bp+1))
@@ -956,16 +973,16 @@ def main(args):
     legend.AddEntry(bkghist,"Background uncertainty","f")
     if int(bin_number) > 2:
         if not mode == 'prefit':
-          legend.AddEntry(sighist,"ggH#rightarrow#tau#tau (#alpha_{hgg}=-59#circ)"%vars(),"l")
-          if args.file_alt != "": legend.AddEntry(sighistPS,"ggH#rightarrow#tau#tau (#alpha_{hgg}=0#circ)"%vars(),"l")
+          legend.AddEntry(sighist,"ggH#rightarrow#tau#tau (#alpha_{gg}=-59#circ)"%vars(),"l")
+          if args.file_alt != "": legend.AddEntry(sighistPS,"ggH#rightarrow#tau#tau (#alpha_{gg}=0#circ)"%vars(),"l")
         else:
-          legend.AddEntry(sighist,"ggH#rightarrow#tau#tau (#alpha_{hgg}=0#circ)"%vars(),"l")
-          if args.file_alt != "": legend.AddEntry(sighistPS,"ggH#rightarrow#tau#tau (#alpha_{hgg}=90#circ)"%vars(),"l")
+          legend.AddEntry(sighist,"ggH#rightarrow#tau#tau (#alpha_{gg}=0#circ)"%vars(),"l")
+          if args.file_alt != "": legend.AddEntry(sighistPS,"ggH#rightarrow#tau#tau (#alpha_{gg}=90#circ)"%vars(),"l")
 
     elif int(bin_number) == 1:
-        legend.AddEntry(sighist,"100#times ggH#rightarrow#tau#tau (#forall #alpha_{hgg})"%vars(),"l")
+        legend.AddEntry(sighist,"100#times ggH#rightarrow#tau#tau (#forall #alpha_{gg})"%vars(),"l")
     else:
-        legend.AddEntry(sighist,"ggH#rightarrow#tau#tau (#forall #alpha_{hgg})"%vars(),"l")
+        legend.AddEntry(sighist,"ggH#rightarrow#tau#tau (#forall #alpha_{gg})"%vars(),"l")
     legend.Draw("same")
 
     latex2 = ROOT.TLatex()
@@ -1049,12 +1066,12 @@ def main(args):
             rlegend.SetFillStyle(0)
             rlegend.AddEntry(ratio_datahist,"Data/Bkg","PE")
             rlegend.AddEntry(""," ","")
-            #rlegend.AddEntry(ratio_sighist,"(Sig(#alpha_{hgg}=0#circ)+Bkg)/Bkg","L")
-            if not mode == 'prefit': rlegend.AddEntry(ratio_sighist,"(Sig(#alpha_{hgg}=-59#circ)+Bkg)/Bkg","L")
-            else: rlegend.AddEntry(ratio_sighist,"(Sig(#alpha_{hgg}=0#circ)+Bkg)/Bkg","L")
+            #rlegend.AddEntry(ratio_sighist,"(Sig(#alpha_{gg}=0#circ)+Bkg)/Bkg","L")
+            if not mode == 'prefit': rlegend.AddEntry(ratio_sighist,"(Sig(#alpha_{gg}=-59#circ)+Bkg)/Bkg","L")
+            else: rlegend.AddEntry(ratio_sighist,"(Sig(#alpha_{gg}=0#circ)+Bkg)/Bkg","L")
             rlegend.AddEntry(""," ","")
-            if not mode == 'prefit': rlegend.AddEntry(ratio_sighist_PS,"(Sig(#alpha_{hgg}=0#circ)+Bkg)/Bkg","L")
-            else: rlegend.AddEntry(ratio_sighist_PS,"(Sig(#alpha_{hgg}=90#circ)+Bkg)/Bkg","L")
+            if not mode == 'prefit': rlegend.AddEntry(ratio_sighist_PS,"(Sig(#alpha_{gg}=0#circ)+Bkg)/Bkg","L")
+            else: rlegend.AddEntry(ratio_sighist_PS,"(Sig(#alpha_{gg}=90#circ)+Bkg)/Bkg","L")
         elif int(bin_number) > 1:
             rlegend = ROOT.TLegend(0.85, 0.27, 0.98, 0.16, '', 'NBNDC')
             rlegend.SetTextFont(42)
@@ -1173,7 +1190,7 @@ def main(args):
         outname = outname.replace("{}_".format(era),"")
     if(log_x): 
         outname+="_logx"
-    c2.SaveAs("%(outname)s.png"%vars())
+    #c2.SaveAs("%(outname)s.png"%vars())
     c2.SaveAs("%(outname)s.pdf"%vars())
 
     del c2

@@ -11,6 +11,7 @@ class CPMixture(PhysicsModel):
         self.ChannelCompatibility = False
         self.VBFangle = False
         self.floatAlpha = False
+        self.do2D = False
 
     def setPhysicsOptions(self, physOptions):
         for po in physOptions:
@@ -26,6 +27,8 @@ class CPMixture(PhysicsModel):
                 self.kappa = True
             if po.startswith("floatAlpha"):
                 self.floatAlpha = True
+            if po.startswith("do2D"):
+                self.do2D = True
 
     def doParametersOfInterest(self):
         """Create POI and other parameters, and define the POI set."""
@@ -60,7 +63,7 @@ class CPMixture(PhysicsModel):
   
         poiNames = []
  
-        if (not self.do_fa3 and not self.ChannelCompatibility and not self.kappa) or self.floatAlpha:
+        if (not self.do_fa3 and not self.ChannelCompatibility and not self.kappa and not self.do2D) or self.floatAlpha:
           self.modelBuilder.doVar('alpha[0,-90,90]') 
           poiNames.append('alpha')
         elif not self.ChannelCompatibility and not self.kappa:
@@ -75,7 +78,14 @@ class CPMixture(PhysicsModel):
           self.modelBuilder.factory_('expr::muggH("@0*@0 + 2.25*@1*@1", kh, ka)')
           if not self.floatAlpha: self.modelBuilder.factory_('expr::alpha("atan(1.5*@1/@0)*180/{pi}", kh, ka)'.format(**params))
 
-        if self.ChannelCompatibility and not self.kappa:
+        if self.do2D:
+          self.modelBuilder.doVar('a2[1,-2,2]')
+          poiNames.append('a2')
+          self.modelBuilder.doVar('a3[0,-2,2]')
+          poiNames.append('a3')
+          self.modelBuilder.factory_('expr::muggH("@0*@0 + @1*@1", a2, a3)')
+
+        if self.ChannelCompatibility and not self.kappa and not self.do2D:
           self.modelBuilder.doVar('alpha_em[0,-90,90]')
           poiNames.append('alpha_em')
           self.modelBuilder.doVar('alpha_et[0,-90,90]')
@@ -88,7 +98,7 @@ class CPMixture(PhysicsModel):
         #self.modelBuilder.doVar('mutautau[1,0,10]')
         self.modelBuilder.doVar('mutautau[1]')
         self.modelBuilder.doVar('muV[1,0,4]')
-        if not self.useRate and not self.kappa:
+        if not self.useRate and not self.kappa and not self.do2D:
            self.modelBuilder.doVar('muggH[1,0,10]')
         if not self.VBFangle: self.modelBuilder.doVar('f[0,-1,1]')
         else: self.modelBuilder.doVar('beta[0,-90,90]')
@@ -109,26 +119,27 @@ class CPMixture(PhysicsModel):
         if not self.ChannelCompatibility:
 
           if not self.do_fa3:
-            self.modelBuilder.factory_('expr::a1("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
-            self.modelBuilder.factory_('expr::a3("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
+            if not self.do2D:
+              self.modelBuilder.factory_('expr::a2("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
+              self.modelBuilder.factory_('expr::a3("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
           else:
             self.modelBuilder.factory_('expr::a3("sqrt( (@0*@1*{sigma1_hzz})/({sigma3_hzz + @1*({sigma1_hzz - sigma3_hzz})}) ) ", muggH_mutautau, fa3)'.format(**params))
-            self.modelBuilder.factory_('expr::a1("sqrt(@0-@1*@1)", muggH_mutautau, a3)'.format(**params)) 
+            self.modelBuilder.factory_('expr::a2("sqrt(@0-@1*@1)", muggH_mutautau, a3)'.format(**params)) 
   
-          self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a1, a3)')
-          self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a1, a3)')
-          self.modelBuilder.factory_('expr::mm_scaling_sync("2*@0*@1", a1, a3)')
-          self.modelBuilder.factory_('expr::mm_scaling("@0*@1", a1, a3)')
+          self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a2, a3)')
+          self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a2, a3)')
+          self.modelBuilder.factory_('expr::mm_scaling_sync("2*@0*@1", a2, a3)')
+          self.modelBuilder.factory_('expr::mm_scaling("@0*@1", a2, a3)')
  
         else: 
           for c in ['em', 'et', 'mt', 'tt']:
-            self.modelBuilder.factory_('expr::a1_%s("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
+            self.modelBuilder.factory_('expr::a2_%s("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
             self.modelBuilder.factory_('expr::a3_%s("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
    
-            self.modelBuilder.factory_('expr::sm_scaling_%s("@0*@0 - @0*@1", a1_%s, a3_%s)' % (c, c, c))
-            self.modelBuilder.factory_('expr::ps_scaling_%s("@1*@1 - @0*@1", a1_%s, a3_%s)' % (c, c, c))
-            self.modelBuilder.factory_('expr::mm_scaling_%s("@0*@1", a1_%s, a3_%s)' % (c, c, c)) 
-            self.modelBuilder.factory_('expr::mm_scaling_sync_%s("2*@0*@1", a1_%s, a3_%s)' % (c, c, c)) 
+            self.modelBuilder.factory_('expr::sm_scaling_%s("@0*@0 - @0*@1", a2_%s, a3_%s)' % (c, c, c))
+            self.modelBuilder.factory_('expr::ps_scaling_%s("@1*@1 - @0*@1", a2_%s, a3_%s)' % (c, c, c))
+            self.modelBuilder.factory_('expr::mm_scaling_%s("@0*@1", a2_%s, a3_%s)' % (c, c, c)) 
+            self.modelBuilder.factory_('expr::mm_scaling_sync_%s("2*@0*@1", a2_%s, a3_%s)' % (c, c, c)) 
         
         # For the 0jet and boosted categories since all templates should be the same for SM, MM, and PS sum together all the templates but weight by event numbers in the samples
 
@@ -228,7 +239,7 @@ class CPMixture(PhysicsModel):
         if scalings:
             scaling = '_'.join(scalings)
 
-            if self.sm_fix and False:
+            if self.sm_fix:
                 if "_1_13TeV" in bin_ or "_2_13TeV" in bin_:
                     # simply this by only take SM template for 0 and 1 jet categories
                     if "ggH_sm" in process or 'reweighted_ggH_htt_0PM' in process: scaling = "muggH_mutautau"

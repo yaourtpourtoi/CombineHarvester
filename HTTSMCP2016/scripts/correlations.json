@@ -49,6 +49,7 @@
   "CMS_eff_embedded_t_mt_13TeV": 0.0,
   "CMS_eff_embedded_t_tt_13TeV": 0.0,
   "CMS_eff_b_13TeV": 0.0,
+  "CMS_eff_b": 0.0,
   "CMS_scale_t_1prong_13TeV": 0.0,
   "CMS_scale_t_1prong1pizero_13TeV": 0.0,
   "CMS_scale_t_3prong_13TeV": 0.0,
