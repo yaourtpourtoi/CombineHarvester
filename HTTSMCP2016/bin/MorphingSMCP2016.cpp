@@ -626,7 +626,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"mt"};
+    VString chns = {"mt","tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     if(sync>0) chns = {"mt"};   
 
@@ -1482,21 +1482,21 @@ int main(int argc, char** argv) {
  
     //! [part8]
     //// add bbb uncertainties for all backgrounds
-    auto bbb = ch::BinByBinFactory()
-    .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-    .SetAddThreshold(0.)
-    .SetMergeThreshold(0.5)
-    .SetFixNorm(false);
-    bbb.MergeBinErrors(cb.cp().backgrounds());
-    bbb.AddBinByBin(cb.cp().backgrounds(), cb);
+    //auto bbb = ch::BinByBinFactory()
+    //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
+    //.SetAddThreshold(0.)
+    //.SetMergeThreshold(0.5)
+    //.SetFixNorm(false);
+    //bbb.MergeBinErrors(cb.cp().backgrounds());
+    //bbb.AddBinByBin(cb.cp().backgrounds(), cb);
 
-    // add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
-    auto bbb_sig = ch::BinByBinFactory()
-    .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-    .SetAddThreshold(0.)
-    .SetMergeThreshold(0.0)
-    .SetFixNorm(false);
-    bbb_sig.AddBinByBin(cb.cp().signals(),cb); 
+    //// add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
+    //auto bbb_sig = ch::BinByBinFactory()
+    //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
+    //.SetAddThreshold(0.)
+    //.SetMergeThreshold(0.0)
+    //.SetFixNorm(false);
+    //bbb_sig.AddBinByBin(cb.cp().signals(),cb); 
 
     if(mergeSymm) {
 
@@ -1608,7 +1608,7 @@ int main(int argc, char** argv) {
     }
 
     // use for Barlow-Beeston-lite method for bbb uncertainties
-    //cb.AddDatacardLineAtEnd("* autoMCStats 0");
+    if (!mergeSymm) cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
 
     // binomial bbb uncertainties for embedded em events to cover statistical uncertainties on generator weights
     //auto bbb = ch::BinByBinFactory()

@@ -275,8 +275,9 @@ namespace ch {
                                                        "CMS_htt_wjXsec_13TeV", "lnN", SystMap<>::init(1.04));    
         }
 
-        cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em","em_2016","em_2017","et","et_2016","et_2017","mt","mt_2016","mt_2017","tt","tt_2016","tt_2017"}).AddSyst(cb,
-                                             "CMS_PreFire_13TeV", "shape", SystMap<>::init(1.00));
+        // FIXME: missing in datacards atm
+        //cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"em","em_2016","em_2017","et","et_2016","et_2017","mt","mt_2016","mt_2017","tt","tt_2016","tt_2017"}).AddSyst(cb,
+        //                                     "CMS_PreFire_13TeV", "shape", SystMap<>::init(1.00));
 
         // QCD uncerts for em
         // add lnN uncertainties for now        
