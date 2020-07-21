@@ -1515,6 +1515,7 @@ int main(int argc, char** argv) {
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
       .SetAddThreshold(0.)
       .SetMergeThreshold(0.5)
+      //.SetMergeThreshold(0.)
       .SetFixNorm(false);
       bbb.MergeBinErrors(cb.cp().backgrounds());
       bbb.AddBinByBin(cb.cp().backgrounds(), cb);

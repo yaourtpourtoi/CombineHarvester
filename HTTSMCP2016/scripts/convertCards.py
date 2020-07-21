@@ -149,7 +149,6 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname, reweight=Fa
       ROOT.gDirectory.cd('/')
 
     directory = outfile.Get(dirname)
-
     # now loop to antisymmetrise mm templates
     for key in directory.GetListOfKeys():
         histo = directory.Get(key.GetName())
