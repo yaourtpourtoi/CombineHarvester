@@ -189,8 +189,8 @@ namespace ch {
         //  b tag and mistag rate  efficiencies 
         //##############################################################################
 
-        //cb.cp().process({"TTT","TT","VVT","VV"}).AddSyst(cb,
-        //                                     "CMS_eff_b_13TeV", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"TTT","TT","VVT","VV"}).channel({"tt","tt_2016","tt_2017","tt_2018"}, false).AddSyst(cb,
+                                             "CMS_eff_b_13TeV", "shape", SystMap<>::init(1.00));
         
         //##############################################################################
         //  Electron, muon and tau energy Scale
