@@ -196,7 +196,8 @@ parser.add_argument('--others', nargs='*', help='add secondary scans processed a
 parser.add_argument('--breakdown', help='do quadratic error subtraction using --others')
 parser.add_argument('--meta', default='', help='Other metadata to save in format KEY:VAL,KEY:VAL')
 parser.add_argument('--logo', default='CMS')
-parser.add_argument('--logo-sub', default='Preliminary')
+#parser.add_argument('--logo-sub', default='Preliminary')
+parser.add_argument('--logo-sub', default='')
 parser.add_argument('--x_title', default=None)
 args = parser.parse_args()
 if args.pub: args.no_input_label = True
@@ -313,7 +314,7 @@ latex.SetTextColor(14)
 l = ROOT.gPad.GetLeftMargin()
 r = ROOT.gPad.GetRightMargin()
 ypos = (1-r-l)*(yvals[0]/(axishist.GetMaximum()-axishist.GetMinimum())) + l + 0.012
-latex.DrawLatex(0.88,ypos,"#bf{68% CL}")
+latex.DrawLatex(0.86,ypos,"#bf{68% CL}")
 
 latex2 = ROOT.TLatex()
 latex2.SetNDC()
@@ -324,7 +325,7 @@ latex2.SetTextColor(14)
 l = ROOT.gPad.GetLeftMargin()
 r = ROOT.gPad.GetRightMargin()
 ypos = (1-r-l)*(yvals[1]/(axishist.GetMaximum()-axishist.GetMinimum())) + l + 0.01
-latex.DrawLatex(0.88,ypos,"#bf{95% CL}")
+latex.DrawLatex(0.86,ypos,"#bf{95% CL}")
 
 
 for yval in yvals:
@@ -351,7 +352,7 @@ if args.POI == 'alpha':
   latex.SetNDC()
   latex.SetTextSize(0.04)
   latex.SetTextAlign(12)
-  latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance2)
+  #latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance2)
   print "0^{+} vs 0^{-} = %.8f#sigma (%.8f#sigma)" % (significance,significance2)
 
 for other in other_scans:
@@ -549,7 +550,7 @@ plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsT
 #plot.DrawTitle(pads[0], '41.9 fb^{-1} (13 TeV)', 3)
 plot.DrawTitle(pads[0], '59.7 fb^{-1} (13 TeV)', 3)
 # plot.DrawTitle(pads[0], '77.8 fb^{-1} (13 TeV)', 3)
-# plot.DrawTitle(pads[0], '137.2 fb^{-1} (13 TeV)', 3)
+plot.DrawTitle(pads[0], '137 fb^{-1} (13 TeV)', 3)
 #plot.DrawTitle(pads[0], 'm_{H} = 125 GeV', 1)
 pads[0].SetTicks(1)
 
@@ -562,10 +563,10 @@ pads[0].SetTicks(1)
 #info.AddText('HIG-16-004 H#rightarrowbb')
 #info.Draw()
 # legend_l = 0.70 if len(args) >= 4 else 0.73
-legend_l = 0.69
+legend_l = 0.95
 if len(other_scans) > 0:
     legend_l = legend_l - len(other_scans) * 0.06
-legend = ROOT.TLegend(0.15, legend_l, 0.55, 0.78, '', 'NBNDC')
+legend = ROOT.TLegend(0.50, legend_l, 0.90, 0.78, '', 'NBNDC')
 #legend.SetTextSize(0.030)
 legend.SetFillStyle(0)
 if len(other_scans) >= 3:

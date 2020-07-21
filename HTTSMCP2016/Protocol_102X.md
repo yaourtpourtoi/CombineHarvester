@@ -1,3 +1,7 @@
+# Always do the following commend before running anything (it seems to prevent random seg faults )
+
+ulimit -s unlimited
+
 
 # creating datacards
     
@@ -33,7 +37,7 @@ To take VBF/VH cross-section as SM in both rate and shape use:
 To take the H->tautau BR as SM use:
     `--freezeParameters mutautau`
 
-
+To run with no systematics: '--freezeParameters allConstrainedNuisances'
 
 To scan alpha:
     `combineTool.py -m 125 -M MultiDimFit --setParameters alpha=0 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/cp130219/cmb/125/ws.root --algo grid  --there -n .alpha --floatOtherPOIs 1 --points=37 --alignEdges 1 -t -1 --cminDefaultMinimizerStrategy 0`
@@ -50,14 +54,15 @@ To run on IC batch use (1 point per job):
 To run on lx batch use:
   `--job-mode lxbatch --sub-opts '-q 1nh --split-points 1'
 
-Run 2D liklihood scan of mu vs alpha using:
+Run 2--cminDefaultMinimizerStrategy=0D liklihood scan of mu vs alpha using:
     `combineTool.py -m 125 -M MultiDimFit --setParameters muggH=1,alpha=0 --freezeParameters mutautau --setParameterRanges alpha=-90,90:muggH=0,2.5 --redefineSignalPOIs alpha,muggH -d output/cp261118_nobbb/cmb/125/ws.root --there -n ".2DScan" --points 2000 --algo grid -t -1 --parallel=8 --alignEdges`
 
 # Plot scan
 
 1D scans can be plotted using scripts/plot1DScan.py script.
 To plot alpha:
-    `python scripts/plot1DScan.py --main output/test/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI alpha --output alpha --no-numbers --no-box --x_title "#alpha_{hgg} (#circ)" --y-max 2.5`
+
+  python scripts/plot1DScan.py --main output/cp160720/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI alpha --output alpha --no-numbers --no-box --x_title "#alpha_{gg} (#circ)" --y-max 5 --x-max=90 --x-min=-90
 
 Plot 1D scan of mu:
 
