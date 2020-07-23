@@ -53,10 +53,10 @@ if mode == 3: plot_name+='_pirho'
 if mode == 4: plot_name+='_murho'
 if mode == 5: plot_name+='_others'
 
-#fout = ROOT.TFile('temp.root','RECREATE')
-#fout.cd()
-#data_hist.Write()
-#sm_hist.Write()
+fout = ROOT.TFile('temp.root','RECREATE')
+fout.cd()
+data_hist.Write()
+sm_hist.Write()
 
 plot.propoganda_plot_phicp(sm_hist,ps_hist,sm_hist,bkg_hist,data_hist,plot_name, mode)
 

@@ -123,7 +123,6 @@ void DecorrelateMCAndEMB (ch::CombineHarvester& cb, string name, string embed_na
 
 }
 
-
 void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
   if (correlation >= 1.) return;
   auto cb_syst = cb.cp().syst_name({name});
@@ -191,19 +190,152 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
   }
 }
 
+void Remove13TeVFromNames (ch::CombineHarvester& cb) {
+  auto cb_syst = cb.cp();
+  cb.cp().ForEachSyst([&](ch::Systematic *syst) {
+    std::string old_name = syst->name();
+    if (old_name.find("lumi") == std::string::npos) {
+      std::string new_name = old_name;
+      boost::replace_all(new_name,"_13TeV","");
+      syst->set_name(new_name);
+    }  
+  }
+  );
+}
+
+void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::vector<double> correlations, std::vector<string> chans_2016, std::vector<string> chans_2017, std::vector<string> chans_2018) {
+  auto cb_syst = cb.cp().syst_name({name});
+  double val2016 = sqrt(1. - correlations[0]);
+  double val2017 = sqrt(1. - correlations[1]);
+  double val2018 = sqrt(1. - correlations[2]);
+  // clone 2016 systs
+  if(correlations[0] < 1.) {
+    std::cout << "test1" << std::endl;
+    ch::CloneSysts(cb.cp().channel(chans_2016).syst_name({name}), cb, [&](ch::Systematic *s) {
+        s->set_name(s->name()+"_2016");
+        if (s->type().find("shape") != std::string::npos) {
+          s->set_scale(s->scale() * val2016);
+        }
+        if (s->type().find("lnN") != std::string::npos) {
+          s->set_value_u((s->value_u() - 1.) * val2016 + 1.);
+          if (s->asymm()){
+            s->set_value_d((s->value_d() - 1.) * val2016 + 1.);
+          }
+        }
+    });
+
+    if(correlations[0]>0.) {
+      // re-scale un-correlated part
+      double val = sqrt(correlations[0]);
+      cb_syst.channel(chans_2017).ForEachSyst([val](ch::Systematic *syst) {
+        if (syst->type().find("shape") != std::string::npos) {
+          syst->set_scale(syst->scale() * val);
+        }
+        if (syst->type().find("lnN") != std::string::npos) {
+          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
+          if (syst->asymm()){
+            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
+          }
+        }
+      });
+    } else {
+      // remove uncorrelated part if systs are 100% un-correlated
+      cb_syst.channel(chans_2016).FilterSysts([&](ch::Systematic *s){
+          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+      });
+    }
+
+  }
+  // clone 2017 systs
+  if(correlations[1] < 1.) {
+    ch::CloneSysts(cb.cp().channel(chans_2017).syst_name({name}), cb, [&](ch::Systematic *s) {
+        s->set_name(s->name()+"_2017");
+        if (s->type().find("shape") != std::string::npos) {
+          s->set_scale(s->scale() * val2017);
+        }
+        if (s->type().find("lnN") != std::string::npos) {
+          s->set_value_u((s->value_u() - 1.) * val2017 + 1.);
+          if (s->asymm()){
+            s->set_value_d((s->value_d() - 1.) * val2017 + 1.);
+          }
+        }
+    });
+
+    if(correlations[1]>0.) {
+      // re-scale un-correlated part
+      double val = sqrt(correlations[1]);
+      cb_syst.channel(chans_2017).ForEachSyst([val](ch::Systematic *syst) {
+        if (syst->type().find("shape") != std::string::npos) {
+          syst->set_scale(syst->scale() * val);
+        }
+        if (syst->type().find("lnN") != std::string::npos) {
+          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
+          if (syst->asymm()){
+            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
+          }
+        }
+      });
+    } else {
+      // remove uncorrelated part if systs are 100% un-correlated
+      cb_syst.channel(chans_2017).FilterSysts([&](ch::Systematic *s){
+          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+      });
+    }
+  }
+  // clone 2018 systs
+  if(correlations[2] < 1.) {
+    ch::CloneSysts(cb.cp().channel(chans_2018).syst_name({name}), cb, [&](ch::Systematic *s) {
+        s->set_name(s->name()+"_2018");
+        if (s->type().find("shape") != std::string::npos) {
+          s->set_scale(s->scale() * val2018);
+        }
+        if (s->type().find("lnN") != std::string::npos) {
+          s->set_value_u((s->value_u() - 1.) * val2018 + 1.);
+          if (s->asymm()){
+            s->set_value_d((s->value_d() - 1.) * val2018 + 1.);
+          }
+        }
+    });
+
+    if(correlations[2]>0.) {
+      // re-scale un-correlated part
+      double val = sqrt(correlations[2]);
+      cb_syst.channel(chans_2018).ForEachSyst([val](ch::Systematic *syst) {
+        if (syst->type().find("shape") != std::string::npos) {
+          syst->set_scale(syst->scale() * val);
+        }
+        if (syst->type().find("lnN") != std::string::npos) {
+          syst->set_value_u((syst->value_u() - 1.) * val + 1.);
+          if (syst->asymm()){
+            syst->set_value_d((syst->value_d() - 1.) * val + 1.);
+          }
+        }
+      });
+    } else {
+      // remove uncorrelated part if systs are 100% un-correlated
+      cb_syst.channel(chans_2018).FilterSysts([&](ch::Systematic *s){
+          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+      });
+    }
+  }
+
+}
+
+
 
 int main(int argc, char** argv) {
 
     string output_folder = "ztt_validation";
     string input_folder_em="IC/ZTT/";
     string input_folder_et="IC/ZTT/";
-    string input_folder_mt="IC/ZTT/";
+    string input_folder_mt="DESY_ZTT/";
     string input_folder_tt="IC/ZTT/";
     string scale_sig_procs="";
-    string postfix="-2D";
+    string postfix="";
     unsigned no_shape_systs = 0;
     bool auto_rebin = false;
     bool mergeXbbb = false;
+    bool do_embed = false;
 
     string era;
     po::variables_map vm;
@@ -211,14 +343,15 @@ int main(int argc, char** argv) {
     config.add_options()
     ("input_folder_em", po::value<string>(&input_folder_em)->default_value("IC/ZTT/"))
     ("input_folder_et", po::value<string>(&input_folder_et)->default_value("IC/ZTT/"))
-    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("IC/ZTT/"))
+    ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("DESY_ZTT/"))
     ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/ZTT/"))
     ("postfix", po::value<string>(&postfix)->default_value(postfix))
     ("output_folder", po::value<string>(&output_folder)->default_value("ztt_validation"))
     ("no_shape_systs", po::value<unsigned>(&no_shape_systs)->default_value(no_shape_systs))
     ("auto_rebin", po::value<bool>(&auto_rebin)->default_value(false))
-    ("era", po::value<string>(&era)->default_value("2018"))
-    ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false));
+    ("era", po::value<string>(&era)->default_value("all"))
+    ("mergeXbbb", po::value<bool>(&mergeXbbb)->default_value(false))
+    ("do_embed", po::value<bool>(&do_embed)->default_value(false));
 
     po::store(po::command_line_parser(argc, argv).options(config).run(), vm);
     po::notify(vm);
@@ -236,6 +369,8 @@ int main(int argc, char** argv) {
     // First define the location of the "auxiliaries" directory where we can
     // source the input files containing the datacard shapes
     //    string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/CombineTools/bin/AllROOT_20fb/";
+    //
+    std::cout << "input folder = " << input_folder_mt << std::endl;
     std::map<string, string> input_dir;
     input_dir["em"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";
     input_dir["mt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_mt+"/";
@@ -244,16 +379,17 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt","mt"};
+    VString chns = {"mt"};
     
     map<string, VString> bkg_procs;
 
-    bkg_procs["et"] = {"ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-    bkg_procs["mt"] = {"ZL", "TTT", "VVT", "EWKZ", "jetFakes"};
-    bkg_procs["tt"] = {"ZL", "TTT", "VVT", "EWKZ", "jetFakes","Wfakes","TTfakes"};
+    bkg_procs["et"] = {"ZL", "TTT", "VVT", "jetFakes"};
+    bkg_procs["mt"] = {"ZL", "TTT", "VVT", "jetFakes"};
+    bkg_procs["tt"] = {"ZL", "TTT", "VVT", "jetFakes","Wfakes","TTfakes"};
 
 
     ch::CombineHarvester cb;
+
     
     map<string,Categories> cats;
     
@@ -263,8 +399,14 @@ int main(int argc, char** argv) {
         {2, "tt_2016_jetFakes"}
       };
       cats["mt_2016"] = {
-        {1, "mt_2016_zttEmbed"},
-        {2, "mt_2016_jetFakes"}
+        {3, "mt_murho_alphaLtPiOver4_2016"},
+        {4, "mt_mupi_alphaLtPiOver4_2016"},
+        {5, "mt_mua1_alphaLtPiOver4_2016"},
+        {6, "mt_mu0a1_alphaLtPiOver4_2016"},
+        {30, "mt_murho_alphaGtPiOver4_2016"},
+        {40, "mt_mupi_alphaGtPiOver4_2016"},
+        {50, "mt_mua1_alphaGtPiOver4_2016"},
+        {60, "mt_mu0a1_alphaGtPiOver4_2016"},
       };
     } 
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -281,12 +423,14 @@ int main(int argc, char** argv) {
       };
 
       cats["mt_2017"] = {
-        //{1, "mt_2018_zttEmbed"},
-        //{2, "mt_2018_jetFakes"},
-        {3, "mt_2018_ztt_Mu_Pi"},
-        {4, "mt_2018_ztt_Mu_A1"},
-        {5, "mt_2018_ztt_Mu_Rho"},
-        //{6, "mt_2018_higgs_Mu_Rho_Ip"},
+        {3, "mt_murho_alphaLtPiOver4_2017"},
+        {4, "mt_mupi_alphaLtPiOver4_2017"},
+        {5, "mt_mua1_alphaLtPiOver4_2017"},
+        {6, "mt_mu0a1_alphaLtPiOver4_2017"},
+        {30, "mt_murho_alphaGtPiOver4_2017"},
+        {40, "mt_mupi_alphaGtPiOver4_2017"},
+        {50, "mt_mua1_alphaGtPiOver4_2017"},
+        {60, "mt_mu0a1_alphaGtPiOver4_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -302,18 +446,21 @@ int main(int argc, char** argv) {
 
       };
       cats["mt_2018"] = {
-        //{1, "mt_2018_zttEmbed"},
-        //{2, "mt_2018_jetFakes"},
-        {3, "mt_2018_ztt_Mu_Pi"},
-        {4, "mt_2018_ztt_Mu_A1"},
-        {5, "mt_2018_ztt_Mu_Rho"},
-        //{6, "mt_2018_higgs_Mu_Rho_Ip"},
-        //
+        {3, "mt_murho_alphaLtPiOver4_2018"},
+        {4, "mt_mupi_alphaLtPiOver4_2018"},
+        {5, "mt_mua1_alphaLtPiOver4_2018"},
+        {6, "mt_mu0a1_alphaLtPiOver4_2018"},
+        {30, "mt_murho_alphaGtPiOver4_2018"},
+        {40, "mt_mupi_alphaGtPiOver4_2018"},
+        {50, "mt_mua1_alphaGtPiOver4_2018"},
+        {60, "mt_mu0a1_alphaGtPiOver4_2018"},
       };
     }
     
     map<string, VString> sig_procs;
     sig_procs["ZTT"] = {"ZTT"};
+    if(do_embed) sig_procs["ZTT"] = {"EmbedZTT"};
+
  
     vector<string> masses = {"125"};    
     
@@ -411,6 +558,10 @@ int main(int argc, char** argv) {
     .SetVerbosity(1);
     if(auto_rebin) rebin.Rebin(cb, cb);
   
+    std::vector<double> binning =  { 0.0000000, 0.62831853, 1.2566371, 1.8849556, 2.5132741, 3.1415927, 3.7699112, 4.3982297, 5.0265482, 5.6548668, 6.2831853 };
+
+    //cb.cp().VariableRebin(binning);
+ 
   
     // At this point we can fix the negative bins
     std::cout << "Fixing negative bins\n";
@@ -569,8 +720,9 @@ int main(int argc, char** argv) {
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_et_13TeV");
     cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_eff_trigger_mt_13TeV","CMS_eff_embedded_trigger_em_13TeV");
 
+
     // de-correlate systematics for 2016 and 2017, ADD 2018 
-    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos){
+    if((era.find("2016") != std::string::npos && era.find("2017") != std::string::npos && era.find("2018") != std::string::npos) ||  era.find("all") != std::string::npos || true){
       std::cout << "Partially Decorrelating systematics for 2016/2017/2018" << std::endl;
       Json::Value js;
       string json_file = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/scripts/correlations.json";
@@ -584,6 +736,20 @@ int main(int argc, char** argv) {
         std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
         DecorrelateSyst (cb, name, value, chans_2016, chans_2017, chans_2018);
       }
+
+      // now take care of cases where correlations are different for the 3 years
+      string json_file_byyear = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/scripts/correlations_byyear.json";
+      js = ch::ExtractJsonFromFile(json_file_byyear);
+      keys = js.getMemberNames();
+      for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it){
+        string name = *it;
+        std::vector<double> values = {js[*it]["2016"].asDouble(),js[*it]["2017"].asDouble(), js[*it]["2018"].asDouble()};
+        std::vector<string> chans_2016 = {"em","em_2016","et","et_2016","mt","mt_2016","tt","tt_2016","ttbar","ttbar_2016"};
+        std::vector<string> chans_2017 = {"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"};
+        std::vector<string> chans_2018 = {"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"};
+        DecorrelateSystSeperateYears (cb, name, values, chans_2016, chans_2017, chans_2018);
+      }
+
     }
 
      ch::SetStandardBinNames(cb);
@@ -624,21 +790,26 @@ int main(int argc, char** argv) {
      }
      //writer.WriteCards("htt_tt_1_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}));
      //writer.WriteCards("htt_tt_2_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}));
-     writer.WriteCards("htt_tt_3_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3}));
+     //writer.WriteCards("htt_tt_3_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,3}));
      //writer.WriteCards("htt_tt_4_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_tt_5_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5}));
-     writer.WriteCards("htt_tt_6_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,6}));
-     writer.WriteCards("htt_tt_7_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7}));
-     writer.WriteCards("htt_tt_8_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,8}));
-     writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
+     //writer.WriteCards("htt_tt_5_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,5}));
+     //writer.WriteCards("htt_tt_6_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,6}));
+     //writer.WriteCards("htt_tt_7_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,7}));
+     //writer.WriteCards("htt_tt_8_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,8}));
+     //writer.WriteCards("htt_tt_9_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,9}));
      //writer.WriteCards("htt_tt_10_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,10}));   
      //writer.WriteCards("htt_tt_11_13TeV", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2,11}));
-     //writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
+     ///writer.WriteCards("htt_mt_1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}));
      //writer.WriteCards("htt_mt_2_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}));
-     writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
-     writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
-     writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
-     //writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
+     writer.WriteCards("htt_mt_3_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({3}));
+     writer.WriteCards("htt_mt_4_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4}));
+     writer.WriteCards("htt_mt_5_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5}));
+     writer.WriteCards("htt_mt_6_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({6}));
+
+     writer.WriteCards("htt_mt_30_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({30}));
+     writer.WriteCards("htt_mt_40_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({40}));
+     writer.WriteCards("htt_mt_50_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({50}));
+     writer.WriteCards("htt_mt_60_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({60}));
         
     cb.PrintAll();
     cout << " done\n";

@@ -3,13 +3,11 @@
 
 import ROOT
 
+fout = ROOT.TFile('shapes_ztt_cmb.root','RECREATE')
+
 bini=3
 
-f2 = ROOT.TFile('shapes_bestfit.root')
-f3 = ROOT.TFile('shapes_sm_bestfit.root')
-f4 = ROOT.TFile('shapes_ps_bestfit.root')
 
-fout = ROOT.TFile('shapes_cmb_bestfit.root','RECREATE')
 
 chans = ['mt','tt']
 bins = {

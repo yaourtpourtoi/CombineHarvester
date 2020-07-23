@@ -89,7 +89,7 @@ parser.add_argument('--x_blind_min',default=10000,help='Minimum x for manual bli
 parser.add_argument('--x_blind_max',default=4000,help='Maximum x for manual blinding')
 parser.add_argument('--empty_bin_error',action='store_true',default=False, help='Draw error bars for empty bins')
 #General plotting options
-parser.add_argument('--channel_label',default='#mu#tau_{h} no b-tag',help='Channel - category label')
+parser.add_argument('--channel_label',default='',help='Channel - category label')
 parser.add_argument('--ratio', default=False,action='store_true',help='Draw ratio plot')
 parser.add_argument('--custom_x_range', help='Fix x axis range', action='store_true', default=False)
 parser.add_argument('--x_axis_min',  help='Fix x axis minimum', default=0.0)
@@ -106,7 +106,7 @@ parser.add_argument('--ratio_range',  help='y-axis range for ratio plot in forma
 parser.add_argument('--no_signal', action='store_true',help='Do not draw signal')
 parser.add_argument('--x_title', default='m_{T}^{tot} (GeV)',help='Title for the x-axis')
 parser.add_argument('--y_title', default='dN/dM_{T}^{tot} (1/GeV)',help='Title for the y-axis')
-parser.add_argument('--lumi', default='35.9 fb^{-1} (13 TeV)',help='Lumi label')
+parser.add_argument('--lumi', default='59.7 fb^{-1} (13 TeV)',help='Lumi label')
 parser.add_argument('--tauidplot', action='store_true',help='Do not draw signal')
 parser.add_argument('--totalprocs', action='store_true',help='Inclusve signal in background ratio')
 
@@ -217,7 +217,8 @@ if not args.postfitshapes:
 histo_file = ROOT.TFile(shape_file)
 
 #Store plotting information for different backgrounds 
-background_schemes = {'mt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#mu#mu",["ZL","ZJ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
+#background_schemes = {'mt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#mu#mu",["ZL","ZJ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
+background_schemes = {'mt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#mu#mu",["ZL","ZJ","EWKZ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("#mu#rightarrow#tau embedding",["EmbedZTT"],ROOT.TColor.GetColor(248,206,104))],
 'et':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrowee",["ZL","ZJ"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
 'tt':[backgroundComp("t#bar{t}",["TTT","TTJ"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VVT","VVJ","W","ZL","ZJ"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
 'em':[backgroundComp("t#bar{t}",["TT"],ROOT.TColor.GetColor(155,152,204)),backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),backgroundComp("Electroweak",["VV","W"],ROOT.TColor.GetColor(222,90,106)),backgroundComp("Z#rightarrowll",["ZLL"],ROOT.TColor.GetColor(100,192,232)),backgroundComp("Z#rightarrow#tau#tau",["ZTT","EWKZ"],ROOT.TColor.GetColor(248,206,104))],
@@ -233,7 +234,8 @@ if not model_dep: sighist_ggH = getHistogram(histo_file,'ggH',file_dir, mode, ar
 if not model_dep: sighist_bbH = getHistogram(histo_file,'bbH',file_dir, mode, args.no_signal, log_x)[0]
 for i in range(0,sighist.GetNbinsX()):
   if sighist.GetBinContent(i) < y_axis_min: sighist.SetBinContent(i,y_axis_min)
-bkghist = getHistogram(histo_file,'TotalBkg',file_dir, mode, logx=log_x)[0]
+#bkghist = getHistogram(histo_file,'TotalBkg',file_dir, mode, logx=log_x)[0]
+bkghist = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
 if args.totalprocs: bkghist = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
 if args.tauidplot: bkghist = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
 
