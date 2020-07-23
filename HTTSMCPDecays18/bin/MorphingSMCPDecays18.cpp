@@ -409,7 +409,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt","mt"}; 
+    VString chns = {"tt"}; 
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -1418,8 +1418,7 @@ int main(int argc, char** argv) {
 
        writer.WriteCards("htt_a1", cb.cp().attr({"a1"},"cat"));
 
-     }
-     else{
+     } else{
        for(auto year: years) {
          writer.WriteCards("htt_tt_1_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({1}));
          writer.WriteCards("htt_tt_2_"+year+"_13TeV", cb.cp().channel({"tt_"+year}).bin_id({2}));
