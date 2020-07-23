@@ -1275,8 +1275,8 @@ int main(int argc, char** argv) {
      //
      //if(!mergeXbbb) cb.AddDatacardLineAtEnd("* autoMCStats 0 1");
      // add lumi_scale for projection scans
-     //cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,4]");
-     //cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
+     cb.AddDatacardLineAtEnd("lumi_scale rateParam * *  1. [0,20]");
+     cb.AddDatacardLineAtEnd("nuisance edit freeze lumi_scale");
 
      //! [part9]
      // First we generate a set of bin names:
@@ -1494,8 +1494,12 @@ int main(int argc, char** argv) {
       if(bin.find("_tt_") != std::string::npos && (bin.find("_5_")!=std::string::npos || bin.find("_6_")!=std::string::npos ||  bin.find("_9_")!=std::string::npos || bin.find("_11_")!=std::string::npos) ) phase_shift = true;
       int nxbins = (xbins_map.find(bin))->second;
       ch::CombineHarvester cmb_bin = std::move(cb.cp().bin({bin}));
-      double muV = cb.GetParameter("muV")->val();
-      double muggH = cb.GetParameter("muggH")->val();
+      double muV = 1.;
+      double muggH = 1.;
+      if (fitresult_file.length()) { 
+        muV = cb.GetParameter("muV")->val();
+        muggH = cb.GetParameter("muggH")->val();
+      }
       TH1F bkg = cmb_bin.cp().backgrounds().GetShape();
 
       TH1F sm_sig = cmb_bin.cp().signals().process({"ggH_sm_htt"}).GetShape();
@@ -1531,6 +1535,7 @@ int main(int argc, char** argv) {
           }
           A_ave = A_tot/nxbins;
         }
+        A_ave=1.; // tempoary - remove A to make plot for Yuta, don't forget to change back!!!!
         wt_mapping[b] = s_sb*A_ave;
       }
   
