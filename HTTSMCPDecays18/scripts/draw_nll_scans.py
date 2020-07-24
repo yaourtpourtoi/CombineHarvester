@@ -59,7 +59,7 @@ def parse_arguments():
     parser.add_argument(
         "--mode",
         default="single",
-        choices=["single", "split_by_category", "2d_kappa", "muV", "muggH", "alpha", "alpha_obs", "mutautau"],
+        choices=["single", "split_by_category", "2d_kappa", "muV", "muggH", "alpha", "alpha_obs", "mutautau", "2d"],
         help="What scans to plot",
     )
     parser.add_argument(
@@ -669,6 +669,139 @@ def split_by_year_scan(input_folder, plot_name, y_scale="linear"):
         pdf.savefig(fig, bbox_inches='tight')
         pass
 
+def scan_2d(input_folder, category="cmb", plot_name="scan_2d",threesig=True):
+    """
+    Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
+    This is specifically for 2D scans of kappas (ie. reduced Yukawa couplings)
+
+
+    Paramters
+    =========
+    input_folder: str
+        Path to top of output directory within which ROOT file output 
+        from MultiDimFit is stored
+
+    plot_name: str
+        Name of plot to be saved as pdf
+
+    category: str
+        Category name as in CH, usually 'cmb' for these kind of scans
+    """
+
+    with mpl.backends.backend_pdf.PdfPages(f"plots/{plot_name}.pdf", keep_empty=False,) as pdf:
+        fig, ax = plt.subplots(
+            figsize=(4, 3), dpi=200,
+        )
+        path = f"{input_folder}/{category}/125/higgsCombine.mu_vs_phi.MultiDimFit.mH125.root"
+        parameter0 = "alpha"
+        parameter1 = "mutautau"
+        f = uproot.open(path)["limit"]
+        df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
+            namedecode="utf-8")
+        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        #df = df.query("quantileExpected > -1")
+        df = df.loc[~df.duplicated(),:]
+        df = df.sort_values(by=[parameter1, parameter0])
+        custom_cms_label(ax, "Preliminary", lumi=137)
+        
+        xbins = df[parameter0].unique()
+        ybins = df[parameter1].unique()
+        df["deltaNLL"] = 2*df["deltaNLL"]
+        # print(df)
+        z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
+        # some nans...remove by setting to high value (high NLL)
+        # this is only a temp. fix, hopefully fix to Physics model will remove these
+        z[np.isnan(z)] = 100
+        # print(z)
+        
+        pos = ax.imshow(
+            z, origin='lower', interpolation='bicubic',
+            # extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]],
+            extent=[xbins.min(), xbins.max(), ybins.min(), ybins.max()],
+            aspect='auto', cmap="Blues_r",
+            vmin=0., vmax=25.,
+        )
+        cbar = fig.colorbar(pos, ax=ax)
+        cbar.set_label(r'$-2\Delta\log \mathcal{L}$')
+        
+        X, Y = np.meshgrid(xbins, ybins)
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            #z,
+            levels=[scipy.stats.chi2.ppf(0.68, df=2)],
+            #levels=[scipy.stats.chi2.ppf(0.95, df=2)],
+            colors=['black'],
+        )
+        ax.contour(
+            scipy.ndimage.zoom(X, 4),
+            scipy.ndimage.zoom(Y, 4),
+            scipy.ndimage.zoom(z, 4),
+            levels=[scipy.stats.chi2.ppf(0.95, df=2)],
+            colors=['black'], linestyles='dashed',
+        )
+        if threesig:
+          ax.contour(
+              scipy.ndimage.zoom(X, 4),
+              scipy.ndimage.zoom(Y, 4),
+              scipy.ndimage.zoom(z, 4),
+              levels=[scipy.stats.chi2.ppf(0.997, df=2)],
+              colors=['black'], linestyles='dashdot',
+          )
+        bf = (
+            df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter0],
+            df.loc[df["deltaNLL"]==df["deltaNLL"].min(), parameter1],
+        )
+        ax.plot(
+            *bf, 'P', color='black',
+            ms=5, label="Best fit",
+        )
+        ax.plot(
+            0, 1, '*', color='#e31a1c',
+            ms=5, label="SM",
+        )
+
+        # split legend into two parts
+        handles, labels = ax.get_legend_handles_labels()
+        handles = handles[::-1]
+        labels = labels[::-1]
+        leg1 = ax.legend(
+            handles, labels,
+            loc=2, labelspacing=0.1, borderpad=0.2,
+            fancybox=True, edgecolor='#d9d9d9',
+            framealpha=0., handlelength=1.,
+        )
+        
+        # second part
+        handles = [
+            mpl.lines.Line2D([0], [0], color='black', lw=1),
+            mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
+            mpl.lines.Line2D([0], [0], color='black', lw=1, ls='-.'),
+        ]
+        labels = [r'$68\%$ CI', r'$95\%$ CI', r'$99.7\%$ CI']
+        leg2 = ax.legend(
+            handles, labels,
+            loc=1, labelspacing=0.1, borderpad=0.2,
+            fancybox=True, edgecolor='#d9d9d9',
+            framealpha=0., handlelength=1.,
+        )
+
+        # add back first legend to axis
+        ax.add_artist(leg1)
+
+        ax.text(
+            0.75, 0.05, r"$\mu_{gg\mathrm{H}} = \mu_{\mathrm{V}} = 1$",
+            ha='center', va='bottom', transform=ax.transAxes,
+        )
+
+        ax.set_xlabel(r'$\phi_{\tau\tau} (\mathrm{degrees})$')
+        ax.set_ylabel(r'$\mu^{\tau\tau}$')
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_xlim(-1.5, 1.5)
+        print(f"Saving figure as plots/{plot_name}.pdf")
+        pdf.savefig(fig, bbox_inches='tight')
+
 def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threesig=False):
     """
     Function to plot NLL scan using multiple ROOT output file from MultiDimFit.
@@ -692,7 +825,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         fig, ax = plt.subplots(
             figsize=(4, 3), dpi=200,
         )
-        path = f"{input_folder}/{category}/125/higgsCombine.kappas.MultiDimFit.mH125.root"
+        path = f"{input_folder}/{category}/125/higgsCombine.kappas.widthSM.MultiDimFit.mH125.root"
         parameter0 = "kappaH"
         parameter1 = "kappaA"
         f = uproot.open(path)["limit"]
@@ -782,7 +915,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         labels = [r'$68\%$ CI', r'$95\%$ CI', r'$99.7\%$ CI']
         leg2 = ax.legend(
             handles, labels,
-            loc=3, labelspacing=0.1, borderpad=0.2,
+            loc=1, labelspacing=0.1, borderpad=0.2,
             fancybox=True, edgecolor='#d9d9d9',
             framealpha=0., handlelength=1.,
         )
@@ -790,17 +923,36 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         # add back first legend to axis
         ax.add_artist(leg1)
 
+        #ax.text(
+        #    0.75, 0.05, r"$\mu_{gg\mathrm{H}} = \mu_{\mathrm{V}} = 1$",
+        #    ha='center', va='bottom', transform=ax.transAxes,
+        #)
+        #ax.text(
+        #    #0.75, 0.15, r"$\kappa_{i} = 1, \tilde{\kappa}_{i} = 0 ~\forall~ i \ne \tau$",
+        #    0.68, 0.88, r"$(\kappa_{i}, \tilde{\kappa}_{i}) = (1, 0) ~\forall~ i \ne \tau$",
+        #    ha='center', va='bottom', transform=ax.transAxes,
+        #)
+        #ax.text(
+        #    0.68, 0.80, r"$\Gamma=\Gamma_{\mathrm{SM}}$",
+        #    ha='center', va='bottom', transform=ax.transAxes,
+        #)
+
         ax.text(
-            0.75, 0.05, r"$\mu_{gg\mathrm{H}} = \mu_{\mathrm{V}} = 1$",
+            0.68, 0.05, r"$\kappa_{i} = 1, ~ \tilde{\kappa}_{i} = 0 ~\forall~ i \ne \tau$",
+            ha='center', va='bottom', transform=ax.transAxes,
+        )
+        ax.text(
+            0.84, 0.15, r"$\Gamma=\Gamma_{\mathrm{SM}}$",
             ha='center', va='bottom', transform=ax.transAxes,
         )
 
         ax.set_xlabel(r'$\kappa_{\tau}$')
         ax.set_ylabel(r'$\tilde{\kappa}_{\tau}$')
-        # ax.set_ylim(-1.5, 1.5)
-        # ax.set_xlim(-1.5, 1.5)
+        ax.set_ylim(-2, 2)
+        ax.set_xlim(-2, 2)
         print(f"Saving figure as plots/{plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
+
 
 def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, observed, add_significance, threesig):
     if mode == "single":
@@ -819,6 +971,8 @@ def main(input_folder, channel, cat, nsigmas, mode, plot_name, y_scale, observed
         single_parameter_scan(input_folder, "alpha", cat, plot_name, observed, add_significance)
     elif mode == "2d_kappa":
         scan_2d_kappa(input_folder, cat, plot_name, threesig)
+    elif mode == "2d":
+        scan_2d(input_folder, cat)
 
 if __name__ == "__main__":
     main(**vars(parse_arguments()))
