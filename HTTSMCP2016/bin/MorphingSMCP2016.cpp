@@ -1307,7 +1307,7 @@ int main(int argc, char** argv) {
       syst->set_value_u(syst->value_u()*1.161);
       syst->set_value_d(syst->value_d()*0.863);
   });
-  cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_sm_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
+  cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_mm_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
       syst->set_value_u(syst->value_u()*1.189);
       syst->set_value_d(syst->value_d()*0.844);
   });
@@ -1512,7 +1512,7 @@ int main(int argc, char** argv) {
       //// add bbb uncertainties for all backgrounds
       auto bbb = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-      .SetAddThreshold(0.)
+      .SetAddThreshold(0.01)
       .SetMergeThreshold(0.5)
       //.SetMergeThreshold(0.)
       .SetFixNorm(false);
@@ -1522,7 +1522,7 @@ int main(int argc, char** argv) {
       // add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
       auto bbb_sig = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-      .SetAddThreshold(0.)
+      .SetAddThreshold(0.05)
       .SetMergeThreshold(0.0)
       .SetFixNorm(false);
       bbb_sig.AddBinByBin(cb.cp().signals(),cb);
