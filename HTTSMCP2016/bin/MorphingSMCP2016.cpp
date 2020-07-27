@@ -1305,25 +1305,25 @@ int main(int argc, char** argv) {
       syst->set_value_d(syst->value_d()*0.863);
   });
   cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_ps_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.161);
+      syst->set_value_u(syst->value_u()*1.162);
       syst->set_value_d(syst->value_d()*0.863);
   });
   cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_mm_htt"}).channel({"et","et_2016","em","em_2016","mt","mt_2016","tt","tt_2016"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.189);
-      syst->set_value_d(syst->value_d()*0.844);
+      syst->set_value_u(syst->value_u()*1.161);
+      syst->set_value_d(syst->value_d()*0.863);
   });
 
   cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_sm_htt"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.163);
-      syst->set_value_d(syst->value_d()*0.862);
+      syst->set_value_u(syst->value_u()*1.167);
+      syst->set_value_d(syst->value_d()*0.859);
   });
   cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_ps_htt"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.162);
-      syst->set_value_d(syst->value_d()*0.862);
+      syst->set_value_u(syst->value_u()*1.169);
+      syst->set_value_d(syst->value_d()*0.857);
   });
   cb.cp().syst_name({"QCDscale_ggH_ACCEPT"}).process({"ggH_mm_htt"}).channel({"et_2017","et_2018","em_2017","em_2018","mt_2017","mt_2018","tt_2017","tt_2018"}).ForEachSyst([](ch::Systematic *syst) {
-      syst->set_value_u(syst->value_u()*1.191);
-      syst->set_value_d(syst->value_d()*0.842);
+      syst->set_value_u(syst->value_u()*1.166);
+      syst->set_value_d(syst->value_d()*0.859);
   });
 
     if(do_control_plots==0)  {
