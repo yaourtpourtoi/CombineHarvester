@@ -255,13 +255,13 @@ def main(args):
         args.ratio_range = "0.4,1.6"
         bin_label = "boosted"
     if bin_number == "3":
-        bin_label = "dijet loose-m_{jj}"
+        bin_label = "VBF Loose-m_{jj}"
     if bin_number == "4":
-        bin_label = "dijet loose-m_{jj} boosted"
+        bin_label = "VBF Loose-m_{jj} boosted"
     if bin_number == "5":
-        bin_label = "dijet tight-m_{jj}"
+        bin_label = "VBF Tight-m_{jj}"
     if bin_number == "6":
-        bin_label = "dijet tight-m_{jj} boosted"
+        bin_label = "VBF Tight-m_{jj} boosted"
 
     if args.channel == '':
         args.channel = args.file_dir.split("_")[1]
@@ -459,6 +459,8 @@ def main(args):
                 ]
         }
 
+
+
     if args.log_y:
       background_schemes_new = {}
       for i in background_schemes:
@@ -493,6 +495,37 @@ def main(args):
                 backgroundComp("Electroweak",["VV","W","ZLL","EWKZ"],ROOT.TColor.GetColor(222,90,106)),
                 backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),
                 ]
+
+
+    background_schemes['tt'] = [
+              backgroundComp("qqH#rightarrow#tau#tau + VH#rightarrow#tau#tau",["qqH_htt125","ZH_htt125","WH_htt125"],ROOT.TColor.GetColor(51,51,230)),
+              backgroundComp("jet#rightarrow#tau_{h} fakes",["jetFakes"],ROOT.TColor.GetColor(192,232,100)),
+              backgroundComp("#mu#rightarrow#tau embedding",["EmbedZTT"],ROOT.TColor.GetColor(248,206,104)),
+              backgroundComp("l#rightarrow#tau_{h} fakes",["VVT","ZL","EWKZ","TTT"],ROOT.TColor.GetColor(100,192,232)),
+              ]
+    background_schemes['et'] = [
+              backgroundComp("qqH#rightarrow#tau#tau + VH#rightarrow#tau#tau",["qqH_htt125","ZH_htt125","WH_htt125"],ROOT.TColor.GetColor(51,51,230)),
+              backgroundComp("jet#rightarrow#tau_{h} fakes",["jetFakes"],ROOT.TColor.GetColor(192,232,100)),
+              backgroundComp("#mu#rightarrow#tau embedding",["EmbedZTT"],ROOT.TColor.GetColor(248,206,104)),
+              backgroundComp("t#bar{t}",["TTT"],ROOT.TColor.GetColor(155,152,204)),
+              backgroundComp("Electroweak",["VVT"],ROOT.TColor.GetColor(222,90,106)),
+              backgroundComp("Z#rightarrowee",["ZL","EWKZ"],ROOT.TColor.GetColor(100,192,232)),
+              ]
+    background_schemes['mt'] = [
+              backgroundComp("qqH#rightarrow#tau#tau + VH#rightarrow#tau#tau",["qqH_htt125","ZH_htt125","WH_htt125"],ROOT.TColor.GetColor(51,51,230)),
+              backgroundComp("jet#rightarrow#tau_{h} fakes",["jetFakes"],ROOT.TColor.GetColor(192,232,100)),
+              backgroundComp("#mu#rightarrow#tau embedding",["EmbedZTT"],ROOT.TColor.GetColor(248,206,104)),
+              backgroundComp("t#bar{t}",["TTT"],ROOT.TColor.GetColor(155,152,204)),
+              backgroundComp("Electroweak",["VVT"],ROOT.TColor.GetColor(222,90,106)),
+              backgroundComp("Z#rightarrow#mu#mu",["ZL","EWKZ"],ROOT.TColor.GetColor(100,192,232)),
+              ]
+    background_schemes['em'] = [
+              backgroundComp("qqH#rightarrow#tau#tau + VH#rightarrow#tau#tau",["qqH_htt125","ZH_htt125","WH_htt125"],ROOT.TColor.GetColor(51,51,230)),
+              backgroundComp("t#bar{t}",["TT"],ROOT.TColor.GetColor(155,152,204)),
+              backgroundComp("#mu#rightarrow#tau embedding",["EmbedZTT"],ROOT.TColor.GetColor(248,206,104)),
+              backgroundComp("Electroweak",["VV","W","ZLL","EWKZ"],ROOT.TColor.GetColor(222,90,106)),
+              backgroundComp("QCD", ["QCD"], ROOT.TColor.GetColor(250,202,255)),
+              ]
  
     
     #Extract relevent histograms from shape file

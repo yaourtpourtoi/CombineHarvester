@@ -90,12 +90,14 @@ class CPMixture(PhysicsModel):
             self.modelBuilder.doVar('mutautau[1]')
 
             self.modelBuilder.factory_('expr::a1("@0", kappaH)'.format(**params))
-            self.modelBuilder.factory_('expr::a3("@0", kappaA)'.format(**params))
+            self.modelBuilder.factory_('expr::a3("1.5*@0", kappaA)'.format(**params))
 
-            self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a1, a3)')
-            self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a1, a3)')
+            self.modelBuilder.factory_('expr::width_correction("1/(1 + (8.19E-02)*(@0*@0+2.25*@1*@1 -1))", kappaH, kappaA)')
+
+            self.modelBuilder.factory_('expr::sm_scaling("(@0*@0 - @0*@1)*@2", a1, a3, width_correction)')
+            self.modelBuilder.factory_('expr::ps_scaling("(@1*@1 - @0*@1)*@2", a1, a3, width_correction)')
             # don't scale MM by 2x SM as XS already scaled by 2
-            self.modelBuilder.factory_('expr::mm_scaling("@0*@1", a1, a3)') 
+            self.modelBuilder.factory_('expr::mm_scaling("@0*@1*@2", a1, a3, width_correction)') 
 
         if self.do2D:
           self.modelBuilder.doVar('a2[1,-2,2]')

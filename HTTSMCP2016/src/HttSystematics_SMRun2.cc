@@ -581,7 +581,7 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_l_pt_closure_syst_njets2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_syst_njets2", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
 
         //##############################################################################
         //  DY LO->NLO reweighting, Between no and twice the correction.
