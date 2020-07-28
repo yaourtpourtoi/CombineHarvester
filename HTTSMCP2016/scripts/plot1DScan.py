@@ -27,7 +27,7 @@ def read(scan, param, files, chop, remove_near_min, rezero, remove_delta = None,
     param_str = param
     # if we are scanning alpha then put back units of pi/2
     #if args.POI == 'alpha': param_str = param+'*%.5f' % (math.pi/2) for radians
-    if args.POI == 'alpha': param_str = param
+    if args.POI == 'fa3': param_str = 'alpha/abs(alpha)*sin(alpha*3.14159/180)*sin(alpha*3.14159/180)'
 
     graph = plot.TGraphFromTree(limit, param_str, '2*deltaNLL', 'quantileExpected > -1.5')
     graph.SetName(scan)
@@ -573,16 +573,17 @@ if len(other_scans) >= 3:
         legend = ROOT.TLegend(0.58, 0.79, 0.95, 0.93, '', 'NBNDC')
         legend.SetNColumns(2)
     else:
-        legend = ROOT.TLegend(0.46, 0.83, 0.95, 0.93, '', 'NBNDC')
+        legend = ROOT.TLegend(0.46, 0.75, 0.95, 0.92, '', 'NBNDC')
         legend.SetNColumns(2)
 
-if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{hgg} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
+if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{gg} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 elif args.POI == 'beta': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha_{hvv} = %.0f{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 elif args.POI == 'muggH': legend.AddEntry(main_scan['func'], args.main_label + ': #mu_{ggh}^{#tau#tau} = %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 elif args.POI == 'muV': legend.AddEntry(main_scan['func'], args.main_label + ': #mu_{V}^{#tau#tau} = %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 else: legend.AddEntry(main_scan['func'], args.main_label + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 for i, other in enumerate(other_scans):
-    if args.POI == 'alpha': legend.AddEntry(other['func'], other_scans_opts[i][1] + ': #alpha_{hgg} = %.0f#circ{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')
+    #if args.POI == 'alpha': legend.AddEntry(other['func'], other_scans_opts[i][1] + ': #alpha_{hgg} = %.0f#circ{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')
+    if args.POI == 'alpha': legend.AddEntry(other['func'], other_scans_opts[i][1], 'L')
     elif args.POI == 'beta': legend.AddEntry(other['func'], other_scans_opts[i][1] + ': #alpha_{hvv} = %.0f#circ{}^{#plus %.0f#circ}_{#minus %.0f#circ}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')
 
     elif args.POI == 'muggH': legend.AddEntry(other['func'], other_scans_opts[i][1] + ': #mu_{ggh}^{#tau#tau} = %.2f{}^{#plus %.2f}_{#minus %.2f}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')

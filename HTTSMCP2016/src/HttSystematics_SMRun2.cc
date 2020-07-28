@@ -507,7 +507,7 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_l_pt_closure_syst_njets2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_syst_njets2", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
 
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_sub_syst", "shape", SystMap<>::init(1.00));
 
@@ -580,7 +580,7 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_l_pt_closure_syst_njets2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_syst_njets2", "shape", SystMap<>::init(1.00));
 
-        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
+//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
 
         //##############################################################################
         //  DY LO->NLO reweighting, Between no and twice the correction.
@@ -733,35 +733,35 @@ namespace ch {
         // For boosted category this is not exclusivly 1 jet events since events with > 1 jets and mjj<300 enter also. So take weighted average of Njets=1 and Njets>=1 uncertainties i.e sigma(boosted) = sigma(njets=1)*(# Njets=1 && boosted)/(# boosted) + sigma(njets>=1)*(#Njets>1 && boosted)/(# boosted)
         // These need to be set properly for MVA approach (placeholders for now)
         
-        cb.cp().AddSyst(cb, "CMS_ggH_mig01", "lnN", SystMap<channel, bin_id, process>::init
-                        ({"em","em_2016","em_2017","em_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
-                        ({"et","et_2016","et_2017","et_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
-                        ({"mt","mt_2016","mt_2017","mt_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
-                        ({"tt","tt_2016","tt_2017","tt_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
-                        
-                        ({"em","em_2016","em_2017","em_2018"},{2},ggH_sig_procs, 1.071)
-                        ({"et","et_2016","et_2017","et_2018"},{2},ggH_sig_procs, 1.071)
-                        ({"mt","mt_2016","mt_2017","mt_2018"},{2},ggH_sig_procs, 1.071)
-                        ({"tt","tt_2016","tt_2017","tt_2018"},{2},ggH_sig_procs, 1.071)
-                        
-                        ({"em","em_2016","em_2017","em_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
-                        ({"et","et_2016","et_2017","et_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
-                        ({"mt","mt_2016","mt_2017","mt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
-                        ({"tt","tt_2016","tt_2017","tt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
-                        );
-        
-        
-        cb.cp().AddSyst(cb, "CMS_ggH_mig12", "lnN", SystMap<channel, bin_id, process>::init 
-                        ({"em","em_2016","em_2017","em_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
-                        ({"et","et_2016","et_2017","et_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
-                        ({"mt","mt_2016","mt_2017","mt_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
-                        ({"tt","tt_2016","tt_2017","tt_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
-                        
-                        ({"em","em_2016","em_2017","em_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
-                        ({"et","et_2016","et_2017","et_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
-                        ({"mt","mt_2016","mt_2017","mt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
-                        ({"tt","tt_2016","tt_2017","tt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
-                        );
+        //cb.cp().AddSyst(cb, "CMS_ggH_mig01", "lnN", SystMap<channel, bin_id, process>::init
+        //                ({"em","em_2016","em_2017","em_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
+        //                ({"et","et_2016","et_2017","et_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
+        //                ({"mt","mt_2016","mt_2017","mt_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
+        //                ({"tt","tt_2016","tt_2017","tt_2018"},{1,31,32,33,34,35,36,37},ggH_sig_procs, 0.959)
+        //                
+        //                ({"em","em_2016","em_2017","em_2018"},{2},ggH_sig_procs, 1.071)
+        //                ({"et","et_2016","et_2017","et_2018"},{2},ggH_sig_procs, 1.071)
+        //                ({"mt","mt_2016","mt_2017","mt_2018"},{2},ggH_sig_procs, 1.071)
+        //                ({"tt","tt_2016","tt_2017","tt_2018"},{2},ggH_sig_procs, 1.071)
+        //                
+        //                ({"em","em_2016","em_2017","em_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
+        //                ({"et","et_2016","et_2017","et_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
+        //                ({"mt","mt_2016","mt_2017","mt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
+        //                ({"tt","tt_2016","tt_2017","tt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.036)
+        //                );
+        //
+        //
+        //cb.cp().AddSyst(cb, "CMS_ggH_mig12", "lnN", SystMap<channel, bin_id, process>::init 
+        //                ({"em","em_2016","em_2017","em_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
+        //                ({"et","et_2016","et_2017","et_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
+        //                ({"mt","mt_2016","mt_2017","mt_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
+        //                ({"tt","tt_2016","tt_2017","tt_2018"},{2,31,32,33,34,35,36,37},ggH_sig_procs, 0.986)
+        //                
+        //                ({"em","em_2016","em_2017","em_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
+        //                ({"et","et_2016","et_2017","et_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
+        //                ({"mt","mt_2016","mt_2017","mt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
+        //                ({"tt","tt_2016","tt_2017","tt_2018"},{3,4,5,6,41,42,43,44,45,46,47,48,49},ggH_sig_procs, 1.145)
+        //                );
 
         
         //if (ttbar_fit) {
