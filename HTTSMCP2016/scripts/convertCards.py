@@ -129,6 +129,7 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname, reweight=Fa
 
     to_write = []
 
+    print(directory)
     # in second loop we symmetrise all templates except for mm ones
     for key in directory.GetListOfKeys():
         histo = directory.Get(key.GetName())

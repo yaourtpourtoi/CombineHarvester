@@ -202,12 +202,12 @@ namespace ch {
 
  
         // Decay Mode based TES Settings
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
-                                                "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_1prong_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
+        //                                        "CMS_scale_t_3prong_13TeV", "shape", SystMap<>::init(1.00));
 
         cb.cp().process(JoinStr({sig_procs, real_tau_mc_bkgs, embed, /*{"jetFakes"}*/})).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb,
                                                 "CMS_scale_t_3prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
@@ -227,14 +227,14 @@ namespace ch {
 
 
         // MET Systematic shapes - recoil uncertainties for recoil corrected met, unclustered energy uncertainty for samples with no recoil correction, jes uncertainties propogated to met for samples with no recoil correction
-        cb.cp().process({"TT","TTJ","TTT","VV","VVJ","VVT"}).channel({"et","et_2016","mt","mt_2016","tt","tt_2016"},false).AddSyst(cb,
+        /*cb.cp().process({"TT","TTJ","TTT","VV","VVJ","VVT"}).channel({"et","et_2016","mt","mt_2016","tt","tt_2016"},false).AddSyst(cb,
                                                   "CMS_scale_met_unclustered_13TeV", "shape", SystMap<>::init(1.00));
 
 
         cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
                                                   "CMS_htt_boson_reso_met_13TeV", "shape", SystMap<>::init(1.00)); 
         cb.cp().process(JoinStr({sig_procs, {"ZTT","ZLL","ZL","ZJ","EWKZ","W"}})).AddSyst(cb,
-                                                  "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      
+                                                  "CMS_htt_boson_scale_met_13TeV", "shape", SystMap<>::init(1.00));      */
  
 
       
@@ -507,7 +507,8 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_l_pt_closure_syst_njets2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_syst_njets2", "shape", SystMap<>::init(1.00));
 
-//        cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
+        // missing template
+        // cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
 
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_sub_syst", "shape", SystMap<>::init(1.00));
 

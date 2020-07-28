@@ -40,7 +40,9 @@ To take the H->tautau BR as SM use:
 To run with no systematics: '--freezeParameters allConstrainedNuisances'
 
 To scan alpha:
-    `combineTool.py -m 125 -M MultiDimFit --setParameters alpha=0 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/cp130219/cmb/125/ws.root --algo grid  --there -n .alpha --floatOtherPOIs 1 --points=37 --alignEdges 1 -t -1 --cminDefaultMinimizerStrategy 0`
+
+combineTool.py -m 125 -M MultiDimFit --setParameters alpha=0 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/cp210720/cmb/125/ws.root --algo grid  --there -n .alpha --floatOtherPOIs 1 --points=21 --alignEdges 1 -t -1 --cminDefaultMinimizerStrategy 0 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10  --cminDefaultMinimizerTolerance=1
+
 (Note we may want to change the --cminDefaultMinimizerStrategy 0 at some point but the fit does not always converget for --cminDefaultMinimizerStrategy 1 - could adjust the number of function calls and/or tolerance to get this to work)
 
 To free all systematics add '--freezeParameters allConstrainedNuisances'
@@ -62,40 +64,61 @@ Run 2--cminDefaultMinimizerStrategy=0D liklihood scan of mu vs alpha using:
 1D scans can be plotted using scripts/plot1DScan.py script.
 To plot alpha:
 
-  python scripts/plot1DScan.py --main output/cp160720/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI alpha --output alpha --no-numbers --no-box --x_title "#alpha_{gg} (#circ)" --y-max 5 --x-max=90 --x-min=-90
+  python scripts/plot1DScan.py --main output/cp160720/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI alpha --output alpha --no-numbers --no-box --x_title "#alpha_{gg} (#circ)" --y-max 5 --x-max=90 --x-min=-90 --rezero --improve
+
+plot fa3 instead (using alpha points)
+
+python scripts/plot1DScanfa3.py --main output/cp210720/cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root --POI fa3 --output fa3_cutbased --no-numbers --no-box --x_title "f_{a3}^{ggH}cos(\phi_{a3}^{ggH})" --y-max 3.5 --x-max=1 --x-min=-1 --rezero --improve
+
+or by channel use:
+
+scripts/plot1DScan.py --main output/cp210720/cmb/125/higgsCombine.alpha.v3.MultiDimFit.mH125.root --POI alpha --output alpha_bychan --no-numbers --no-box --x_title "#alpha_{gg} (#circ)" --x-max=90 --x-min=-90 --others output/cp210720/em_cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root:e#mu:1 output/cp210720/et_cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root:"e#tau":2 output/cp210720/tt_cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root:"#tau#tau":3 output/cp210720/mt_cmb/125/higgsCombine.alpha.MultiDimFit.mH125.root:"#mu#tau":6 --rezero --improve --y-max=2.6 --rezero --improve
 
 Plot 1D scan of mu:
 
-  python scripts/plot1DScan.py --main output/test/cmb/125/higgsCombine.mu.MultiDimFit.mH125.root --POI muggH --output muggH --no-numbers --no-box --x_title "#mu_{ggH}^{#tau#tau}" --y-max 12
+  python scripts/plot1DScan.py --main output/test/cmb/125/higgsCombine.mu.MultiDimFit.mH125.root --POI muggH --output muggH --no-numbers --no-box --x_title "#mu_{ggH}^{#tau#tau}" --y-max 12 --rezero --improve
 
 2D scans can be plotted using scripts/plotMultiDimFit.py script:
 
     `python scripts/plotMultiDimFit.py --title-right "77.8 fb^{-1} (13 TeV)" --cms-sub "" --mass 125 -o mu_vs_alpha output/cp281118_nobbb/cmb/125/higgsCombine.2DScan.MultiDimFit.mH125.root --x-min -90 --x-max 90`
 
 nclusivly
-## Impacts
 
-cd into output directory:
-  `cd output/jes_study_dphi_split_jes`
+# Run impacts
 
-First do initial fit:
+First create workspace using top instructions.
 
-  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --doInitialFit --robustFit 1 -t -1 --parallel 8 --setParameters alpha=0 --setParameterRanges alpha=-90,90 --freezeParameters mutautau --floatOtherPOIs 1`
+Then perform initial fit:
 
-Run the fits for all nuisance parameters:
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --cminFallbackAlgo Minuit2,Migrad,0:1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10
 
-  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1 --minimizerAlgoForMinos Minuit2,Migrad --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90 --freezeParameters mutautau`
+this one seems to work but is slow:
 
-Run on lx batch system using `--job-mode lxbatch --sub-opts '-q 1nh' --merge 2`
-Run on ic batch using `--job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=2`
+#combine -M MultiDimFit -n blah_initialFit_Test --algo singles --redefineSignalPOIs alpha -t -1 --setParameterRanges alpha=-90,90:muV=-2,4:muggH=0.5,1.5 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd MINIMIZER_analytic --robustFit 1 -v 2 -m 125 -d output/cp210720/cmb/125/ws.root --setParameters alpha=0
+    
+combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP --X-rtd MINIMIZER_analytic  --setParameters alpha=0 --setParameterRanges alpha=-90,90:muV=-2,4:muggH=0.5,1.5  --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10
+
+To run impacts for each systematic on crab (RECOMMENDED):
+First open `custom_crab.py` and edit the workarea name.
+Make sure you have a valid grid proxy.
+Then run:
+
+    combineTool.py -M Impacts -d ws.root -m 125 --robustFit 1 -t  -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --cminFallbackAlgo Minuit2,Migrad,0:1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10 --merge 1 --job-mode crab3 --task-name grid-test-impacts --custom-crab custom_crab.py
+
+Otherwise for SGE batch use:
+
+    combineTool.py -M Impacts -d ws.root -m 125 --robustFit 1 -t  -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --cminFallbackAlgo Minuit2,Migrad,0:1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10 --merge 1 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" 
+
+Less recommended:
+For lxplus batch use `--job-mode condor --sub-opts='+JobFlavour = "longlunch"` but this is not fully tested (eg. might run out of time).
 
 Collect results:
-  
-  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json`
+
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json
 
 Make impact plot:
 
-  `plotImpacts.py -i impacts.json -o impacts`
+    plotImpacts.py -i impacts.json -o impacts
 
 
 ## Make post-fit plots

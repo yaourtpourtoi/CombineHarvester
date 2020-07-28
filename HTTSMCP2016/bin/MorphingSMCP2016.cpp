@@ -640,8 +640,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"mt","tt","et","em"};
-    //VString chns = {"tt","em","et"};
+    VString chns = {"mt","tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     if(sync>0) chns = {"mt"};   
 
@@ -1638,7 +1637,7 @@ int main(int argc, char** argv) {
    }
 
     // use for Barlow-Beeston-lite method for bbb uncertainties
-    //cb.AddDatacardLineAtEnd("* autoMCStats 0");
+    if (!mergeSymm) cb.AddDatacardLineAtEnd("* autoMCStats 10 1");
 
     // binomial bbb uncertainties for embedded em events to cover statistical uncertainties on generator weights
     //auto bbb = ch::BinByBinFactory()
@@ -1751,6 +1750,12 @@ int main(int argc, char** argv) {
         writer.WriteCards("no_tt_2018_01jet", cb.cp().bin_id({1,2}).channel({"tt_2018"},false));
         writer.WriteCards("no_em_2018_01jet", cb.cp().bin_id({1,2}).channel({"em_2018"},false));
 
+        // mt and tt for Albert's thesis
+        writer.WriteCards("tt_mt_cmb", cb.cp().channel({"mt_2016","mt_2017","mt_2018","tt_2016","tt_2017","tt_2018"}));
+        writer.WriteCards("tt_mt_2016", cb.cp().channel({"mt_2016","tt_2016"}));
+        writer.WriteCards("tt_mt_2017", cb.cp().channel({"mt_2017","tt_2017"}));
+        writer.WriteCards("tt_mt_2018", cb.cp().channel({"mt_2018","tt_2018"}));
+
         for (auto chn : chns){
           writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn+"_2016",chn+"_2017",chn+"_2018"}).bin_id({1}));
           writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn+"_2016",chn+"_2017",chn+"_2018"}).bin_id({2}));
@@ -1784,12 +1789,11 @@ int main(int argc, char** argv) {
         if (!do_mva) {
           writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn}).bin_id({1}));
           writer.WriteCards("htt_"+chn+"_2_13TeV", cb.cp().channel({chn}).bin_id({2}));
-	  writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
-	  writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({4}));
+	      writer.WriteCards("htt_"+chn+"_3_13TeV", cb.cp().channel({chn}).bin_id({3}));
+	      writer.WriteCards("htt_"+chn+"_4_13TeV", cb.cp().channel({chn}).bin_id({4}));
           writer.WriteCards("htt_"+chn+"_5_13TeV", cb.cp().channel({chn}).bin_id({5}));
           writer.WriteCards("htt_"+chn+"_6_13TeV", cb.cp().channel({chn}).bin_id({6}));
-	}
-        else {
+	    } else {
           writer.WriteCards("htt_"+chn+"_31_13TeV", cb.cp().channel({chn}).bin_id({31}));
           writer.WriteCards("htt_"+chn+"_32_13TeV", cb.cp().channel({chn}).bin_id({32}));
           writer.WriteCards("htt_"+chn+"_33_13TeV", cb.cp().channel({chn}).bin_id({33}));

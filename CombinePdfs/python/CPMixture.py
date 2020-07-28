@@ -70,13 +70,34 @@ class CPMixture(PhysicsModel):
           self.modelBuilder.doVar('fa3[0,0,1]')
           poiNames.append('fa3')
 
+        # if self.kappa:
+        #   self.modelBuilder.doVar('kh[1,-2,2]')
+        #   poiNames.append('kh')
+        #   self.modelBuilder.doVar('ka[0,-2,2]')
+        #   poiNames.append('ka')
+        #   self.modelBuilder.factory_('expr::muggH("@0*@0 + 2.25*@1*@1", kh, ka)')
+        #   if not self.floatAlpha: self.modelBuilder.factory_('expr::alpha("atan(1.5*@1/@0)*180/{pi}", kh, ka)'.format(**params))
+
+        # new kappa scan
         if self.kappa:
-          self.modelBuilder.doVar('kh[1,-2,2]')
-          poiNames.append('kh')
-          self.modelBuilder.doVar('ka[0,-2,2]')
-          poiNames.append('ka')
-          self.modelBuilder.factory_('expr::muggH("@0*@0 + 2.25*@1*@1", kh, ka)')
-          if not self.floatAlpha: self.modelBuilder.factory_('expr::alpha("atan(1.5*@1/@0)*180/{pi}", kh, ka)'.format(**params))
+            self.modelBuilder.doVar('kappaH[1,-2,2]')
+            self.modelBuilder.doVar('kappaA[0,-2,2]')
+            poiNames.append('kappaH')
+            poiNames.append('kappaA')
+            self.modelBuilder.doSet('POI', ','.join(poiNames))
+            # scale muggH by kappa^2 + (3/2 * kappa_tilde)^2
+            self.modelBuilder.factory_('expr::muggH("@0*@0 + 2.25*@1*@1", kappaH, kappaA)')
+            self.modelBuilder.doVar('mutautau[1]')
+
+            self.modelBuilder.factory_('expr::a1("@0", kappaH)'.format(**params))
+            self.modelBuilder.factory_('expr::a3("1.5*@0", kappaA)'.format(**params))
+
+            self.modelBuilder.factory_('expr::width_correction("1/(1 + (8.19E-02)*(@0*@0+2.25*@1*@1 -1))", kappaH, kappaA)')
+
+            self.modelBuilder.factory_('expr::sm_scaling("(@0*@0 - @0*@1)*@2", a1, a3, width_correction)')
+            self.modelBuilder.factory_('expr::ps_scaling("(@1*@1 - @0*@1)*@2", a1, a3, width_correction)')
+            # don't scale MM by 2x SM as XS already scaled by 2
+            self.modelBuilder.factory_('expr::mm_scaling("@0*@1*@2", a1, a3, width_correction)') 
 
         if self.do2D:
           self.modelBuilder.doVar('a2[1,-2,2]')
@@ -116,30 +137,31 @@ class CPMixture(PhysicsModel):
         self.modelBuilder.factory_('expr::muV_mutautau("@0*@1", muV, mutautau)')
         self.modelBuilder.factory_('expr::muggH_mutautau("@0*@1", muggH, mutautau)')
 
-        if not self.ChannelCompatibility:
+        if not self.kappa:
+            if not self.ChannelCompatibility:
 
-          if not self.do_fa3:
-            if not self.do2D:
-              self.modelBuilder.factory_('expr::a2("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
-              self.modelBuilder.factory_('expr::a3("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
-          else:
-            self.modelBuilder.factory_('expr::a3("sqrt( (@0*@1*{sigma1_hzz})/({sigma3_hzz + @1*({sigma1_hzz - sigma3_hzz})}) ) ", muggH_mutautau, fa3)'.format(**params))
-            self.modelBuilder.factory_('expr::a2("sqrt(@0-@1*@1)", muggH_mutautau, a3)'.format(**params)) 
+              if not self.do_fa3:
+                if not self.do2D:
+                  self.modelBuilder.factory_('expr::a2("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
+                  self.modelBuilder.factory_('expr::a3("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha)'.format(**params))
+              else:
+                self.modelBuilder.factory_('expr::a3("sqrt( (@0*@1*{sigma1_hzz})/({sigma3_hzz + @1*({sigma1_hzz - sigma3_hzz})}) ) ", muggH_mutautau, fa3)'.format(**params))
+                self.modelBuilder.factory_('expr::a2("sqrt(@0-@1*@1)", muggH_mutautau, a3)'.format(**params)) 
   
-          self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a2, a3)')
-          self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a2, a3)')
-          self.modelBuilder.factory_('expr::mm_scaling_sync("2*@0*@1", a2, a3)')
-          self.modelBuilder.factory_('expr::mm_scaling("@0*@1", a2, a3)')
+              self.modelBuilder.factory_('expr::sm_scaling("@0*@0 - @0*@1", a2, a3)')
+              self.modelBuilder.factory_('expr::ps_scaling("@1*@1 - @0*@1", a2, a3)')
+              self.modelBuilder.factory_('expr::mm_scaling_sync("2*@0*@1", a2, a3)')
+              self.modelBuilder.factory_('expr::mm_scaling("@0*@1", a2, a3)')
  
-        else: 
-          for c in ['em', 'et', 'mt', 'tt']:
-            self.modelBuilder.factory_('expr::a2_%s("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
-            self.modelBuilder.factory_('expr::a3_%s("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
+            else: 
+              for c in ['em', 'et', 'mt', 'tt']:
+                self.modelBuilder.factory_('expr::a2_%s("sqrt(@0)*cos(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
+                self.modelBuilder.factory_('expr::a3_%s("sqrt(@0)*sin(@1/90*{pi}/2)", muggH_mutautau, alpha_%s)'.format(**params) % (c, c))
    
-            self.modelBuilder.factory_('expr::sm_scaling_%s("@0*@0 - @0*@1", a2_%s, a3_%s)' % (c, c, c))
-            self.modelBuilder.factory_('expr::ps_scaling_%s("@1*@1 - @0*@1", a2_%s, a3_%s)' % (c, c, c))
-            self.modelBuilder.factory_('expr::mm_scaling_%s("@0*@1", a2_%s, a3_%s)' % (c, c, c)) 
-            self.modelBuilder.factory_('expr::mm_scaling_sync_%s("2*@0*@1", a2_%s, a3_%s)' % (c, c, c)) 
+                self.modelBuilder.factory_('expr::sm_scaling_%s("@0*@0 - @0*@1", a2_%s, a3_%s)' % (c, c, c))
+                self.modelBuilder.factory_('expr::ps_scaling_%s("@1*@1 - @0*@1", a2_%s, a3_%s)' % (c, c, c))
+                self.modelBuilder.factory_('expr::mm_scaling_%s("@0*@1", a2_%s, a3_%s)' % (c, c, c)) 
+                self.modelBuilder.factory_('expr::mm_scaling_sync_%s("2*@0*@1", a2_%s, a3_%s)' % (c, c, c)) 
         
         # For the 0jet and boosted categories since all templates should be the same for SM, MM, and PS sum together all the templates but weight by event numbers in the samples
 
