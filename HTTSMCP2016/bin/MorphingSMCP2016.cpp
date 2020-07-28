@@ -608,6 +608,8 @@ int main(int argc, char** argv) {
       input_folder_et="/Imperial/control_cards_"+era+"/";
       input_folder_mt="/Imperial/control_cards_"+era+"/";
       input_folder_tt="/Imperial/control_cards_"+era+"/";
+      input_folder_mt="/control/";
+      input_folder_tt="/control/";
     }
 
     if(sync>0) {
@@ -640,7 +642,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"mt","tt"};
+    VString chns = {"tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     if(sync>0) chns = {"mt"};   
 
@@ -959,7 +961,7 @@ int main(int argc, char** argv) {
           {105, "et_"+extra+"mjj"},
           {106, "et_"+extra+"sjdphi"},
           {107, "et_"+extra+"n_jets"}, 
-          {108, "et_"+extra+"m_sv"}
+          {108, "et_"+extra+"svfit_mass"}
          };
          cats["mt_2016"] = {
           {100, "mt_"+extra+"pt_1"},
@@ -970,7 +972,7 @@ int main(int argc, char** argv) {
           {105, "mt_"+extra+"mjj"},
           {106, "mt_"+extra+"sjdphi"},  
           {107, "mt_"+extra+"n_jets"},
-          {108, "mt_"+extra+"m_sv"}
+          {108, "mt_"+extra+"svfit_mass"}
          };
          cats["tt_2016"] = {
           {100, "tt_"+extra+"pt_1"},
@@ -981,7 +983,7 @@ int main(int argc, char** argv) {
           {105, "tt_"+extra+"mjj"},
           {106, "tt_"+extra+"sjdphi"},  
           {107, "tt_"+extra+"n_jets"},
-          {108, "tt_"+extra+"m_sv"}
+          {108, "tt_"+extra+"svfit_mass"}
          };
          cats["em_2016"] = {
           {100, "em_"+extra+"pt_1"},
@@ -992,7 +994,7 @@ int main(int argc, char** argv) {
           {105, "em_"+extra+"mjj"},
           {106, "em_"+extra+"sjdphi"},
           {107, "em_"+extra+"n_jets"},
-          {108, "em_"+extra+"m_sv"}
+          {108, "em_"+extra+"svfit_mass"}
          }; 
        }
      if(era=="2017"){
@@ -1009,7 +1011,7 @@ int main(int argc, char** argv) {
           {105, "et_"+extra+"mjj"},
           {106, "et_"+extra+"sjdphi"},
           {107, "et_"+extra+"n_jets"},
-          {108, "et_"+extra+"m_sv"}
+          {108, "et_"+extra+"svfit_mass"}
          };
          cats["mt_2017"] = {
           {100, "mt_"+extra+"pt_1"},
@@ -1020,7 +1022,7 @@ int main(int argc, char** argv) {
           {105, "mt_"+extra+"mjj"},
           {106, "mt_"+extra+"sjdphi"},
           {107, "mt_"+extra+"n_jets"},
-          {108, "mt_"+extra+"m_sv"}
+          {108, "mt_"+extra+"svfit_mass"}
          };
          cats["tt_2017"] = {
           {100, "tt_"+extra+"pt_1"},
@@ -1031,7 +1033,7 @@ int main(int argc, char** argv) {
           {105, "tt_"+extra+"mjj"},
           {106, "tt_"+extra+"sjdphi"},
           {107, "tt_"+extra+"n_jets"},
-          {108, "tt_"+extra+"m_sv"}
+          {108, "tt_"+extra+"svfit_mass"}
          };
          cats["em_2017"] = {
           {100, "em_"+extra+"pt_1"},
@@ -1042,7 +1044,7 @@ int main(int argc, char** argv) {
           {105, "em_"+extra+"mjj"},
           {106, "em_"+extra+"sjdphi"},
           {107, "em_"+extra+"n_jets"},
-          {108, "em_"+extra+"m_sv"}
+          {108, "em_"+extra+"svfit_mass"}
          };
        }
      if(era=="2018"){
@@ -1059,18 +1061,18 @@ int main(int argc, char** argv) {
           {105, "et_"+extra+"mjj"},
           {106, "et_"+extra+"sjdphi"},
           {107, "et_"+extra+"n_jets"},
-          {108, "et_"+extra+"m_sv"}
+          {108, "et_"+extra+"svfit_mass"}
          };
          cats["mt_2018"] = {
-          {100, "mt_"+extra+"pt_1"},
-          {101, "mt_"+extra+"pt_2"},
-          {102, "mt_"+extra+"met"},
-          {103, "mt_"+extra+"pt_tt"},
-          {104, "mt_"+extra+"m_vis"},
+          /* {100, "mt_"+extra+"pt_1"}, */
+          /* {101, "mt_"+extra+"pt_2"}, */
+          /* {102, "mt_"+extra+"met"}, */
+          /* {103, "mt_"+extra+"pt_tt"}, */
+          /* {104, "mt_"+extra+"m_vis"}, */
           {105, "mt_"+extra+"mjj"},
-          {106, "mt_"+extra+"sjdphi"},
-          {107, "mt_"+extra+"n_jets"},
-          {108, "mt_"+extra+"m_sv"}
+          /* {106, "mt_"+extra+"sjdphi"}, */
+          /* {107, "mt_"+extra+"n_jets"}, */
+          {108, "mt_"+extra+"svfit_mass"}
          };
          cats["tt_2018"] = {
           {100, "tt_"+extra+"pt_1"},
@@ -1081,7 +1083,7 @@ int main(int argc, char** argv) {
           {105, "tt_"+extra+"mjj"},
           {106, "tt_"+extra+"sjdphi"},
           {107, "tt_"+extra+"n_jets"},
-          {108, "tt_"+extra+"m_sv"}
+          {108, "tt_"+extra+"svfit_mass"}
          };
          cats["em_2018"] = {
           {100, "em_"+extra+"pt_1"},
@@ -1092,7 +1094,7 @@ int main(int argc, char** argv) {
           {105, "em_"+extra+"mjj"},
           {106, "em_"+extra+"sjdphi"},
           {107, "em_"+extra+"n_jets"},
-          {108, "em_"+extra+"m_sv"}
+          {108, "em_"+extra+"svfit_mass"}
          };
        }
 
