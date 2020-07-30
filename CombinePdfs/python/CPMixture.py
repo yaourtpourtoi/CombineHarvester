@@ -265,7 +265,7 @@ class CPMixture(PhysicsModel):
                 if "_1_13TeV" in bin_ or "_2_13TeV" in bin_:
                     # simply this by only take SM template for 0 and 1 jet categories
                     if "ggH_sm" in process or 'reweighted_ggH_htt_0PM' in process: scaling = "muggH_mutautau"
-                    if "qqH_htt" in process or 'WH_htt' in process or 'ZH_htt': scaling = "muV_mutautau"
+                    if "qqH_htt" in process or 'WH_htt' in process or 'ZH_htt' in process: scaling = "muV_mutautau"
                     else: scaling = "Zero"
 
                     #year = '2016'
