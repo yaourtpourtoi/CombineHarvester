@@ -619,7 +619,8 @@ def propoganda_plot_phicp(sm,ps,best,bkg,data,plot_name,mode=1):
     data.Draw("E same")
 
 
-    DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 11, 0.001, -0.07, 0.2, 1.5, '', 1.0)
+    if mode==1: DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 11, 0.001, -0.07, 0.2, 1.5, '', 1.0)
+    else: DrawCMSLogo(pads[0], 'CMS', 'Supplementary', 11, 0.001, -0.07, 0.2, 1.5, '', 1.0)
     DrawTitle(pads[0], '137 fb^{-1} (13 TeV)', 3)
 
     #Setup legend
