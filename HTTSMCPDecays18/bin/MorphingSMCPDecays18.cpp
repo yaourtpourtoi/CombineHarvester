@@ -1534,7 +1534,6 @@ int main(int argc, char** argv) {
           }
           A_ave = A_tot/nxbins;
         }
-        A_ave=1.; // tempoary - remove A to make plot for Yuta, don't forget to change back!!!!
         wt_mapping[b] = s_sb*A_ave;
       }
   
