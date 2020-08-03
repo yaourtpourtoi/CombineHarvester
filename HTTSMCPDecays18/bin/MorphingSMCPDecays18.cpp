@@ -356,6 +356,7 @@ int main(int argc, char** argv) {
     bool mergeSymm = false; 
     bool control = false; 
     bool prop_plot = false;
+    bool savenuisancegroups = false;
     unsigned backgroundOnly = 0; 
 
     string era;
@@ -380,6 +381,7 @@ int main(int argc, char** argv) {
     ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
     ("control", po::value<bool>(&control)->default_value(false))
     ("prop_plot", po::value<bool>(&prop_plot)->default_value(false))
+    ("savenuisancegroups", po::value<bool>(&savenuisancegroups)->default_value(false))
     ("backgroundOnly", po::value<unsigned>(&backgroundOnly)->default_value(0));
 
 
@@ -1291,7 +1293,61 @@ int main(int argc, char** argv) {
      ch::CardWriter writer(output_prefix + output_folder + "/$TAG/$MASS/$BIN.txt",
          	    output_prefix + output_folder + "/$TAG/common/htt_input.root");
      
-     
+
+
+
+//below we save nuisance group (bbb and theory, the rest we can obtain by freezing all nuisances)
+if(savenuisancegroups){
+cout<<"start savenuisancegroups"<<endl;
+  vector< std::pair<string, vector<string>> > groups  = {
+    {"bbb group = "           , {"_bbb_bin_"}}
+    //{"allnuisances group = "        , {""}} //not needed. One can insert here another group if desired
+  };
+  
+//we can live without this, can be practical for debuggin purposes
+ std::map<string, TString> group_map_string;
+ TString ungroupedstring="unmatched group = ";
+
+//unitialise the first element of the map
+  for (auto const& g : groups){
+    if (!group_map_string.count(g.first)) group_map_string[g.first] = g.first;
+  }
+
+//this seems to work. But 42 instead of 64 lines that we get from PrintAll
+    auto systematics = cb.SetFromSysts(std::mem_fn(&ch::Systematic::name));
+      for (auto const& s : systematics) {
+
+//  cb.ForEachSyst([&](ch::Systematic *s){
+ 	bool grouped = false;   // not grouped by default
+	// loop through each grouping
+    for (auto const& g : groups) {
+      // loop through the patterns for this group
+      for (auto const& gsub : g.second) {
+        // if pattern is found add the nuisance to the list for this group
+        if (s.find(gsub) != string::npos) {
+	  group_map_string[g.first]+=" ";
+	  group_map_string[g.first]+=s;
+          grouped = true;
+          break;  // can skip other patterns
+        }
+      }
+    }
+    if (!grouped){ ungroupedstring+=" "; ungroupedstring+=s;}
+	}
+
+cout<<"end all sys in systematics" <<endl;
+
+//copy lines below for any groups added
+ cout<<"adding nuisance groups; theory, bbb, allnuisances "<<endl;
+ cout<<"bbb nuisances "<<group_map_string.at(groups[0].first)<<endl;
+ cout<<"theory group = CMS_PS_FSR_VBF CMS_PS_FSR_ggH CMS_PS_ISR_VBF CMS_PS_ISR_ggH QCDscale_VH QCDscale_ggH QCDscale_ggH_ACCEPT QCDscale_qqH QCDscale_qqH_ACCEPT pdf_Higgs_gg  pdf_Higgs_qqbar BR_htt_THU BR_htt_PU_mq BR_htt_PU_alphas"<<endl;
+
+ //this adds the theory, if introduce new theory uncertainties update here..
+ cb.AddDatacardLineAtEnd("theory group = CMS_PS_FSR_VBF CMS_PS_FSR_ggH CMS_PS_ISR_VBF CMS_PS_ISR_ggH QCDscale_VH QCDscale_ggH QCDscale_ggH_ACCEPT QCDscale_qqH QCDscale_qqH_ACCEPT pdf_Higgs_gg  pdf_Higgs_qqbar BR_htt_THU BR_htt_PU_mq BR_htt_PU_alphas");
+//here the bbb are added
+cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
+//cb.AddDatacardLineAtEnd(group_map_string.at(groups[1].first).Data());//currently we don´t save all since can ask with defautl method
+}     
      writer.WriteCards("cmb", cb);
      
      writer.WriteCards("htt_2016", cb.cp().channel({"em_2016","et_2016","mt_2016","tt_2016","ttbar_2016"}));
