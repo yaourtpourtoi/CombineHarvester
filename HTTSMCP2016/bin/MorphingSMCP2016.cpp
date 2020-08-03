@@ -642,7 +642,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt"};
+    VString chns = {"tt","mt","et","em"};
     if (ttbar_fit) chns.push_back("ttbar");
     if(sync>0) chns = {"mt"};   
 
@@ -1431,7 +1431,8 @@ int main(int argc, char** argv) {
 
     // partially decorrelate the energy scale uncertainties
     cb.cp().RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_e");
-    DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    //DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_e","CMS_scale_embedded_e");
     cb.cp().RenameSystematic(cb,"CMS_scale_mu_13TeV","CMS_scale_m");
     DecorrelateMCAndEMB(cb,"CMS_scale_m","CMS_scale_embedded_m",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
@@ -1508,26 +1509,34 @@ int main(int argc, char** argv) {
 
     Remove13TeVFromNames(cb); 
 
+    // For dyShape uncertainties we need to apply fixes in cases where these are converted to lnN as the conversion to lnN does not take into account the 0.1 scaling of the shape uncertainties
+    cb.cp().syst_name({"CMS_htt_dyShape"}).ForEachSyst([](ch::Systematic *sys) {
+        if (sys->type().find("lnN") != std::string::npos){
+          sys->set_value_d((sys->value_d()-1.)*0.1+1.);
+          sys->set_value_u((sys->value_u()-1.)*0.1+1.);
+        }
+    });
+
     if(mergeSymm) {
 
       //! [part8]
       //// add bbb uncertainties for all backgrounds
       auto bbb = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-      .SetAddThreshold(0.01)
+      .SetAddThreshold(0.)
       .SetMergeThreshold(0.5)
-      //.SetMergeThreshold(0.)
       .SetFixNorm(false);
       bbb.MergeBinErrors(cb.cp().backgrounds());
       bbb.AddBinByBin(cb.cp().backgrounds(), cb);
   
       // add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
-      auto bbb_sig = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-      .SetAddThreshold(0.05)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_sig.AddBinByBin(cb.cp().signals(),cb);
+      // neglect bbb uncerts on signal since these are subdominant to background uncerts (would give a 0.5% increase in the total bbb even in the most extream case)
+      //auto bbb_sig = ch::BinByBinFactory()
+      //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
+      //.SetAddThreshold(0.05)
+      //.SetMergeThreshold(0.0)
+      //.SetFixNorm(false);
+      //bbb_sig.AddBinByBin(cb.cp().signals(),cb);
 
       unsigned nxbins = 12; // same dphi binning in each category for now!
 

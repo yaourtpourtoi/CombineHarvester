@@ -1,4 +1,13 @@
 {
+
+  "CMS_eff_t_DM0_13TeV" : 0.0,
+  "CMS_eff_t_DM1_13TeV" : 0.0,
+  "CMS_eff_t_DM10_13TeV" : 0.0,
+  "CMS_eff_t_DM11_13TeV" : 0.0,
+  "CMS_eff_embedded_t_DM0_13TeV" : 0.0,
+  "CMS_eff_embedded_t_DM1_13TeV" : 0.0,
+  "CMS_eff_embedded_t_DM10_13TeV" : 0.0,
+  "CMS_eff_embedded_t_DM11_13TeV" : 0.0,
   "CMS_eff_t_trg_DM0_13TeV": 0.0,
   "CMS_eff_t_trg_DM1_13TeV": 0.0,
   "CMS_eff_t_trg_DM10_13TeV": 0.0,
