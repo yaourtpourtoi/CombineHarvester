@@ -653,59 +653,86 @@ namespace ch {
                                              "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
         // shape uncerts for PS for VBF in 2018 where weights exist, lnN for other years (based on 2018 lnN's)
-        cb.cp().process({"qqH_htt125"}).channel({"et_2018","mt_2018","tt_2018","em_2018"}).AddSyst(cb,
-                                             "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"qqH_htt125"}).channel({"et_2018","mt_2018","tt_2018","em_2018"}).AddSyst(cb,
-                                             "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"qqH_htt125"}).channel({"et_2018","mt_2018","tt_2018","em_2018"}).AddSyst(cb,
+        //                                     "CMS_PS_FSR_ggH_13TeV", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"qqH_htt125"}).channel({"et_2018","mt_2018","tt_2018","em_2018"}).AddSyst(cb,
+        //                                     "CMS_PS_ISR_ggH_13TeV", "shape", SystMap<>::init(1.00));
 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.029,0.9287)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9938,1.014)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.012,0.9752)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9664,1.017)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.01,0.9745 )); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.012,0.9687)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9797,1.062)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9985,1.006)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.997,1.035 )); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.009,1.01  )); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.008,0.9857)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.007,0.995 )); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9628,1.023)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9864,1.027)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.004,0.9613)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9911,1.096)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.013,0.9898)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.014,0.9532)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9818,1.033)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9975,1.003)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9959)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.018,0.9712)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.9938)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.012,0.9899));
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9988,1.002)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9996,1.001)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9915,1.012)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.9966)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.9986)); 
-        cb.cp().channel({"mt_2016","mt_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1,1.002     )); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9971,1.003)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9979)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1,1.001     )); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9988,1.001)); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.998 )); 
-        cb.cp().channel({"tt_2016","tt_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.9987)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,1     )); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9965,1.005)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9928,1.009)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9842,1.027)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9995,1.001)); 
-        cb.cp().channel({"et_2016","et_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9977)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.998 )); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1,1.001     )); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.9984)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.005,0.994 )); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.9961)); 
-        cb.cp().channel({"em_2016","em_2017"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9974));
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.029,0.9287)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9938,1.014)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.012,0.9752)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9664,1.017)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.01,0.9745 )); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.012,0.9687)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9797,1.062)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9985,1.006)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.997,1.035 )); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.009,1.01  )); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.008,0.9857)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.007,0.995 )); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9628,1.023)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9864,1.027)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.004,0.9613)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9911,1.096)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.013,0.9898)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.014,0.9532)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9818,1.033)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9975,1.003)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9959)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.018,0.9712)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.9938)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_FSR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.012,0.9899));
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9988,1.002)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9996,1.001)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9915,1.012)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.9966)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.9986)); 
+        cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1,1.002     )); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9971,1.003)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9979)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1,1.001     )); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9988,1.001)); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.998 )); 
+        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.9987)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,1     )); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9965,1.005)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9928,1.009)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9842,1.027)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(0.9995,1.001)); 
+        cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9977)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({1}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.998 )); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({2}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1,1.001     )); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({3}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.001,0.9984)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({4}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.005,0.994 )); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({5}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.003,0.9961)); 
+        cb.cp().channel({"em_2016","em_2017","em_2018"}).bin_id({6}).process({qqH_sig_procs}).AddSyst(cb, "CMS_PS_ISR_VBF_13TeV", "lnN", SystMapAsymm<>::init(1.002,0.9974));
+
+
+        // extra PS uncerts for VBF to account for the different with the newer samples with Dipole showering
+        cb.cp().process({qqH_sig_procs}).channel({"em_2016","em_2017","em_2018"}).bin_id({1}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.040));
+        cb.cp().process({qqH_sig_procs}).channel({"em_2016","em_2017","em_2018"}).bin_id({2}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.008));
+        cb.cp().process({qqH_sig_procs}).channel({"em_2016","em_2017","em_2018"}).bin_id({3}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.017));
+        cb.cp().process({qqH_sig_procs}).channel({"em_2016","em_2017","em_2018"}).bin_id({4}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.044));
+        cb.cp().process({qqH_sig_procs}).channel({"em_2016","em_2017","em_2018"}).bin_id({5}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.050));
+        cb.cp().process({qqH_sig_procs}).channel({"em_2016","em_2017","em_2018"}).bin_id({6}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.022));
+        cb.cp().process({qqH_sig_procs}).channel({"et_2016","et_2017","et_2018"}).bin_id({1}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.990));
+        cb.cp().process({qqH_sig_procs}).channel({"et_2016","et_2017","et_2018"}).bin_id({2}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.983));
+        cb.cp().process({qqH_sig_procs}).channel({"et_2016","et_2017","et_2018"}).bin_id({3}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.998));
+        cb.cp().process({qqH_sig_procs}).channel({"et_2016","et_2017","et_2018"}).bin_id({4}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.938));
+        cb.cp().process({qqH_sig_procs}).channel({"et_2016","et_2017","et_2018"}).bin_id({5}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.026));
+        cb.cp().process({qqH_sig_procs}).channel({"et_2016","et_2017","et_2018"}).bin_id({6}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.021));
+        cb.cp().process({qqH_sig_procs}).channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.008));
+        cb.cp().process({qqH_sig_procs}).channel({"mt_2016","mt_2017","mt_2018"}).bin_id({2}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.014));
+        cb.cp().process({qqH_sig_procs}).channel({"mt_2016","mt_2017","mt_2018"}).bin_id({3}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.966));
+        cb.cp().process({qqH_sig_procs}).channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.987));
+        cb.cp().process({qqH_sig_procs}).channel({"mt_2016","mt_2017","mt_2018"}).bin_id({5}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.047));
+        cb.cp().process({qqH_sig_procs}).channel({"mt_2016","mt_2017","mt_2018"}).bin_id({6}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.044));
+        cb.cp().process({qqH_sig_procs}).channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.127));
+        cb.cp().process({qqH_sig_procs}).channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.029));
+        cb.cp().process({qqH_sig_procs}).channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(0.984));
+        //cb.cp().process({qqH_sig_procs}).channel({"tt_2016","tt_2017","tt_2018"}).bin_id({4}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.000));
+        cb.cp().process({qqH_sig_procs}).channel({"tt_2016","tt_2017","tt_2018"}).bin_id({5}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.074));
+        cb.cp().process({qqH_sig_procs}).channel({"tt_2016","tt_2017","tt_2018"}).bin_id({6}).AddSyst(cb, "CMS_PS_VBF_withDipoleRecoil_13TeV", "lnN", SystMap<>::init(1.034));
 
         cb.cp().process(ggH_sig_procs).channel({"et","et_2016","mt","mt_2016","tt","tt_2016","em","em_2016","et_2017","et_2018","mt_2017","mt_2018","tt_2017","tt_2018","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_UE_ggH_13TeV", "shape", SystMap<>::init(1.00));
