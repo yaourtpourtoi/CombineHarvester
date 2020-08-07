@@ -398,7 +398,8 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_met_closure_syst_njets0", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_njets0", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({2}).AddSyst(cb, "ff_tt_qcd_met_closure_syst_njets1", "shape", SystMap<>::init(1.00));
-        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_tt_qcd_syst_njets1_m", "shape", SystMap<>::init(1.00));
+        //cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_tt_qcd_syst_njets1_m", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_tt_qcd_syst_njets1", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_tt_qcd_met_closure_syst_njets2", "shape", SystMap<>::init(1.00));
 
         // only need these uncertainties once using the dR corrected FFs
@@ -508,7 +509,7 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1},false).AddSyst(cb, "ff_mt_wjets_syst_njets2", "shape", SystMap<>::init(1.00));
 
         // missing template
-        // cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
+         cb.cp().process({"jetFakes"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).AddSyst(cb, "ff_mt_ttbar_syst", "shape", SystMap<>::init(1.00));
 
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_sub_syst", "shape", SystMap<>::init(1.00));
 
@@ -581,7 +582,7 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_l_pt_closure_syst_njets2", "shape", SystMap<>::init(1.00));
         cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1},false).AddSyst(cb, "ff_et_wjets_syst_njets2", "shape", SystMap<>::init(1.00));
 
-//        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
+        cb.cp().process({"jetFakes"}).channel({"et","et_2016","et_2017","et_2018"}).AddSyst(cb, "ff_et_ttbar_syst", "shape", SystMap<>::init(1.00));
 
         //##############################################################################
         //  DY LO->NLO reweighting, Between no and twice the correction.

@@ -1341,6 +1341,7 @@ int main(int argc, char** argv) {
       // if the analysis changes the number of jdphi or mass bins (for boosted) category then these need to be changed here also
       int ndphibins = 12;
       int nmassbins = 10;
+      int nmassbins_tt = 9;
 
       std::vector<std::string> jes_systs = {
         "CMS_scale_j_Absolute_13TeV",
@@ -1380,7 +1381,8 @@ int main(int argc, char** argv) {
         // Convert VH processes to lnN
         ConvertShapesToLnN(cb.cp().process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), i, 0.);  
         // group mass bins for boosted categories to get smooth templates
-        SmoothShapes(cb.cp().bin_id({2}), i, nmassbins, false, true, false);
+        SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"},false).bin_id({2}), i, nmassbins, false, true, false);
+        SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}), i, nmassbins_tt, false, true, false);
         // group mass bins for dijet categories to get smooth templates
         SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, false, true);
       }
@@ -1398,8 +1400,11 @@ int main(int argc, char** argv) {
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
       // merge together mass bins for boosted category
-      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
-      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
+
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins_tt, false, true, false);
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins_tt, false, true, false);
       // lnN uncertainties for ZL in dijet categories
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_scale_met_13TeV", 0.);

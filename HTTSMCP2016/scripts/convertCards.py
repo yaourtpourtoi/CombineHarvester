@@ -81,8 +81,17 @@ def ASymmetrise(hist,hsm,hps,nxbins):
       e2 = histnew.GetBinError(hi_bin_)
       cnew = (abs(c1)+abs(c2))/2
       enew = math.sqrt(e1**2 + e2**2)/2
-      c1_new = cnew*c1/abs(c1)
-      c2_new = cnew*c2/abs(c2)
+
+      if c1*c2 < 0:
+        c1_new = cnew*c1/abs(c1)
+        c2_new = cnew*c2/abs(c2)
+      else:
+        if c1 < c2:
+          c1_new = -cnew
+          c2_new = cnew
+        else: 
+          c1_new = cnew
+          c2_new = -cnew
         
       histnew.SetBinContent(lo_bin_,c1_new)
       histnew.SetBinContent(hi_bin_,c2_new)
