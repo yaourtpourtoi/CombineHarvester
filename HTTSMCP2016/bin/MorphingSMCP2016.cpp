@@ -420,7 +420,8 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
   } else {
     // remove uncorrelated part if systs are 100% un-correlated
     cb.FilterSysts([&](ch::Systematic *s){
-        return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+        //return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+        return s->name() == name && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
     });
 
   }
@@ -463,7 +464,8 @@ void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::v
     } else {
       // remove uncorrelated part if systs are 100% un-correlated
       cb_syst.channel(chans_2016).FilterSysts([&](ch::Systematic *s){
-          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+          //return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+          return s->name() == name && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
       });
     }
 
