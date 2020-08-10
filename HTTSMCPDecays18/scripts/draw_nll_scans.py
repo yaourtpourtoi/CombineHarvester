@@ -699,7 +699,6 @@ def scan_2d(input_folder, category="cmb", plot_name="scan_2d",threesig=True):
         df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
             namedecode="utf-8")
         df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
-        #df = df.query("quantileExpected > -1")
         df = df.loc[~df.duplicated(),:]
         df = df.sort_values(by=[parameter1, parameter0])
         custom_cms_label(ax, "Preliminary", lumi=137)
@@ -707,12 +706,15 @@ def scan_2d(input_folder, category="cmb", plot_name="scan_2d",threesig=True):
         xbins = df[parameter0].unique()
         ybins = df[parameter1].unique()
         df["deltaNLL"] = 2*df["deltaNLL"]
-        # print(df)
         z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
         # some nans...remove by setting to high value (high NLL)
         # this is only a temp. fix, hopefully fix to Physics model will remove these
-        z[np.isnan(z)] = 100
-        # print(z)
+        for index, i in enumerate(z): 
+          for index2, j in enumerate(i):
+            if j!=j:
+              z[index][index2] = z[index][index2-1] 
+
+        z[np.isnan(z)] = 25
         
         pos = ax.imshow(
             z, origin='lower', interpolation='bicubic',
@@ -779,7 +781,7 @@ def scan_2d(input_folder, category="cmb", plot_name="scan_2d",threesig=True):
             mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
             mpl.lines.Line2D([0], [0], color='black', lw=1, ls='-.'),
         ]
-        labels = [r'$68\%$ CI', r'$95\%$ CI', r'$99.7\%$ CI']
+        labels = [r'$68\%$ CL', r'$95\%$ CL', r'$99.7\%$ CL']
         leg2 = ax.legend(
             handles, labels,
             loc=1, labelspacing=0.1, borderpad=0.2,
@@ -799,6 +801,7 @@ def scan_2d(input_folder, category="cmb", plot_name="scan_2d",threesig=True):
         ax.set_ylabel(r'$\mu^{\tau\tau}$')
         # ax.set_ylim(-1.5, 1.5)
         # ax.set_xlim(-1.5, 1.5)
+        ax.set_xticks([-90, -45, 0, 45, 90])
         print(f"Saving figure as plots/{plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 
@@ -831,7 +834,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         f = uproot.open(path)["limit"]
         df = f.pandas.df([parameter0, parameter1, "deltaNLL","quantileExpected"],
             namedecode="utf-8")
-        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000 ")
+        df = df.query("quantileExpected > -0.5 and deltaNLL < 1000")
         #df = df.query("quantileExpected > -1")
         df = df.loc[~df.duplicated(),:]
         df = df.sort_values(by=[parameter1, parameter0])
@@ -844,9 +847,11 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         z = df.set_index([parameter0, parameter1])["deltaNLL"].unstack().values.T
         # some nans...remove by setting to high value (high NLL)
         # this is only a temp. fix, hopefully fix to Physics model will remove these
-        z[np.isnan(z)] = 100
-        # print(z)
-        
+        z[np.isnan(z)] = 25
+        z[z>25] = 25
+        print(z)
+        print(df)       
+ 
         pos = ax.imshow(
             z, origin='lower', interpolation='bicubic',
             # extent=[xbins[0], xbins[-1], ybins[0], ybins[-1]],
@@ -857,7 +862,10 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         cbar = fig.colorbar(pos, ax=ax)
         cbar.set_label(r'$-2\Delta\log \mathcal{L}$')
         
+        xbins=ybins
         X, Y = np.meshgrid(xbins, ybins)
+        print(xbins)
+        print(ybins)
         ax.contour(
             scipy.ndimage.zoom(X, 4),
             scipy.ndimage.zoom(Y, 4),
@@ -912,7 +920,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
             mpl.lines.Line2D([0], [0], color='black', lw=1, ls='--'),
             mpl.lines.Line2D([0], [0], color='black', lw=1, ls='-.'),
         ]
-        labels = [r'$68\%$ CI', r'$95\%$ CI', r'$99.7\%$ CI']
+        labels = [r'$68\%$ CL', r'$95\%$ CL', r'$99.7\%$ CL']
         leg2 = ax.legend(
             handles, labels,
             loc=1, labelspacing=0.1, borderpad=0.2,
@@ -933,7 +941,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         #    ha='center', va='bottom', transform=ax.transAxes,
         #)
         #ax.text(
-        #    0.68, 0.80, r"$\Gamma=\Gamma_{\mathrm{SM}}$",
+        #    0.68, 0.80, r"$\Gamma=\Gamma(#kappa)$",
         #    ha='center', va='bottom', transform=ax.transAxes,
         #)
 
@@ -942,7 +950,8 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
             ha='center', va='bottom', transform=ax.transAxes,
         )
         ax.text(
-            0.84, 0.15, r"$\Gamma=\Gamma_{\mathrm{SM}}$",
+            #0.84, 0.15, r"$\Gamma=\Gamma(\kappa_{\tau}, \tilde{\kappa}_{\tau}})$",
+            0.78, 0.15, r"$\Gamma=\Gamma(\kappa_{\tau}, \tilde{\kappa}_{\tau})$",
             ha='center', va='bottom', transform=ax.transAxes,
         )
 
@@ -950,6 +959,7 @@ def scan_2d_kappa(input_folder, category="cmb", plot_name="scan_2d_kappa",threes
         ax.set_ylabel(r'$\tilde{\kappa}_{\tau}$')
         ax.set_ylim(-2, 2)
         ax.set_xlim(-2, 2)
+        ax.set_yticks([-2, -1, 0, 1, 2])
         print(f"Saving figure as plots/{plot_name}.pdf")
         pdf.savefig(fig, bbox_inches='tight')
 

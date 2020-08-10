@@ -305,13 +305,17 @@ main_scan['graph'].Draw('PSAME')
 
 if args.POI == 'alpha':
   import scipy.stats
-  significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].Eval(90.)-main_scan['func'].Eval(0.),1),1))
+  significance = np.sign(main_scan['func'].Eval(90.)-main_scan['func'].Eval(0.))*math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(abs(main_scan['func'].Eval(90.)-main_scan['func'].Eval(0.)),1),1))
+  max_significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].GetMaximum(-90,90)-main_scan['func'].GetMinimum(-90,90),1),1))    
+  ps_significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].Eval(90)-main_scan['func'].GetMinimum(-90,90),1),1))    
   latex = ROOT.TLatex()
   latex.SetNDC()
   latex.SetTextSize(0.04)
   latex.SetTextAlign(12)
   latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance)
   print "0^{+} vs 0^{-} = %.3f#sigma" % significance
+  print 'max sigma = ', max_significance
+  print 'best vs CP-odd sigma = ', ps_significance
 
 for other in other_scans:
     if args.breakdown is not None:

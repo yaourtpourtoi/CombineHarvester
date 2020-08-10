@@ -124,11 +124,11 @@ def add_axis(ax):
 def custom_cms_label(ax, label, lumi=35.9, energy=13, extra_label=''):
     ax.text(
         0, 1, r'$\mathbf{CMS}\ \mathit{'+label+'}$',
-        ha='left', va='bottom', transform=ax.transAxes,
+        ha='left', va='bottom', transform=ax.transAxes, fontsize=9
     )
     ax.text(
         1, 1, r'${:.0f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
-        ha='right', va='bottom', transform=ax.transAxes,
+        ha='right', va='bottom', transform=ax.transAxes, fontsize=9
     )
     # label on centre top of axes
     ax.text(
@@ -354,13 +354,16 @@ def draw_1d(
                 ax[0].set_ylim(1e0, ymc_max*1e6)
             elif blind:
                 ax[0].set_ylim(0., ymc_max*2.)
-        ax[0].set_ylabel(r'Events')
+        ax[0].set_ylabel(r'Events/bin')
         #if norm_bins and scale_by_tenthou:
         #    ax[0].set_ylabel(r'$\times 10^5\ \mathrm{Events}\ /\ \mathrm{bin}$')
+        ax[0].set_xticks([0., 90., 180., 270., 360.])
         if norm_bins:
             ax[0].set_ylabel(r'Events/bin')
         #ax[1].set_ylabel(r'Ratio')
-        ax[1].set_ylabel(r'Data/Bkg.')
+        #ax[1].set_ylabel(r'Data/Exp.')
+        #ax[1].set_ylabel(r'Obs./Exp.')
+        ax[1].set_ylabel(r'Data/Exp.')
         
         first_xpos = 0.
         if unrolled:
@@ -374,6 +377,7 @@ def draw_1d(
             ax[1].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=1)
             
             ax[1].set_xticks(list(range(0, binvar0_bins+int(nbins[1]), int(nbins[1]))))
+            #ax[1].set_xticks([0., 90., 180., 270., 360.])
             
             # annotate windows (BDT score)
             widebin_cents = list(range(int(nbins[1]/2), binvar0_bins, int(nbins[1])))
@@ -574,7 +578,7 @@ var_kw_bychannel = {
 
 process_kw={
     "labels": {
-        "SMTotal": "Bkg. Total", 
+        "SMTotal": "Exp. Total", 
         #"Backgrounds": "Bkgs", 
         "Backgrounds": "Minors", 
         "Minors": "Minors", 

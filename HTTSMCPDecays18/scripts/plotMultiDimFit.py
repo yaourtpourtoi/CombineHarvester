@@ -41,7 +41,7 @@ parser.add_argument(
 parser.add_argument(
     '--debug-output', '-d', help="""If specified, write the contour TH2s and
     TGraphs into this output ROOT file""")
-parser.add_argument('--kappa', action='store_true', help='Produce 2D plot for kappa parameterisation', default=True)
+parser.add_argument('--kappa', action='store_true', help='Produce 2D plot for kappa parameterisation', default=False)
 args = parser.parse_args()
 
 #Create canvas and TH2D for each component
@@ -65,10 +65,19 @@ if args.kappa:
   best = plot.TGraphFromTree(
       limit, "kappaH", "kappaA", 'deltaNLL == 0')
 else:
+#  graph = plot.TGraph2DFromTree(
+#      limit, "alpha", "muF", '2*deltaNLL', 'quantileExpected > -0.5 && deltaNLL > 0 && deltaNLL < 1000')
+#  best = plot.TGraphFromTree(
+#      limit, "alpha", "muF", 'deltaNLL == 0')
+#  graph = plot.TGraph2DFromTree(
+#      limit, "muV", "muggH", '2*deltaNLL', 'quantileExpected > -0.5 && deltaNLL > 0 && deltaNLL < 1000')
+#  best = plot.TGraphFromTree(
+#      limit, "muV", "muggH", 'deltaNLL == 0')
+
   graph = plot.TGraph2DFromTree(
-      limit, "alpha", "muF", '2*deltaNLL', 'quantileExpected > -0.5 && deltaNLL > 0 && deltaNLL < 1000')
+      limit, "kappaH", "kappaA", '2*deltaNLL', 'quantileExpected > -0.5 && deltaNLL > 0 && deltaNLL < 1000')
   best = plot.TGraphFromTree(
-      limit, "alpha", "muF", 'deltaNLL == 0')
+      limit, "kappaH", "kappaA", 'deltaNLL == 0')
 plot.RemoveGraphXDuplicates(best)
 hists = plot.TH2FromTGraph2D(graph, method='BinCenterAligned')
 plot.fastFillTH2(hists, graph,interpolateMissing=True)
