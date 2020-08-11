@@ -642,7 +642,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCP2016/shapes/"+input_folder_em+"/";    
     
     
-    VString chns = {"tt"};
+    VString chns = {"mt","tt"};
     if (ttbar_fit) chns.push_back("ttbar");
     if(sync>0) chns = {"mt"};   
 
@@ -1679,13 +1679,17 @@ int main(int argc, char** argv) {
         writer.WriteCards("htt_2017", cb.cp().channel({"em_2017","et_2017","mt_2017","tt_2017","ttbar_2017"})); 
         writer.WriteCards("htt_2018", cb.cp().channel({"em_2018","et_2018","mt_2018","tt_2018","ttbar_2018"})); 
 
-	writer.WriteCards("htt_0jet", cb.cp().bin_id({1}));
-	writer.WriteCards("htt_boosted", cb.cp().bin_id({2}));
-	writer.WriteCards("htt_01jet", cb.cp().bin_id({1,2}));
+	    writer.WriteCards("htt_0jet", cb.cp().bin_id({1}));
+	    writer.WriteCards("htt_boosted", cb.cp().bin_id({2}));
+	    writer.WriteCards("htt_01jet", cb.cp().bin_id({1,2}));
+	    writer.WriteCards("htt_01jet_loosemjj", cb.cp().bin_id({1,2,3,4}));
+	    writer.WriteCards("htt_01jet_loosemjj_2016", cb.cp().bin_id({1,2,3,4}).channel({"em_2016","et_2016","mt_2016","tt_2016"}));
+	    writer.WriteCards("htt_01jet_loosemjj_2017", cb.cp().bin_id({1,2,3,4}).channel({"em_2017","et_2017","mt_2017","tt_2017"}));
+	    writer.WriteCards("htt_01jet_loosemjj_2018", cb.cp().bin_id({1,2,3,4}).channel({"em_2018","et_2018","mt_2018","tt_2018"}));
         writer.WriteCards("htt_01jet_2016", cb.cp().bin_id({1,2}).channel({"em_2016","et_2016","mt_2016","tt_2016"}));
         writer.WriteCards("htt_01jet_2017", cb.cp().bin_id({1,2}).channel({"em_2017","et_2017","mt_2017","tt_2017"}));
         writer.WriteCards("htt_01jet_2018", cb.cp().bin_id({1,2}).channel({"em_2018","et_2018","mt_2018","tt_2018"}));
-	writer.WriteCards("htt_dijet", cb.cp().bin_id({3,4,5,6}));
+	    writer.WriteCards("htt_dijet", cb.cp().bin_id({3,4,5,6}));
         writer.WriteCards("htt_dijet_2016", cb.cp().bin_id({3,4,5,6}).channel({"em_2016","et_2016","mt_2016","tt_2016"}));
         writer.WriteCards("htt_dijet_2017", cb.cp().bin_id({3,4,5,6}).channel({"em_2017","et_2017","mt_2017","tt_2017"}));
         writer.WriteCards("htt_dijet_2018", cb.cp().bin_id({3,4,5,6}).channel({"em_2018","et_2018","mt_2018","tt_2018"}));
@@ -1757,6 +1761,9 @@ int main(int argc, char** argv) {
         writer.WriteCards("tt_mt_2016", cb.cp().channel({"mt_2016","tt_2016"}));
         writer.WriteCards("tt_mt_2017", cb.cp().channel({"mt_2017","tt_2017"}));
         writer.WriteCards("tt_mt_2018", cb.cp().channel({"mt_2018","tt_2018"}));
+
+        writer.WriteCards("tt_0jet", cb.cp().bin_id({1}).channel({"tt_2016","tt_2017","tt_2018"}));
+        writer.WriteCards("mt_0jet", cb.cp().bin_id({1}).channel({"mt_2016","mt_2017","mt_2018"}));
 
         for (auto chn : chns){
           writer.WriteCards("htt_"+chn+"_1_13TeV", cb.cp().channel({chn+"_2016",chn+"_2017",chn+"_2018"}).bin_id({1}));
