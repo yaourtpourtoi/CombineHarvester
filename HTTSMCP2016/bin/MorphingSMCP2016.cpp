@@ -420,7 +420,8 @@ void DecorrelateSyst (ch::CombineHarvester& cb, string name, double correlation,
   } else {
     // remove uncorrelated part if systs are 100% un-correlated
     cb.FilterSysts([&](ch::Systematic *s){
-        return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+        //return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+        return s->name() == name && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
     });
 
   }
@@ -463,7 +464,8 @@ void DecorrelateSystSeperateYears (ch::CombineHarvester& cb, string name, std::v
     } else {
       // remove uncorrelated part if systs are 100% un-correlated
       cb_syst.channel(chans_2016).FilterSysts([&](ch::Systematic *s){
-          return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+          //return s->name().find(name) != std::string::npos && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
+          return s->name() == name && s->name().find("_2016") == std::string::npos && s->name().find("_2017") == std::string::npos && s->name().find("_2018") == std::string::npos;
       });
     }
 
@@ -1341,6 +1343,7 @@ int main(int argc, char** argv) {
       // if the analysis changes the number of jdphi or mass bins (for boosted) category then these need to be changed here also
       int ndphibins = 12;
       int nmassbins = 10;
+      int nmassbins_tt = 9;
 
       std::vector<std::string> jes_systs = {
         "CMS_scale_j_Absolute_13TeV",
@@ -1380,7 +1383,8 @@ int main(int argc, char** argv) {
         // Convert VH processes to lnN
         ConvertShapesToLnN(cb.cp().process({"WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), i, 0.);  
         // group mass bins for boosted categories to get smooth templates
-        SmoothShapes(cb.cp().bin_id({2}), i, nmassbins, false, true, false);
+        SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"},false).bin_id({2}), i, nmassbins, false, true, false);
+        SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}), i, nmassbins_tt, false, true, false);
         // group mass bins for dijet categories to get smooth templates
         SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, false, true);
       }
@@ -1398,8 +1402,11 @@ int main(int argc, char** argv) {
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
       // merge together mass bins for boosted category
-      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
-      SmoothShapes(cb.cp().bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
+
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins_tt, false, true, false);
+      SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqHsm_htt","qqHps_htt","qqHmm_htt","qqH_htt125","qqHsm_htt125","qqHps_htt125","qqHmm_htt125","WH_htt125","ZH_htt125","WHsm_htt125","ZHsm_htt125","WHps_htt125","ZHps_htt125","WHmm_htt125","ZHmm_htt125","WH_htt","ZH_htt","WHsm_htt","ZHsm_htt","WHps_htt","ZHps_htt","WHmm_htt","ZHmm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins_tt, false, true, false);
       // lnN uncertainties for ZL in dijet categories
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).bin_id({3,4,5,6}), "CMS_htt_boson_scale_met_13TeV", 0.);
@@ -1431,7 +1438,8 @@ int main(int argc, char** argv) {
 
     // partially decorrelate the energy scale uncertainties
     cb.cp().RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_e");
-    DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    //DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_e","CMS_scale_embedded_e");
     cb.cp().RenameSystematic(cb,"CMS_scale_mu_13TeV","CMS_scale_m");
     DecorrelateMCAndEMB(cb,"CMS_scale_m","CMS_scale_embedded_m",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
@@ -1508,26 +1516,34 @@ int main(int argc, char** argv) {
 
     Remove13TeVFromNames(cb); 
 
+    // For dyShape uncertainties we need to apply fixes in cases where these are converted to lnN as the conversion to lnN does not take into account the 0.1 scaling of the shape uncertainties
+    cb.cp().syst_name({"CMS_htt_dyShape"}).ForEachSyst([](ch::Systematic *sys) {
+        if (sys->type().find("lnN") != std::string::npos){
+          sys->set_value_d((sys->value_d()-1.)*0.1+1.);
+          sys->set_value_u((sys->value_u()-1.)*0.1+1.);
+        }
+    });
+
     if(mergeSymm) {
 
       //! [part8]
       //// add bbb uncertainties for all backgrounds
       auto bbb = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-      .SetAddThreshold(0.01)
+      .SetAddThreshold(0.)
       .SetMergeThreshold(0.5)
-      //.SetMergeThreshold(0.)
       .SetFixNorm(false);
       bbb.MergeBinErrors(cb.cp().backgrounds());
       bbb.AddBinByBin(cb.cp().backgrounds(), cb);
   
       // add bbb uncertainties for the signal but only if uncertainties are > 5% and only for categories with significant amount of signal events to reduce the total number of bbb uncertainties
-      auto bbb_sig = ch::BinByBinFactory()
-      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
-      .SetAddThreshold(0.05)
-      .SetMergeThreshold(0.0)
-      .SetFixNorm(false);
-      bbb_sig.AddBinByBin(cb.cp().signals(),cb);
+      // neglect bbb uncerts on signal since these are subdominant to background uncerts (would give a 0.5% increase in the total bbb even in the most extream case)
+      //auto bbb_sig = ch::BinByBinFactory()
+      //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_$PROCESS_bbb_bin_$#")
+      //.SetAddThreshold(0.05)
+      //.SetMergeThreshold(0.0)
+      //.SetFixNorm(false);
+      //bbb_sig.AddBinByBin(cb.cp().signals(),cb);
 
       unsigned nxbins = 12; // same dphi binning in each category for now!
 
