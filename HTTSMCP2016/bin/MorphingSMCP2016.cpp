@@ -566,7 +566,6 @@ int main(int argc, char** argv) {
     bool do_jetfakes = true;
     bool do_mva = false;    
     int do_control_plots = 0;
-    bool useJHU = false;
     bool powheg_check = false;
     int sync = 0;
     bool mergeSymm = false;
@@ -594,7 +593,6 @@ int main(int argc, char** argv) {
     ("era", po::value<string>(&era)->default_value("2016,2017,2018"))
     ("ttbar_fit", po::value<bool>(&ttbar_fit)->default_value(false))
     ("powheg_check", po::value<bool>(&powheg_check)->default_value(false))
-    ("useJHU", po::value<bool>(&useJHU)->default_value(false))
     ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
     ("sync", po::value<int>(&sync)->default_value(0));
 
@@ -1104,11 +1102,10 @@ int main(int argc, char** argv) {
     
     map<string, VString> sig_procs;
     sig_procs["ggH"] = {"ggH_ph_htt"};
-    if(!useJHU) sig_procs["qqH"] = {"qqH_htt125","WH_htt125","ZH_htt125"};
-    else sig_procs["qqH"] = {"qqH_sm_htt125","WH_sm_htt125","ZH_sm_htt125"};
+    sig_procs["qqH"] = {"qqH_htt125","WH_htt125","ZH_htt125"};
     if(sync) sig_procs["qqH"] = {"vbf125_powheg","wh125_powheg","zh125_powheg"};
 
-    sig_procs["qqH_BSM"] = {"qqH_mm_htt","qqH_ps_htt","WH_ps_htt","WH_mm_htt","ZH_ps_htt","ZH_mm_htt"};
+    sig_procs["qqH_BSM"] = {"qqH_sm_htt","qqH_mm_htt","qqH_ps_htt","WH_sm_htt","WH_ps_htt","WH_mm_htt","ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"};
     
     sig_procs["ggHCP"] = {"ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt"};
     if(sync) sig_procs["ggHCP"] = {"reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0"};
@@ -1130,11 +1127,11 @@ int main(int argc, char** argv) {
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
             cb.AddProcesses({"*"},   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["qqH"], cats[chn+"_"+year], false); // SM VBF/VH are added as backgrounds
             cb.AddProcesses({"*"},   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["qqH"], cats_cp[chn+"_"+year], false);
- 
-            if(useJHU){
-              cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["qqH_BSM"], cats[chn+"_"+year], true); // Non-SM VBF/VH are added as signal
+
+            if(mergeSymm) {
+              cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["qqH_BSM"], cats[chn+"_"+year], true); 
               cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["qqH_BSM"], cats_cp[chn+"_"+year], true);
-            }
+            } 
 
             if(powheg_check) cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["ggH"], cats[chn+"_"+year], true);  
             else cb.AddProcesses(masses,   {"htt"}, {"13TeV"}, {chn+extra}, sig_procs["ggHCP"], cats[chn+"_"+year], true);
@@ -1173,7 +1170,7 @@ int main(int argc, char** argv) {
                                                              "$BIN/$PROCESS",
                                                              "$BIN/$PROCESS_$SYSTEMATIC");
           if(chn == "em" || chn == "et" || chn == "mt" || chn == "tt"){
-            if(useJHU) {
+            if(mergeSymm) {
               cb.cp().channel({chn+"_"+year}).process(sig_procs["qqH_BSM"]).ExtractShapes(
                                                                       input_dir[chn]+ extra + "htt_"+chn+".inputs-sm-13TeV"+postfix+".root",
                                                                       "$BIN/$PROCESS$MASS",

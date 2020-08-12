@@ -637,6 +637,10 @@ namespace ch {
       
         cb.cp().process({"qqH_htt","qqH_htt125"}).channel({"et","et_2016","et_2017","et_2018","mt","mt_2016","mt_2017","mt_2018","tt","tt_2016","tt_2017","tt_2018","em","em_2016","em_2017","em_2018"}).AddSyst(cb,
                                              "CMS_scale_gg_13TeV", "shape", SystMap<>::init(1.00));
+
+
+        // additional shape uncertainty for qqH JHU samples givene as difference between deltaphi_jj in LO and NLO samples
+        cb.cp().process({"qqH_sm_htt","qqH_sm_htt125","qqH_mm_htt","qqH_mm_htt125","qqH_ps_htt","qqH_ps_htt125"}).bin_id({3,4,5,6}).AddSyst(cb, "VBF_NLOvsLO", "shape", SystMap<>::init(1.00));
  
         //cb.cp().process(ggH_sig_procs).process({"ggH_ph_htt"},false).AddSyst(cb,
         //                                     "CMS_FiniteQuarkMass_13TeV", "shape", SystMap<>::init(1.00)); // this uncertainty takes the difference between the finite top-mass dependence and the EFT

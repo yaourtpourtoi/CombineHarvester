@@ -29,6 +29,8 @@ class CPMixture(PhysicsModel):
                 self.floatAlpha = True
             if po.startswith("do2D"):
                 self.do2D = True
+            if po.startswith("VBFangle"):
+                self.VBFangle = True
 
     def doParametersOfInterest(self):
         """Create POI and other parameters, and define the POI set."""
@@ -121,8 +123,7 @@ class CPMixture(PhysicsModel):
         self.modelBuilder.doVar('muV[1,0,4]')
         if not self.useRate and not self.kappa and not self.do2D:
            self.modelBuilder.doVar('muggH[1,0,10]')
-        if not self.VBFangle: self.modelBuilder.doVar('f[0,-1,1]')
-        else: self.modelBuilder.doVar('beta[0,-90,90]')
+        if self.VBFangle: self.modelBuilder.doVar('beta[0,-90,90]')
 
         self.modelBuilder.doSet('POI', ','.join(poiNames))
 
@@ -174,43 +175,21 @@ class CPMixture(PhysicsModel):
 
         # define scaling for JHU VBF/VH templates as a function of muV,mutautau, and fa3 - this uses VBF definition of fa3 
 
-        if not self.VBFangle:
-          # dont think this works for the VH not sure why - ? becasue cross sections don't scale in the same way for VH and VBF as is assumed in fa3 paremeterization?
-          # i.e sigma_3/sigma_1 not same for WH, VBF and ZH which mean we can have same a1, a3 and muV since muV = a1^2 + a3^2*sigma_3/sigma_1 if sigma_3/sigma_1 changes then soemthing else has to change to compensate
-          self.modelBuilder.factory_('expr::signf("@0/abs(@0)", f)')  
-
-          self.modelBuilder.factory_('expr::a1_qqh("sqrt( (1-abs(@0))*@1 )", f, muV_mutautau)')
-          self.modelBuilder.factory_('expr::a3_qqh("@0*sqrt( abs(@1)*@2*{qqh_sigma1}/{qqh_sigma3} )", signf, f, muV_mutautau)'.format(**params))
-
-          self.modelBuilder.factory_('expr::vbf_sm_scaling("@0*@0 -@0*@1*{a1_qqh_mm}/{a3_qqh_mm}", a1_qqh, a3_qqh)'.format(**params))
-          self.modelBuilder.factory_('expr::vbf_ps_scaling("@1*@1-@0*@1*{a3_qqh_mm}/{a1_qqh_mm}", a1_qqh, a3_qqh)'.format(**params))
-          self.modelBuilder.factory_('expr::vbf_mm_scaling("@0*@1/({a1_qqh_mm}*{a3_qqh_mm})", a1_qqh, a3_qqh)'.format(**params)) 
-
-          self.modelBuilder.factory_('expr::a3_zh("@0*sqrt( abs(@1)*@2*{zh_sigma1}/{zh_sigma3} )", signf, f, muV_mutautau)'.format(**params))
-
-          self.modelBuilder.factory_('expr::zh_sm_scaling("@0*@0 -@0*@1*{a1_zh_mm}/{a3_zh_mm}", a1_qqh, a3_qqh)'.format(**params))
-          self.modelBuilder.factory_('expr::zh_ps_scaling("@1*@1-@0*@1*{a3_zh_mm}/{a1_zh_mm}", a1_qqh, a3_qqh)'.format(**params))
-          self.modelBuilder.factory_('expr::zh_mm_scaling("@0*@1/({a1_zh_mm}*{a3_zh_mm})", a1_qqh, a3_qqh)'.format(**params))
-
-          self.modelBuilder.factory_('expr::wh_sm_scaling("@0*@0 -@0*@1*{a1_wh_mm}/{a3_wh_mm}", a1_qqh, a3_qqh)'.format(**params))
-          self.modelBuilder.factory_('expr::wh_ps_scaling("@1*@1-@0*@1*{a3_wh_mm}/{a1_wh_mm}", a1_qqh, a3_qqh)'.format(**params))
-          self.modelBuilder.factory_('expr::wh_mm_scaling("@0*@1/({a1_wh_mm}*{a3_wh_mm})", a1_qqh, a3_qqh)'.format(**params))
-
-        else:
+        if self.VBFangle:
           self.modelBuilder.factory_('expr::a1_beta("sqrt(@0)*cos(@1/90*{pi}/2)", muV_mutautau, beta)'.format(**params))
           self.modelBuilder.factory_('expr::a3_beta("sqrt(@0)*sin(@1/90*{pi}/2)", muV_mutautau, beta)'.format(**params))
 
           self.modelBuilder.factory_('expr::vbf_sm_scaling("@0*@0 - @0*@1", a1_beta, a3_beta)')
-          self.modelBuilder.factory_('expr::vbf_ps_scaling("(@1*@1 - @0*@1)*{qqh_sigma1}/{qqh_sigma3}", a1_beta, a3_beta)'.format(**params))
-          self.modelBuilder.factory_('expr::vbf_mm_scaling("2*@0*@1*{qqh_sigma1}/{qqh_sigmamm}", a1_beta, a3_beta)'.format(**params))
+          self.modelBuilder.factory_('expr::vbf_ps_scaling("(@1*@1 - @0*@1)", a1_beta, a3_beta)'.format(**params))
+          self.modelBuilder.factory_('expr::vbf_mm_scaling("2*@0*@1", a1_beta, a3_beta)'.format(**params))
 
           self.modelBuilder.factory_('expr::zh_sm_scaling("@0*@0 - @0*@1", a1_beta, a3_beta)')
-          self.modelBuilder.factory_('expr::zh_ps_scaling("(@1*@1 - @0*@1)*{zh_sigma1}/{zh_sigma3}", a1_beta, a3_beta)'.format(**params))
-          self.modelBuilder.factory_('expr::zh_mm_scaling("2*@0*@1*{zh_sigma1}/{zh_sigmamm}", a1_beta, a3_beta)'.format(**params)) 
+          self.modelBuilder.factory_('expr::zh_ps_scaling("(@1*@1 - @0*@1)", a1_beta, a3_beta)'.format(**params))
+          self.modelBuilder.factory_('expr::zh_mm_scaling("2*@0*@1", a1_beta, a3_beta)'.format(**params)) 
        
           self.modelBuilder.factory_('expr::wh_sm_scaling("@0*@0 - @0*@1", a1_beta, a3_beta)')
-          self.modelBuilder.factory_('expr::wh_ps_scaling("(@1*@1 - @0*@1)*{wh_sigma1}/{wh_sigma3}", a1_beta, a3_beta)'.format(**params))
-          self.modelBuilder.factory_('expr::wh_mm_scaling("2*@0*@1*{wh_sigma1}/{wh_sigmamm}", a1_beta, a3_beta)'.format(**params))
+          self.modelBuilder.factory_('expr::wh_ps_scaling("(@1*@1 - @0*@1)", a1_beta, a3_beta)'.format(**params))
+          self.modelBuilder.factory_('expr::wh_mm_scaling("2*@0*@1", a1_beta, a3_beta)'.format(**params))
 
 
     def getYieldScale(self, bin_, process):
@@ -237,47 +216,40 @@ class CPMixture(PhysicsModel):
             if self.ChannelCompatibility: scalings.append('%s' % chan)
 
         if ('qqH' in process or 'WH' in process or 'ZH' in process or 'vbf125_powheg' in process or 'wh125_powheg' in process or 'zh125_powheg' in process) and 'hww' not in process:
-            if "qqH_sm" in process:
-                scalings.append('vbf_sm_scaling')
-            elif "qqH_ps" in process:
-                scalings.append('vbf_ps_scaling')
-            elif "qqH_mm" in process:
-                scalings.append('vbf_mm_scaling')
-            elif "WH_sm" in process:
-                scalings.append('wh_sm_scaling')
-            elif "WH_ps" in process:
-                scalings.append('wh_ps_scaling')
-            elif "WH_mm" in process:
-                scalings.append('wh_mm_scaling')
-            elif "ZH_sm" in process:
-                scalings.append('zh_sm_scaling')
-            elif "ZH_ps" in process:
-                scalings.append('zh_ps_scaling')
-            elif "ZH_mm" in process:
-                scalings.append('zh_mm_scaling')
+            if self.VBFangle:
+              if "qqH_sm" in process:
+                  scalings.append('vbf_sm_scaling')
+              elif "qqH_ps" in process:
+                  scalings.append('vbf_ps_scaling')
+              elif "qqH_mm" in process:
+                  scalings.append('vbf_mm_scaling')
+              elif "WH_sm" in process:
+                  scalings.append('wh_sm_scaling')
+              elif "WH_ps" in process:
+                  scalings.append('wh_ps_scaling')
+              elif "WH_mm" in process:
+                  scalings.append('wh_mm_scaling')
+              elif "ZH_sm" in process:
+                  scalings.append('zh_sm_scaling')
+              elif "ZH_ps" in process:
+                  scalings.append('zh_ps_scaling')
+              elif "ZH_mm" in process:
+                  scalings.append('zh_mm_scaling')
+              else:
+                 scalings.append('Zero')
             else:
-               scalings.append('muV_mutautau')
-
+              if '_sm_' in process or '_mm_' in process or '_ps_' in process:
+                 scalings.append('Zero')
+              else:
+                 scalings.append('muV_mutautau')
         if scalings:
             scaling = '_'.join(scalings)
 
             if self.sm_fix:
-                if "_1_13TeV" in bin_ or "_2_13TeV" in bin_:
+                if "_1_13TeV" in bin_ or "_2_13TeV" in bin_ and 'ggH' in process:
                     # simply this by only take SM template for 0 and 1 jet categories
                     if "ggH_sm" in process or 'reweighted_ggH_htt_0PM' in process: scaling = "muggH_mutautau"
-                    elif "qqH_htt" in process or 'WH_htt' in process or 'ZH_htt' in process: scaling = "muV_mutautau"
                     else: scaling = "Zero"
-
-                    #year = '2016'
-                    #if '2017' in bin_: year = '2017' 
-                    #if "ggH_sm" in process: scaling = "muggH_mutautau_sm_01jetnorm_%s" % year
-                    #else: scaling = "Zero"
-                    #elif "ggH_mm" in process: scaling = "muggH_mutautau_mm_01jetnorm_%s" % year
-                    #elif "ggH_ps" in process: scaling = "muggH_mutautau_ps_01jetnorm_%s" % year
-                    
-                    #if "ggH_sm" in process: scaling = "muggH_mutautau"
-                    #elif "ggH_mm" in process: scaling = "Zero" 
-                    #elif "ggH_ps" in process: scaling = "Zero"
 
             if "ggH_ph_htt" in process: scaling = "muggH_mutautau"
 

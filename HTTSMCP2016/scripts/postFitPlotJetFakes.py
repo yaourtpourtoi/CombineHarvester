@@ -652,14 +652,15 @@ def main(args):
     if int(bin_number) == 2 and manual_blind or auto_blind_check_only:
         x_blind_ind = [ind for ind, x in enumerate(x_bins) if 145 >= int(x) >= 100]
         x_blind_ind1 = []
-        dummy_list = [int(x) for x in np.linspace(10,100,10)]
+        
+        #dummy_list = [int(x) for x in np.linspace(10,100,10)]
+        dummy_list = [int(x) for x in np.linspace(Nxbins,Nxbins*Nxbins,Nxbins)]
         # print dummy_list
         for i in range(0,total_datahist.GetNbinsX()):
             if i in dummy_list:
                 x_blind_ind1 = [x+i for x in x_blind_ind]
                 # print x_blind_ind1
             if i in x_blind_ind or i in x_blind_ind1:
-                # print i
                 blind_datahist.SetBinContent(i+1,-0.1)
                 blind_datahist.SetBinError(i+1,0)
     # for dijet categories:
@@ -890,6 +891,10 @@ def main(args):
             axish[1].GetXaxis().SetMoreLogLabels()
             axish[1].GetXaxis().SetNoExponent()
             if int(bin_number): axish[1].GetXaxis().SetTitleOffset(0.85)
+
+            if bin_number in  ["1"]:
+                axish[0].GetXaxis().SetRangeUser(50.,bkghist.GetXaxis().GetXmax()-0.01)
+                axish[1].GetXaxis().SetRangeUser(50.,bkghist.GetXaxis().GetXmax()-0.01)
  
             if custom_x_range:
                 axish[0].GetXaxis().SetRangeUser(x_axis_min,x_axis_max-0.01)
@@ -1067,10 +1072,10 @@ def main(args):
     #CMS and lumi labels
     plot.FixTopRange(pads[0], plot.GetPadYMax(pads[0]), extra_pad if extra_pad>0 else 0.15)
     if bin_number == "1":
-        #plot.DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 11, 0.045, 0.05, 1.0, '', 1.0)
+        plot.DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 11, 0.045, 0.05, 1.0, '', 1.0)
         plot.DrawTitle(pads[0], lumi, 3)
     else:
-        #plot.DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 0, 0.07, -0.1, 2.0, '', 0.6)
+        plot.DrawCMSLogo(pads[0], 'CMS', 'Preliminary', 0, 0.07, -0.1, 2.0, '', 0.6)
         DrawTitleUnrolled(pads[0], lumi, 3, scale=0.7)
     
     #Add ratio plot if required
