@@ -246,7 +246,7 @@ class CPMixture(PhysicsModel):
             scaling = '_'.join(scalings)
 
             if self.sm_fix:
-                if "_1_13TeV" in bin_ or "_2_13TeV" in bin_ and 'ggH' in process:
+                if ("_1_13TeV" in bin_ or "_2_13TeV" in bin_) and 'ggH' in process:
                     # simply this by only take SM template for 0 and 1 jet categories
                     if "ggH_sm" in process or 'reweighted_ggH_htt_0PM' in process: scaling = "muggH_mutautau"
                     else: scaling = "Zero"
