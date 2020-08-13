@@ -406,9 +406,28 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({1},false).AddSyst(cb, "ff_tt_qcd_met_closure_syst_njets2", "shape", SystMap<>::init(1.00));
 
         // only need these uncertainties once using the dR corrected FFs
-        cb.cp().process({"jetFakes"}).channel({"tt_2016"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2016", "lnN", SystMap<>::init(1.04));
-        cb.cp().process({"jetFakes"}).channel({"tt_2017"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2017", "lnN", SystMap<>::init(1.07));
-        cb.cp().process({"jetFakes"}).channel({"tt_2018"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2018", "lnN", SystMap<>::init(1.06));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2016"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2016", "lnN", SystMap<>::init(1.04));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2017"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2017", "lnN", SystMap<>::init(1.07));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2018"}).AddSyst(cb, "ff_tt_qcd_syst_norm_2018", "lnN", SystMap<>::init(1.06));
+        //
+        // try decorrelating by njets as well as failling GoF tests
+        //cb.cp().process({"jetFakes"}).channel({"tt_2016"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets0_2016", "lnN", SystMap<>::init(1.04));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2016"}).bin_id({1}, false).AddSyst(cb, "ff_tt_qcd_syst_norm_njets1_2016", "lnN", SystMap<>::init(1.04));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2017"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets0_2017", "lnN", SystMap<>::init(1.07));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2017"}).bin_id({1}, false).AddSyst(cb, "ff_tt_qcd_syst_norm_njets1_2017", "lnN", SystMap<>::init(1.07));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2018"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets0_2018", "lnN", SystMap<>::init(1.06));
+        //cb.cp().process({"jetFakes"}).channel({"tt_2018"}).bin_id({1}, false).AddSyst(cb, "ff_tt_qcd_syst_norm_njets1_2018", "lnN", SystMap<>::init(1.06));
+        //
+        // try decorrelating further by njets as well as failling GoF tests
+        cb.cp().process({"jetFakes"}).channel({"tt_2016"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets0_2016", "lnN", SystMap<>::init(1.04));
+        cb.cp().process({"jetFakes"}).channel({"tt_2016"}).bin_id({2}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets1_2016", "lnN", SystMap<>::init(1.04));
+        cb.cp().process({"jetFakes"}).channel({"tt_2016"}).bin_id({1}, false).AddSyst(cb, "ff_tt_qcd_syst_norm_njets2_2016", "lnN", SystMap<>::init(1.04));
+        cb.cp().process({"jetFakes"}).channel({"tt_2017"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets0_2017", "lnN", SystMap<>::init(1.07));
+        cb.cp().process({"jetFakes"}).channel({"tt_2017"}).bin_id({2}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets1_2017", "lnN", SystMap<>::init(1.07));
+        cb.cp().process({"jetFakes"}).channel({"tt_2017"}).bin_id({1}, false).AddSyst(cb, "ff_tt_qcd_syst_norm_njets2_2017", "lnN", SystMap<>::init(1.07));
+        cb.cp().process({"jetFakes"}).channel({"tt_2018"}).bin_id({1}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets0_2018", "lnN", SystMap<>::init(1.06));
+        cb.cp().process({"jetFakes"}).channel({"tt_2018"}).bin_id({2}).AddSyst(cb, "ff_tt_qcd_syst_norm_njets1_2018", "lnN", SystMap<>::init(1.06));
+        cb.cp().process({"jetFakes"}).channel({"tt_2018"}).bin_id({1}, false).AddSyst(cb, "ff_tt_qcd_syst_norm_njets2_2018", "lnN", SystMap<>::init(1.06));
 
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "ff_tt_sub_syst", "shape", SystMap<>::init(1.00));
 
