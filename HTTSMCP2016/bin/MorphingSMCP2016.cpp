@@ -1375,9 +1375,9 @@ int main(int argc, char** argv) {
         // all tt channel MC backgrounds except Higgs to lnN
         ConvertShapesToLnN(cb.cp().backgrounds().process({"TTT","VVT","EWKZ","ZL","Wfakes"}).channel({"tt","tt_2017","tt_2016","tt_2018"}), i, 0.);
         // EWKZ and ZLL (em channel) always small so convert to lnN
-        ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ","ZLL"}), i, 0.);
+        ConvertShapesToLnN(cb.cp().backgrounds().process({"EWKZ","ZLL","W","Wfakes"}), i, 0.);
         // all backgrounds except ttbar and Higgs to lnN for dijet categories
-        ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3,4,5,6}).process({"W","VVT","VV","ZLL","ZL","EWKZ"}), i, 0.);
+        ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3,4,5,6}).process({"W","Wfakes","VVT","VV","ZLL","ZL","EWKZ"}), i, 0.);
         // Convert VH processes to lnN
         ConvertShapesToLnN(cb.cp().process({"WH_htt125","ZH_htt125","WH_sm_htt125","ZH_sm_htt125","WH_ps_htt125","ZH_ps_htt125","WH_mm_htt125","ZH_mm_htt125","WH_htt","ZH_htt","WH_sm_htt","ZH_sm_htt","WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt"}), i, 0.);  
         // group mass bins for boosted categories to get smooth templates
@@ -1397,8 +1397,10 @@ int main(int argc, char** argv) {
       // MET response and resolution uncertainties for recoil corrected samples
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZLL","W"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
       ConvertShapesToLnN(cb.cp().backgrounds().process({"ZLL","W"}).channel({"em","em_2016","em_2017","em_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
-      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
+      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_reso_met_13TeV", 0.);
+      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}), "CMS_htt_boson_scale_met_13TeV", 0.);
+      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes"}).bin_id({3,4,5,6}), "CMS_htt_boson_scale_met_13TeV", 0.);
+      ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes"}).bin_id({2,3,4,5,6}), "CMS_htt_boson_reso_met_13TeV", 0.);
       // merge together mass bins for boosted category
       SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqH_sm_htt","qqH_ps_htt","qqH_mm_htt","qqH_htt125","qqH_sm_htt125","qqH_ps_htt125","qqH_mm_htt125","WH_htt125","ZH_htt125","WH_sm_htt125","ZH_sm_htt125","WH_ps_htt125","ZH_ps_htt125","WH_mm_htt125","ZH_mm_htt125","WH_htt","ZH_htt","WH_sm_htt","ZH_sm_htt","WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt"}), "CMS_htt_boson_reso_met_13TeV", nmassbins, false, true, false);
       SmoothShapes(cb.cp().channel({"tt_2016","tt_2017","tt_2018"}, false).bin_id({2}).process({"ZL","ggH_sm_htt", "ggH_mm_htt", "ggH_ps_htt","reweighted_ggH_htt_0PM","reweighted_ggH_htt_0Mf05ph0","reweighted_ggH_htt_0M","qqH_htt","qqH_sm_htt","qqH_ps_htt","qqH_mm_htt","qqH_htt125","qqH_sm_htt125","qqH_ps_htt125","qqH_mm_htt125","WH_htt125","ZH_htt125","WH_sm_htt125","ZH_sm_htt125","WH_ps_htt125","ZH_ps_htt125","WH_mm_htt125","ZH_mm_htt125","WH_htt","ZH_htt","WH_sm_htt","ZH_sm_htt","WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt"}), "CMS_htt_boson_scale_met_13TeV", nmassbins, false, true, false);
@@ -1419,7 +1421,8 @@ int main(int argc, char** argv) {
       std::vector<std::string> systs_ES = {"CMS_scale_t_1prong_13TeV","CMS_scale_t_1prong1pizero_13TeV","CMS_scale_t_3prong_13TeV","CMS_scale_t_3prong1pizero_13TeV","CMS_scale_e_13TeV","CMS_scale_mu_13TeV","CMS_ZLShape_et_1prong_13TeV", "CMS_ZLShape_et_1prong1pizero_13TeV", "CMS_ZLShape_mt_1prong_13TeV", "CMS_ZLShape_mt_1prong1pizero_13TeV"};
       for (auto i : systs_ES) {
         SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, true, false);
-        ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes"}).channel({"tt_2016","tt_2017","tt_2018","mt_2016","mt_2017","mt_2018"}).bin_id({3,4,5,6}), i, 0.);
+        ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes","W","ZLL","VVT"}).bin_id({3,4,5,6}), i, 0.);
+        ConvertShapesToLnN(cb.cp().backgrounds().process({"TTT"}).channel({"em_2016","em_2017","em_2018"},false).bin_id({3,4,5,6}), i, 0.);
       }
 
       // merge sjdphi bins for FF subraction systematics

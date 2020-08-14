@@ -28,7 +28,7 @@ namespace ch {
         //
         
         
-        std::vector<std::string> sig_procs = {"ggH_htt","qqH_htt","WH_htt","ZH_htt","reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0","qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt","vbf125_powheg","qqH_sm_htt125", "qqH_ps_htt", "qqH_mm_htt","wh125_powheg","zh125_powheg","WH_sm_htt125","ZH_sm_htt125", "WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt","WH_sm_htt","ZH_sm_htt","WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt", "ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt" ,"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
+        std::vector<std::string> sig_procs = {"ggH_htt","qqH_htt","qqH_htt125","WH_htt","WH_htt125","ZH_htt","ZH_htt125","reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0","qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt","vbf125_powheg","qqH_sm_htt125", "qqH_ps_htt", "qqH_mm_htt","wh125_powheg","zh125_powheg","WH_sm_htt125","ZH_sm_htt125", "WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt","WH_sm_htt","ZH_sm_htt","WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt", "ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt" ,"qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
         std::vector<std::string> ggH_sig_procs = {"ggH_htt","reweighted_ggH_htt_0PM", "reweighted_ggH_htt_0M", "reweighted_ggH_htt_0Mf05ph0","ggHsm_jhu_htt","ggHps_jhu_htt","ggHmm_jhu_htt","ggH_ph_htt","ggH_sm_htt", "ggH_ps_htt", "ggH_mm_htt"};
         std::vector<std::string> qqH_sig_procs = {"qqH_htt","qqH_htt125","qqH_sm_htt", "qqH_ps_htt", "qqH_mm_htt", "vbf125_powheg","qqH_sm_htt125", "qqH_ps_htt125", "qqH_mm_htt125"};
         
