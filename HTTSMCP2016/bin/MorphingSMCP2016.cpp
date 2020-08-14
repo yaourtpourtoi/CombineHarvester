@@ -1419,6 +1419,7 @@ int main(int argc, char** argv) {
       std::vector<std::string> systs_ES = {"CMS_scale_t_1prong_13TeV","CMS_scale_t_1prong1pizero_13TeV","CMS_scale_t_3prong_13TeV","CMS_scale_t_3prong1pizero_13TeV","CMS_scale_e_13TeV","CMS_scale_mu_13TeV","CMS_ZLShape_et_1prong_13TeV", "CMS_ZLShape_et_1prong1pizero_13TeV", "CMS_ZLShape_mt_1prong_13TeV", "CMS_ZLShape_mt_1prong1pizero_13TeV"};
       for (auto i : systs_ES) {
         SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, true, false);
+        ConvertShapesToLnN(cb.cp().backgrounds().process({"ZL","Wfakes"}).channel({"tt_2016","tt_2017","tt_2018","mt_2016","mt_2017","mt_2018"}).bin_id({3,4,5,6}), i, 0.);
       }
 
       // merge sjdphi bins for FF subraction systematics
