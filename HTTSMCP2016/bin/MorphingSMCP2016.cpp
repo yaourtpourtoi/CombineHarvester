@@ -1416,7 +1416,7 @@ int main(int argc, char** argv) {
       ConvertShapesToLnN(cb.cp().bin_id({3,4,5,6}).process({"WH_htt125","ZH_htt125","WH_sm_htt125","ZH_sm_htt125","WH_ps_htt125","ZH_ps_htt125","WH_mm_htt125","ZH_mm_htt125","WH_htt","ZH_htt","WH_sm_htt","ZH_sm_htt","WH_ps_htt","ZH_ps_htt","WH_mm_htt","ZH_mm_htt"}), "CMS_htt_boson_scale_met_13TeV", 0.);
 
       // tau ES / electron uncertainties. Keep these as shape uncertainties but for the dijet categpory group jdphi bins together to improve statistics
-      std::vector<std::string> systs_ES = {"CMS_scale_t_1prong_13TeV","CMS_scale_t_1prong1pizero_13TeV","CMS_scale_t_3prong_13TeV","CMS_scale_t_3prong1pizero_13TeV","CMS_scale_e_13TeV","CMS_scale_mu_13TeV"};
+      std::vector<std::string> systs_ES = {"CMS_scale_t_1prong_13TeV","CMS_scale_t_1prong1pizero_13TeV","CMS_scale_t_3prong_13TeV","CMS_scale_t_3prong1pizero_13TeV","CMS_scale_e_13TeV","CMS_scale_mu_13TeV","CMS_ZLShape_et_1prong_13TeV", "CMS_ZLShape_et_1prong1pizero_13TeV", "CMS_ZLShape_mt_1prong_13TeV", "CMS_ZLShape_mt_1prong1pizero_13TeV"};
       for (auto i : systs_ES) {
         SmoothShapes(cb.cp().bin_id({3,4,5,6}), i, ndphibins, false, true, false);
       }
