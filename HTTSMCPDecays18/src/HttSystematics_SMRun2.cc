@@ -1044,12 +1044,13 @@ namespace ch {
         // Add back later!
         
         cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,4}).AddSyst(cb,
-                                                         "CMS_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
+                                                         "CMS_htt_ZLShape_et_1prong_13TeV", "shape", SystMap<>::init(1.00));
         cb.cp().process( {"ZL"}).channel({"et","et_2016","et_2017","et_2018"}).bin_id({1,2,3,6}).AddSyst(cb,
-                                                         "CMS_ZLShape_et_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4,40}).AddSyst(cb,
+                                                         "CMS_htt_ZLShape_et_1prong1pizero_13TeV", "shape", SystMap<>::init(1.00));
+
+        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}).AddSyst(cb,
                                                          "CMS_htt_ZLShape_mt_1prong_13TeV", "shape", SystMap<>::init(1.00));
-        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,6,30,60}).AddSyst(cb,
+        cb.cp().process( {"ZL"}).channel({"mt","mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,6}).AddSyst(cb,
                                                          "CMS_htt_ZLShape_mt_1prong1pi_13TeV", "shape", SystMap<>::init(1.00));
        
         cb.cp().process({"ZL","EWKZ"}).channel({"mt_2016"}).bin_id({1}).AddSyst(cb, "CMS_htt_mFakeTau_MVADM0_13TeV", "lnN", SystMap<>::init(1.11));
