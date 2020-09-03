@@ -314,7 +314,8 @@ int main(int argc, char* argv[]) {
     map<string, TH1F> post_shapes_tot;
 
     if(total_shapes){
-      post_shapes_tot["data_obs"] = cmb.GetObservedShape();
+      if (datacard != "") post_shapes_tot["data_obs"] = cmb_card.cp().GetObservedShape(); 
+      else post_shapes_tot["data_obs"] = cmb.GetObservedShape();
       // Fill the total sig. and total bkg. hists
       auto cmb_bkgs = cmb.cp().backgrounds();
       auto cmb_sigs = cmb.cp().signals();
@@ -349,7 +350,8 @@ int main(int argc, char* argv[]) {
 
     for (auto bin : bins) {
       ch::CombineHarvester cmb_bin = cmb.cp().bin({bin});
-      post_shapes[bin]["data_obs"] = cmb_bin.GetObservedShape();
+      if (datacard != "") post_shapes[bin]["data_obs"] = cmb_card.cp().bin({bin}).GetObservedShape();
+      else post_shapes[bin]["data_obs"] = cmb_bin.GetObservedShape();
       for (auto proc : cmb_bin.process_set()) {
         auto cmb_proc = cmb_bin.cp().process({proc});
         // Method to get the shape uncertainty depends on whether we are using

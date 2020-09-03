@@ -170,6 +170,7 @@ parser.add_argument('--envelope', action='store_true', help='do envelope plot')
 parser.add_argument('--upper-cl', type=float, help='quote upper limit instead')
 parser.add_argument('--chop', type=float, default=100., help='remove vals above')
 parser.add_argument('--y-max', type=float, default=8., help='max y to draw')
+parser.add_argument('--y-min', type=float, default=0., help='max y to draw')
 parser.add_argument('--x-max', type=float, default=None, help='max x to draw')
 parser.add_argument('--x-min', type=float, default=None, help='min x to draw')
 parser.add_argument('--remove-near-min', type=float, help='remove points with this fraction of the average x-spacing to the best-fit point')
@@ -248,7 +249,7 @@ main_scan['graph'].Draw('AP') #'APL'
 axishist = plot.GetAxisHist(pads[0])
 # axishist.SetMinimum(1E-5)
 # pads[0].SetLogy(True)
-axishist.SetMinimum(0.)
+axishist.SetMinimum(args.y_min)
 axishist.SetMaximum(args.y_max)
 axishist.GetYaxis().SetTitle("- 2 #Delta ln L")
 axishist.GetXaxis().SetTitle("%s" % fixed_name)
@@ -304,13 +305,17 @@ main_scan['graph'].Draw('PSAME')
 
 if args.POI == 'alpha':
   import scipy.stats
-  significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].Eval(90.)-main_scan['func'].Eval(0.),1),1))
+  significance = np.sign(main_scan['func'].Eval(90.)-main_scan['func'].Eval(0.))*math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(abs(main_scan['func'].Eval(90.)-main_scan['func'].Eval(0.)),1),1))
+  max_significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].GetMaximum(-90,90)-main_scan['func'].GetMinimum(-90,90),1),1))    
+  ps_significance = math.sqrt(scipy.stats.chi2.ppf(scipy.stats.chi2.cdf(main_scan['func'].Eval(90)-main_scan['func'].GetMinimum(-90,90),1),1))    
   latex = ROOT.TLatex()
   latex.SetNDC()
   latex.SetTextSize(0.04)
   latex.SetTextAlign(12)
   latex.DrawLatex(.7,.9,"0^{+} vs 0^{-} = %.2f#sigma" % significance)
   print "0^{+} vs 0^{-} = %.3f#sigma" % significance
+  print 'max sigma = ', max_significance
+  print 'best vs CP-odd sigma = ', ps_significance
 
 for other in other_scans:
     if args.breakdown is not None:
@@ -526,7 +531,8 @@ if len(other_scans) >= 3:
         legend = ROOT.TLegend(0.46, 0.7, 0.95, 0.93, '', 'NBNDC')
         legend.SetNColumns(2)
 
-if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha = %.1f#circ{}^{#plus %.1f#circ}_{#minus %.1f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
+#if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha = %.1f#circ{}^{#plus %.1f#circ}_{#minus %.1f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
+if args.POI == 'alpha': legend.AddEntry(main_scan['func'], args.main_label + ': #alpha = %.5f#circ{}^{#plus %.5f#circ}_{#minus %.5f#circ}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 else: legend.AddEntry(main_scan['func'], args.main_label + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (val_nom[0], val_nom[1], abs(val_nom[2])), 'L')
 for i, other in enumerate(other_scans):
     #legend.AddEntry(other['func'], other_scans_opts[i][1] + ': %.2f{}^{#plus %.2f}_{#minus %.2f}' % (other['val'][0], other['val'][1], abs(other['val'][2])), 'L')

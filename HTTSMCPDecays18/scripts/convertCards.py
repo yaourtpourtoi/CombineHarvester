@@ -52,6 +52,22 @@ cp_bins = {
         "mt_mu0a1_fakes_201$": 4,
 }
 
+ss_bins = {
+
+        "tt_201$_zttEmbed": 1,
+        "tt_201$_jetFakes": 1,
+        "tt_201$_higgs_Rho_Rho": 10,
+        "tt_201$_higgs_0A1_Rho_and_0A1_0A1": 4,
+        "tt_201$_higgs_A1_Rho": 4,
+        "tt_201$_higgs_A1_A1": 4,
+        "tt_201$_higgs_Pi_Rho_Mixed": 10,
+        "tt_201$_higgs_Pi_Pi": 4,
+        "tt_201$_higgs_Pi_A1_Mixed": 4,
+        "tt_201$_higgs_Pi_0A1_Mixed": 4,
+        "tt_201$_higgs_A1_0A1": 4,
+        "tt_201$_zttEmbed_Rho_Rho": 10,
+}
+
 def MergeXBins(hist, nxbins):
   histnew = hist.Clone()
   nbins = hist.GetNbinsX()
@@ -184,6 +200,28 @@ def getHistogramAndWriteToFile(infile,outfile,dirname,write_dirname):
           histo.Write()
           ROOT.gDirectory.cd('/')
 
+def MergeWH(infile,outfile,dirname):
+    directory = infile.Get(dirname)
+    year='2018'
+    if '2016' in dirname: year='2016'
+    if '2017' in dirname: year='2017'
+    for key in directory.GetListOfKeys():
+        histo = directory.Get(key.GetName()).Clone()
+        if 'WplusH' not in key.GetName(): continue
+        if isinstance(histo,ROOT.TH1D) or isinstance(histo,ROOT.TH1F):
+          print histo.GetName()
+          histo2 = directory.Get(key.GetName().replace('plus','minus'))
+          print histo, histo2
+          print histo.Integral(), histo2.Integral()
+          histo.Add(histo2)
+          print histo.Integral()
+          outfile.cd()
+          if not ROOT.gDirectory.GetDirectory(dirname): ROOT.gDirectory.mkdir(dirname)
+          ROOT.gDirectory.cd(dirname)
+          print 'Writing ', dirname, histo.GetName()
+          histo.Write(key.GetName().replace('plus',''), ROOT.TObject.kOverwrite)
+          ROOT.gDirectory.cd('/')
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--file', '-f', help= 'File from which we want to merge X bins')
 args = parser.parse_args()
@@ -198,4 +236,60 @@ for key in original_file.GetListOfKeys():
         #if 'murho' not in key.GetName() or 'sig' not in key.GetName(): continue
         dirname=key.GetName()
         getHistogramAndWriteToFile(original_file,output_file,key.GetName(),dirname)
+        #MergeWH(output_file,output_file,dirname)
+
+for key in output_file.GetListOfKeys():
+  if isinstance(output_file.Get(key.GetName()),ROOT.TDirectory):
+    dirname=key.GetName()
+    if not dirname.startswith('tt_') or '_ss' in dirname: continue
+    year='2018'
+    if '2016' in dirname: year='2016'
+    if '2017' in dirname: year='2017'
+    if dirname.replace(year,'201$') not in cp_bins: continue
+    print 'Making SS closure systematic for: ', dirname 
+    directory = output_file.Get(dirname)
+    if not isinstance(original_file.Get(dirname+'_ss'),ROOT.TDirectory): continue
+    directory_ss = original_file.Get(dirname+'_ss')
+    nom = directory.Get('jetFakes')
+    ss = directory_ss.Get('jetFakes')
+    ss_data = directory_ss.Get('data_obs')
+    ss_data.Add(directory_ss.Get('EmbedZTT'),-1)
+    ss_data.Add(directory_ss.Get('TTT'),-1)
+    ss_data.Add(directory_ss.Get('VVT'),-1)
+    ss_data.Add(directory_ss.Get('ZL'),-1)
+    ss_data.Add(directory_ss.Get('Wfakes'),-1)
+
+    nxbins = cp_bins[dirname.replace(year,'201$')]
+    ss =  MergeXBins(ss,nxbins)    
+    ss_data =  MergeXBins(ss_data,nxbins)    
+
+    for i in range(1,ss.GetNbinsX()+1):
+      c1 = ss_data.GetBinContent(i)
+      c2 = ss.GetBinContent(i)
+      if c1<=0 or c2 <=0:
+        print 'found 0 or negative for: ', dirname
+        print c1, c2 
+        ss_data.SetBinContent(i,1.0)
+        ss.SetBinContent(i,1.0)
+
+    ss.Divide(ss_data)
+
+    syst_up = nom.Clone()
+    syst_down = nom.Clone()
+
+    #syst_up.SetName('jetFakes_SS_closure_'+dirname+'Up')
+    #syst_down.SetName('jetFakes_SS_closure_'+dirname+'Down')
+
+    syst_up.SetName('jetFakes_ff_SS_closureUp')
+    syst_down.SetName('jetFakes_ff_SS_closureDown')
+
+    syst_up.Multiply(ss)
+    syst_down.Divide(ss)
+
+    output_file.cd()
+    ROOT.gDirectory.cd(dirname)
+
+    syst_up.Write()
+    syst_down.Write()
+
 

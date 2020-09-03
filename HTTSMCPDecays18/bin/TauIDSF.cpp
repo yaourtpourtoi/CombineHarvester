@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
 
     //for tight deeptauVsEle (et channel)
     string output_folder = "et_datacards_output/"; //easier to use output option though
-    string input_folder_mt="IC/et_datacards/"; 
+    string input_folder_mt="IC/new_et_datacards/"; 
     string input_folder_zmm="IC/et_datacards/";
     
     //for VVLoose deeptauVsEle (mt&tt channel)

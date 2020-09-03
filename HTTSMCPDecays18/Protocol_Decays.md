@@ -4,13 +4,18 @@ ulimit -s unlimited
 
 # Creating datacard
 
-    MorphingSMCPDecays18 --output_folder="cpdecay2017" --postfix="-2D" 
+    MorphingSMCPDecays18 --output_folder="pas_1206_v2" --mergeXbbb=true 
 
 the option --no_shape_systs=true can be used as well to remove all shape uncertainties except for bbb's
 
 # Building the workspaces:
+(combined sub folder only)
 
-    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/test_cp/cmb/* -o ws.root --parallel 8
+    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/pas_1206_v2/cmb/* -o ws.root --parallel 8
+
+(or to build all subdirectories)
+
+    combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/pas_1206_v2/*/* -o ws.root --parallel 8
 
 # Run maximum likelihood scan
 
@@ -22,6 +27,13 @@ the option --no_shape_systs=true can be used as well to remove all shape uncerta
     `--job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" --split-points 1`
     To run on lx batch use:
     `--job-mode lxbatch --sub-opts '-q 1nh --split-points 1'
+
+    Useful option to save all nuisance parameter values when performing MultiDimFit (and doesn't seem to cost extra runtime):
+    --saveSpecifiedNuis all
+
+for this fit and others when running on data it helps to define fall back algorithms with higher tolerance, e.g:
+
+--cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --cminFallbackAlgo Minuit2,Migrad,0:1 --cminFallbackAlgo Minuit2,Migrad,0:2 --cminFallbackAlgo Minuit2,Migrad,0:4 --cminFallbackAlgo Minuit2,Migrad,0:10
 
 # Plot scan
 
@@ -44,6 +56,65 @@ run files (note i would use batch jobs):
   combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,muggH=1,kappaH=1,kappaA=0  --redefineSignalPOIs kappaH,kappaA --points 2000  -d output/merge_sig/cmb/125/ws_kappas.root --algo grid -t -1 --there -n .kappas --alignEdges 1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=1
 
 
+# GOF tests for unblinding
+
+KS tests
+
+(note when unblinding the data in stages change cmb accordingly!)
+Also change job-mode options if you are not running on IC batch!
+
+Run toys for all cats seperatly:
+
+   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".KS.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 1 -s 0:500:1 
+
+(this runs 500 jobs with 1 toys each)
+
+Run observed
+   combineTool.py -M GoodnessOfFit --algorithm KS  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".KS" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
+
+Collect results and make plots
+
+    combineTool.py -M CollectGoodnessOfFit --input output/pas_1206_v2/cmb/125/higgsCombine.KS.GoodnessOfFit.mH125.root output/pas_1206_v2/cmb/125/higgsCombine.KS.toys.GoodnessOfFit.mH125.*.root --there -o cmb_KS.json
+
+   python ../CombineTools/scripts/plotGof.py --statistic KS --mass 125.0 cmb_KS.json --title-right="137 fb^{-1} (13 TeV)" --output='-KS'
+
+saturated model tests:
+
+For saturated model we always run seperatly for each category
+
+Run toys for all cats seperatly:
+
+   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/htt_*_13TeV/125/ws.root -n ".saturated.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 50 -s 0:10:1
+
+(this runs 10 jobs per channel/year with 50 toys each)
+ 
+and for combined
+   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".saturated.toys" --fixedSignalStrength=1 --there --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --job-mode 'SGE' --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0" -t 1 -s 0:500:1
+
+(this runs 500 jobs with 1 toys each) 
+
+Run observed
+   combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/htt_*_13TeV/125/ws.root -n ".saturated" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
+and for combined 
+  combineTool.py -M GoodnessOfFit --algorithm saturated  --there -d output/pas_1206_v2/cmb/125/ws.root -n ".saturated" --fixedSignalStrength=1 --setParameters muV=1,alpha=0,muggH=1,mutautau=1
+
+
+Collect output and make plots:
+
+    bins=( "mt_1" "mt_2" "mt_3" "mt_4" "mt_5" "mt_6" "tt_1" "tt_2" "tt_3" "tt_4" "tt_5" "tt_6" "tt_7" "tt_8" "tt_9" "tt_10" "tt_11" )
+    years=( "2016" "2017" "2018" )
+
+    for i in "${bins[@]}"
+    do
+      for j in "${years[@]}"
+      do
+        combineTool.py -M CollectGoodnessOfFit --input output/pas_1206_v2/htt_"$i"_"$j"_13TeV/125/higgsCombine.saturated.GoodnessOfFit.mH125.root output/gof/htt_"$i"_"$j"_13TeV/125/higgsCombine.saturated.toys.GoodnessOfFit.mH125.*.root --there -o "$i"_"$j"_saturated.json
+      python ../CombineTools/scripts/plotGof.py --statistic saturated --mass 125.0 "$i"_"$j"_saturated.json --title-right="137 fb^{-1} (13 TeV)" --output="$i"_"$j"'-saturated'
+      done
+    done
+
+then do same for cmb if you ran this as well
+
 # perform ZTT validation
 
 Morphing step
@@ -56,7 +127,8 @@ T2W
 
 run fits
 
-    combineTool.py -m 125 -M MultiDimFit  -d output/ztt_validation/htt_tt_3_13TeV/125/ws.root  --there -n .r_ztt --saveFitResult --setParameterRanges r=0.999,1.001
+    combineTool.py -m 125 -M MultiDimFit  -d output/ztt_validation/cmb/125/ws.root  --there -n .r_ztt --saveFitResult --setParameterRanges r=0.999,1.001 --expectSignal 1 --cminDefaultMinimizerStrategy=0
+
 
 make plots
 
@@ -115,23 +187,42 @@ Collect output and make plots:
 
 # Run impacts
 
-first perform initial fit:
+First create workspace using top instructions.
 
-  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0'
+Then perform initial fit:
 
-then run impact with:
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doInitialFit --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0
 
-  'combineTool.py -M Impacts -d cmb/125/ws.root -m 125 --robustFit 1 -t -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=0:180:0" --merge=1'
+To run impacts for each systematic on crab (RECOMMENDED):
+First open `custom_crab.py` and edit the workarea name. 
+Make sure you have a valid grid proxy.
+Then run:
+
+    combineTool.py -M Impacts -d ws.root -m 125 --robustFit 1 -t  -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --merge 1 --job-mode crab3 --task-name grid-test-impacts --custom-crab custom_crab.py
+
+Otherwise for SGE batch use:
+
+    combineTool.py -M Impacts -d ws.root -m 125 --robustFit 1 -t  -1  --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0 --setParameterRanges alpha=-90,90  --cminDefaultMinimizerStrategy=0 --merge 1 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0"
+
+Less recommended:
+For lxplus batch use `--job-mode condor --sub-opts='+JobFlavour = "longlunch"` but this is not fully tested (eg. might run out of time).
 
 Collect results:
 
-  `combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json`
+    combineTool.py -M Impacts -d cmb/125/ws.root -m 125 -o impacts.json
 
 Make impact plot:
 
-  `plotImpacts.py -i impacts.json -o impacts`
+    plotImpacts.py -i impacts.json -o impacts
 
-Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+# this seems to help convergence:
+
+combineTool.py -M Impacts -d output/pas_2206/htt_stage2/125/ws.root -m 125 --robustFit 1 --doInitialFit --setParameters alpha=0,muV=1,muggH=1 --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --setParameterRanges muV=-10,10:muggH,-10,10:alpha=-180,180 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP
+
+combineTool.py -M Impacts -d ../output/pas_2206/cmb/125/ws.root -m 125 --robustFit 1 --doFits --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --setParameters alpha=0,muV=1,muggH=1  --cminDefaultMinimizerStrategy=0 --cminDefaultMinimizerTolerance=0.1 --setParameterRanges muV=-10,10:muggH,-10,10:alpha=-180,180 --X-rtd FITTER_NEW_CROSSING_ALGO --X-rtd FITTER_NEVER_GIVE_UP  --merge 1 --job-mode 'SGE'  --prefix-file ic --sub-opts "-q hep.q -l h_rt=3:0:0"
+
+# Perform fits plots/fits/GOF of background only categories unrolled in phiCP bins
+
 This is useful if you want to compare data/MC agreement in these completly unblinded categories
 
 first run morphing (use --backgroundOnly=1 for ZTT categories or =2 for jetFakes category) 
@@ -165,6 +256,7 @@ Run following set-up commands (after sourcing cmsenv as usual):
 
     pip3 install --user --upgrade numpy
     pip3 install --user dftools pysge oyaml uproot
+    pip3 install --user --upgrade dftools
 
 Alternatively, use your private python3 conda environment.
 
@@ -195,29 +287,19 @@ To plot 2D scans of kappa (related to Yukawa couplings) use option `--mode 2d_ka
 First create workspace for category/merged category of interest using above command.
 Then run PostFitShapesFromWorkspace using the workspace.
 
-For prefit both of these steps need to be done with `alpha=0` and `alpha=90` as initial values
-such that we can plot both SM and PS distributions on prefit plots.
-To change these need to do (using vim or any other text editor):
-
-    vim ../CombinePdfs/python/CPMixtureDecays.py
-
-Change `alpha[0,-90,90] --> alpha[90,-90,90]` for PS and rerun command for workspace creation with different workspace name (`ws.root --> ws_ps.root`), eg:
-
     combineTool.py -M T2W -P CombineHarvester.CombinePdfs.CPMixtureDecays:CPMixtureDecays -i output/test_cp/cmb/* -o ws_ps.root --parallel 8
 
-Otherwise, only using Asmiov of SM (`alpha=0`).
 
 ### Producing prefit shapes
+Just use one workspace and produce shapes using `--freeze` option:
 
 For `alpha=0` prefit:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print -o shapes_eff_sm.root
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print --total-shapes-bin=true  -o shapes_eff_sm.root
 
 For `alpha=90` prefit:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws_ps.root --print -o shapes_eff_ps.root
-
-(You can just use the same workspace for the above and use --freeze alpha=90)
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root --print --total-shapes-bin=true --freeze alpha=90 -o shapes_eff_ps.root
 
 For multiple channels, can accelerate prefit shapes by looping over folders and
 create workspace + PostFitShapes for separate bins.
@@ -226,14 +308,25 @@ create workspace + PostFitShapes for separate bins.
 
 Run MultiDimFit and save fit result:
 
-    combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90 --points 21 --redefineSignalPOIs alpha  -d output/test_cp/cmb/125/ws.root --algo none -t -1 --there -n .alpha --saveFitResult
+(the -t -1 has been removed from the command below so be careful if you are not unblinding!)
 
-This will create multidimfit.alpha.root
+combineTool.py -m 125 -M MultiDimFit --setParameters muV=1,alpha=0,muggH=1,mutautau=1 --setParameterRanges alpha=-90,90  --redefineSignalPOIs alpha  -d output/pas_1206_v2/cmb/125/ws.root --algo none  --there -n .bestfit --cminDefaultMinimizerStrategy=0 --saveFitResult
+
+This will create multidimfit.bestfit.root
+
+Note in case of partial unblinding replace cmb with the subdirectory corresponding to the unblinding step
 
 Add `--postfit --sampling -f <fit_result>` to PostFitShapesFromWorkspace command:
 
-    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root -o shapes_eff.root --print --postfit --sampling -f output/30032020_ps/cmb/125/multidimfit.alpha.root:fit_mdf 
+this will produce all plots at once in one root file but it tends to be slow:
 
+    PostFitShapesFromWorkspace -m 125 -d output/merge/cmb/125/combined.txt.cmb -w output/merge/cmb/125/ws.root -o shapes_eff.root --print --postfit --sampling --total-shapes-bin=true -f output/30032020_ps/cmb/125/multidimfit.bestfit.root:fit_mdf 
+
+it is better to produce shapes seperate for each year to speed this up (e.g for tt in 2016):
+
+    PostFitShapesFromWorkspace -m 125 -d output/pas_1202/tt_2016/125/combined.txt.cmb -w output/pas_1202/tt_2016/125/ws.root -o shapes_tt_2016.root --print --postfit --sampling --total-shapes-bin=true -f output/pas_1206_v2/cmb/125/multidimfit.bestfit.root:fit_mdf
+
+If this is still too slow you can produce the shapes for each channel seperatly instead
 
 ### Drawing distributions
 

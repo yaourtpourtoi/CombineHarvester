@@ -9,6 +9,7 @@ import matplotlib as mpl
 import dftools
 import scipy
 import uproot
+import math
 from tqdm.auto import tqdm
 mpl.use('pdf')
 plt.style.use('cms')
@@ -31,18 +32,23 @@ def create_df(
             # Take bin number from data in this case
             nbins = _file["{}/data_obs".format(directory)].numbins
             bin_edges = _file["{}/data_obs".format(directory)].edges
+            factor = 180./math.pi
             df = pd.concat([df, pd.DataFrame({
                 "varname0": ["var"] * nbins,
-                "binvar0": bin_edges[:-1],
-                "binvar1": bin_edges[1:],
+                "binvar0": bin_edges[:-1]*factor,
+                "binvar1": bin_edges[1:]*factor,
                 "sum_w": [1e-10]*nbins,
                 "sum_ww": [1e-10]*nbins, 
                 "parent": process,
             })], axis='index', sort=False)
             continue
         hist = _file["{}/{}".format(directory, process)]
+        factor = 180./math.pi
         bins = hist.bins
+        for i in bins: i*=factor
         bin_edges = hist.edges
+        for i in range(0,len(bin_edges)): bin_edges[i] =bin_edges[i]*factor
+ 
         nbins = hist.numbins
         weights = hist.values
         if process == "data_obs":
@@ -52,7 +58,7 @@ def create_df(
         variance = hist.variances
         if process in bkg_processes:
             variance = (
-                _file["{}/TotalBkg".format(directory)].variances/len(bkg_processes)
+                _file["{}/TotalProcs".format(directory)].variances/len(bkg_processes)
             )
         variance_down = np.zeros_like(variance)
         variance_up = np.zeros_like(variance)
@@ -118,17 +124,22 @@ def add_axis(ax):
 def custom_cms_label(ax, label, lumi=35.9, energy=13, extra_label=''):
     ax.text(
         0, 1, r'$\mathbf{CMS}\ \mathit{'+label+'}$',
-        ha='left', va='bottom', transform=ax.transAxes,
+        ha='left', va='bottom', transform=ax.transAxes, fontsize=9
     )
     ax.text(
         1, 1, r'${:.0f}\ \mathrm{{fb}}^{{-1}}$ ({:.0f} TeV)'.format(lumi, energy),
-        ha='right', va='bottom', transform=ax.transAxes,
+        ha='right', va='bottom', transform=ax.transAxes, fontsize=9
     )
     # label on centre top of axes
     ax.text(
         0.5, 1, extra_label,
         ha='center', va='bottom', transform=ax.transAxes,
     )
+
+def chan_label(ax, label, alpha_label=r'$\alpha^{\rho}_{-} \geq \frac{\pi}{4}$'):
+    # label on centre top of axes
+    ax.text(0.05, 0.88, label,transform=ax.transAxes)
+    ax.text(0.05, 0.76, alpha_label,transform=ax.transAxes)
 
 def draw_signal_ratio(ax, df_, sigs=["H_sm", "H_ps",],):
     
@@ -184,7 +195,7 @@ def draw_1d(
         df["sum_ww"] = df.eval("sum_ww/(binwidth**2)")
         df["sum_ww_down"] = df.eval("sum_ww_down/(binwidth**2)")
         df["sum_ww_up"] = df.eval("sum_ww_up/(binwidth**2)")
-    
+ 
     with mpl.backends.backend_pdf.PdfPages(
         "plots/{}_{}_{}_{}_{}_{}.pdf".format(
             plot_var, nbins[3], channel, year_, category, postfix
@@ -229,9 +240,13 @@ def draw_1d(
         else:
             custom_cms_label(ax[0], "Preliminary", lumi=137)
             
-        
+       
+        chan_label(ax[0], label=nbins[2], alpha_label=nbins[4])
+ 
         # to fix when y axis is too large 
         # (scientific notation starts showing up)
+     
+ 
         if not unrolled and not logy and (df["sum_w"] > 1e5).any():
             scale_by_tenthou = False
             #df["sum_w"] = df.eval("sum_w/1e5")
@@ -239,7 +254,6 @@ def draw_1d(
             #df["sum_ww_down"] = df.eval("sum_ww_down/(1e5**2)")
             #df["sum_ww_up"] = df.eval("sum_ww_up/(1e5**2)")
             
-        
         data_mask = df.index.get_level_values("parent") != "data_obs"
         
         df_data = df.loc[~data_mask,:]
@@ -279,7 +293,7 @@ def draw_1d(
                 ymax *= 1.8
         leg_kw = {
             "offaxis": False, "fontsize": 7, "labelspacing":0.12,
-            "ncol": 2, "loc": 9, "framealpha": 0.,
+            "ncol": 2, "loc": 1, "framealpha": 0.,
         }
         ratio_leg_kw = {
             "fontsize": 7, "labelspacing":0.12,
@@ -340,13 +354,16 @@ def draw_1d(
                 ax[0].set_ylim(1e0, ymc_max*1e6)
             elif blind:
                 ax[0].set_ylim(0., ymc_max*2.)
-        ax[0].set_ylabel(r'Events')
+        ax[0].set_ylabel(r'Events/bin')
         #if norm_bins and scale_by_tenthou:
         #    ax[0].set_ylabel(r'$\times 10^5\ \mathrm{Events}\ /\ \mathrm{bin}$')
+        ax[0].set_xticks([0., 90., 180., 270., 360.])
         if norm_bins:
             ax[0].set_ylabel(r'Events/bin')
         #ax[1].set_ylabel(r'Ratio')
-        ax[1].set_ylabel(r'Data/Bkg.')
+        #ax[1].set_ylabel(r'Data/Exp.')
+        #ax[1].set_ylabel(r'Obs./Exp.')
+        ax[1].set_ylabel(r'Data/Exp.')
         
         first_xpos = 0.
         if unrolled:
@@ -360,6 +377,7 @@ def draw_1d(
             ax[1].vlines(vert_lines, *ax[0].get_ylim(), linestyles='--', colors='black', zorder=1)
             
             ax[1].set_xticks(list(range(0, binvar0_bins+int(nbins[1]), int(nbins[1]))))
+            #ax[1].set_xticks([0., 90., 180., 270., 360.])
             
             # annotate windows (BDT score)
             widebin_cents = list(range(int(nbins[1]/2), binvar0_bins, int(nbins[1])))
@@ -498,7 +516,8 @@ var_kw = {
     "IC_11May2020_max_score": r'BDT score',
     "IC_01Jun2020_max_score": r'BDT score',
     "NN_score": r'NN score',
-    "Bin_number": r'Bin number',
+    #"Bin_number": r'$\phi\mbox{*}_{\mathcal{CP}}$ (degrees)',
+    "Bin_number": r'$\phi_{CP}$ (degrees)',
     "jmva_1": r'PU jet ID',
     "jmva_2": r'PU jet ID',
     "aco_angle_1": r'$\phi\mbox{*}_{\mathcal{CP}}$',
@@ -559,7 +578,7 @@ var_kw_bychannel = {
 
 process_kw={
     "labels": {
-        "SMTotal": "Bkg. Total", 
+        "SMTotal": "Exp. Total", 
         #"Backgrounds": "Bkgs", 
         "Backgrounds": "Minors", 
         "Minors": "Minors", 
@@ -569,6 +588,7 @@ process_kw={
         "Electroweak": "Electroweak",
         "ZTT": r'$\mathrm{Z}\rightarrow\tau\tau$',
         "ZMM": r'$\mathrm{Z}\rightarrow \mu\mu$',
+        "Others": 'Others',
         "ZEE": r'$\mathrm{Z}\rightarrow ee$',
         "jetFakes": r'$\mathrm{jet}\rightarrow \tau_{h}$',
         "EmbedZTT": r'$\mu\rightarrow\tau \ \mathrm{Embed.}$',
@@ -594,6 +614,7 @@ process_kw={
         "ZTT": "#fdb462",
         #"ZMM": "#64C0E8",
         "ZMM": "#93C6D6",
+        "Others": "#93C6D6",
         #"ZEE": "#64C0E8",
         "ZEE": "#93C6D6",
         "jetFakes": "#addd8e",
@@ -640,14 +661,15 @@ nbins_kw = {
         100: [[None], 1, "signal", "signal"],
     },
     "mt": {
-        1: [[None], 1, "embed", "embed"], # embed
-        2: [[None], 1, "fakes", "fakes"], # fakes
-        3: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 10, r'$\mu\rho$', "mu-rho"], # mu-rho
-        4: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 8, r'$\mu\pi$', "mu-pi"], # mu-pi
-        5: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{3\mathrm{pr}}$', "mu-a1"], # mu-a1
-        #6: [[0.0, 0.45, 0.6, 0.7, 0.8, 0.9, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu-0a1
-        6: [[0.0, 0.45, 0.6, 0.8, 1.0], 4, r'$\mu a_{1}^{1\mathrm{pr}}$', "mu-0a1"], # mu-0a1
-        100: [[None], 1, "signal", "signal"],
+        3: [[0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu\rho$',  "ztt_LT_3", r'$\alpha^{\rho}_{-} < \frac{\pi}{4}$'], # embed
+        4: [[0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu\pi$',  "ztt_LT_4", r'$\alpha^{\pi}_{-} < \frac{\pi}{4}$'], # embed
+        5: [[0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu a_{1}^{3\mathrm{pr}}$', "ztt_LT_5", r'$\alpha^{\rho}_{-} < \frac{\pi}{4}$'], # embed
+        6: [[0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu a_{1}^{1\mathrm{pr}}$', "ztt_LT_6", r'$\alpha^{\rho}_{-} < \frac{\pi}{4}$'], # embed
+
+        30: [[ 0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu\rho$',  "ztt_GT_3", r'$\alpha^{\rho}_{-} \geq \frac{\pi}{4}$'], # embed
+        40: [[ 	0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu\pi$',  "ztt_GT_4", r'$\alpha^{\pi}_{-} \geq \frac{\pi}{4}$'], # embed
+        50: [[0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu a_{1}^{3\mathrm{pr}}$', "ztt_GT_5", r'$\alpha^{\rho}_{-} \geq \frac{\pi}{4}$'], # embed
+        60: [[0,12,24,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,216,228,240,252,264,276,288,300,312,324,336,348,360], 1, r'$\mu a_{1}^{1\mathrm{pr}}$', "ztt_GT_6", r'$\alpha^{\rho}_{-} \geq \frac{\pi}{4}$'], # embed
     },}
 
 nllscan_kw = {
