@@ -342,7 +342,7 @@ int main(int argc, char** argv) {
 
     string output_folder = "sm_run2";
     string input_folder_em="IC/";
-    string input_folder_et="IC/";
+    string input_folder_et="DESY/";
     string input_folder_mt="DESY/";
     string input_folder_tt="IC/";
     string input_folder_mm="USCMS/";
@@ -366,7 +366,7 @@ int main(int argc, char** argv) {
     po::options_description config("configuration");
     config.add_options()
     ("input_folder_em", po::value<string>(&input_folder_em)->default_value("IC/"))
-    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("IC/"))
+    ("input_folder_et", po::value<string>(&input_folder_et)->default_value("DESY/"))
     ("input_folder_mt", po::value<string>(&input_folder_mt)->default_value("DESY/"))
     ("input_folder_tt", po::value<string>(&input_folder_tt)->default_value("IC/"))
     ("input_folder_mm", po::value<string>(&input_folder_mm)->default_value("USCMS"))
@@ -406,14 +406,14 @@ int main(int argc, char** argv) {
     // source the input files containing the datacard shapes
     //    string aux_shapes = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/CombineTools/bin/AllROOT_20fb/";
     std::map<string, string> input_dir;
+    
     input_dir["em"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";
     input_dir["mt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_mt+"/";
     input_dir["et"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_et+"/";
     input_dir["tt"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_tt+"/";
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
-    
-    VString chns = {"tt","mt"}; 
+    VString chns = {"tt","mt","et"}; 
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -441,7 +441,6 @@ int main(int argc, char** argv) {
         bkg_procs["mt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes"/*, "EWKZ"*/};
         bkg_procs["tt"] = {"EmbedZTT", "ZL", "TTT", "VVT", "jetFakes", "Wfakes"/*"EWKZ"*/};
       }
-
     }
 
 
@@ -476,6 +475,14 @@ int main(int argc, char** argv) {
         //{100, "mt_sig_2016"}, //Merijn 2006	
 	
       };
+      cats["et_2016"] = {
+        {1, "et_ztt_2016"},
+        {2, "et_fakes_2016"},
+        {3, "et_murho_sig_2016"},
+	{4, "et_mupi_sig_2016"},
+	{5, "et_mua1_sig_2016"},
+	{6, "et_mu0a1_sig_2016"},
+      };
     }  
     if( era.find("2017") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2017"] = {
@@ -501,6 +508,14 @@ int main(int argc, char** argv) {
         {5, "mt_mua1_sig_2017"},
         {6, "mt_mu0a1_sig_2017"},
         //{100, "mt_sig_2017"}, //Merijn 2006	
+      };
+      cats["et_2017"] = {
+        {1, "et_ztt_2017"},
+        {2, "et_fakes_2017"},
+        {3, "et_murho_sig_2017"},
+        {4, "et_mupi_sig_2017"},
+        {5, "et_mua1_sig_2017"},
+        {6, "et_mu0a1_sig_2017"},
       };
     }
     if( era.find("2018") != std::string::npos ||  era.find("all") != std::string::npos) {
@@ -528,6 +543,14 @@ int main(int argc, char** argv) {
         {6, "mt_mu0a1_sig_2018"},
         //{100, "mt_sig_2018"}, //Merijn 2006	
       };
+      cats["et_2018"] = {
+        {1, "et_ztt_2018"},
+        {2, "et_fakes_2018"},
+        {3, "et_murho_sig_2018"},
+        {4, "et_mupi_sig_2018"},
+        {5, "et_mua1_sig_2018"},
+        {6, "et_mu0a1_sig_2018"},
+      };
     }
     
     if(backgroundOnly==1) {
@@ -537,6 +560,12 @@ int main(int argc, char** argv) {
           {4, "mt_mupi_ztt_"+y},
           {5, "mt_mua1_ztt_"+y},
           {6, "mt_mu0a1_ztt_"+y},
+        };
+	cats["et_"+y] = {
+          {3, "et_murho_ztt_"+y},
+          {4, "et_mupi_ztt_"+y},
+          {5, "et_mua1_ztt_"+y},
+          {6, "et_mu0a1_ztt_"+y},
         };
         cats["tt_"+y] = {
           {3, "tt_"+y+"_zttEmbed_Rho_Rho"},
@@ -559,6 +588,12 @@ int main(int argc, char** argv) {
           {4, "mt_mupi_fakes_"+y},
           {5, "mt_mua1_fakes_"+y},
           {6, "mt_mu0a1_fakes_"+y},
+        };
+        cats["et_"+y] = {
+          {3, "et_murho_fakes_"+y},
+          {4, "et_mupi_fakes_"+y},
+          {5, "et_mua1_fakes_"+y},
+          {6, "et_mu0a1_fakes_"+y},
         };
         cats["tt_"+y] = {
           {3, "tt_"+y+"_jetFakes_Rho_Rho"},
@@ -757,7 +792,6 @@ int main(int argc, char** argv) {
          s->set_type("lnN");
       }
   });
-
   // convert systematics to lnN here
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
   cb.cp().RenameSystematic(cb,"CMS_eff_b_13TeV","CMS_btag_comb");
@@ -1358,10 +1392,15 @@ cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
 
      writer.WriteCards("htt_tt", cb.cp().channel({"tt_2016","tt_2018","tt_2017"}));
      writer.WriteCards("htt_mt", cb.cp().channel({"mt_2016","mt_2018","mt_2017"}));
+     writer.WriteCards("htt_et", cb.cp().channel({"et_2016","et_2018","et_2017"}));
 
      writer.WriteCards("htt_bkg_mt_2016", cb.cp().channel({"mt_2016"}).bin_id({1,2}));
      writer.WriteCards("htt_bkg_mt_2017", cb.cp().channel({"mt_2017"}).bin_id({1,2}));
      writer.WriteCards("htt_bkg_mt_2018", cb.cp().channel({"mt_2018"}).bin_id({1,2}));
+
+     writer.WriteCards("htt_bkg_et_2016", cb.cp().channel({"et_2016"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_et_2017", cb.cp().channel({"et_2017"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_et_2018", cb.cp().channel({"et_2018"}).bin_id({1,2}));
      
      writer.WriteCards("htt_bkg_tt_2016", cb.cp().channel({"tt_2016"}).bin_id({1,2}));
      writer.WriteCards("htt_bkg_tt_2017", cb.cp().channel({"tt_2017"}).bin_id({1,2}));
@@ -1369,6 +1408,7 @@ cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
 
      writer.WriteCards("htt_bkg_tt", cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({1,2}));
      writer.WriteCards("htt_bkg_mt", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2}));
+     writer.WriteCards("htt_bkg_et", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2}));
 
 
      writer.WriteCards("htt_ztt", cb.cp().bin_id({1}));
@@ -1442,12 +1482,19 @@ cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
        //writer.WriteCards("htt_mt_2018_3_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,3}));
        //writer.WriteCards("htt_mt_2018_4_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,4}));
        //writer.WriteCards("htt_mt_2018_5_13TeV", cb.cp().channel({"mt_2018"}).bin_id({1,2,5}));
+         
+       writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
+       writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,4}));
+       writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,5}));
+       writer.WriteCards("htt_mt_mu0a1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,6}));
+       writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6}));
+ 
+       writer.WriteCards("htt_et_murho_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,3}));
+       writer.WriteCards("htt_et_mupi_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,4}));
+       writer.WriteCards("htt_et_mua1_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,5}));
+       writer.WriteCards("htt_et_mu0a1_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,6}));
+       writer.WriteCards("htt_et_Combined_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,3,4,5,6}));
 
-       writer.WriteCards("htt_mt_mupi_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3}));
-       writer.WriteCards("htt_mt_murho_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({4,5,6}));
-       writer.WriteCards("htt_mt_mua1_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({7,8,9}));
-       writer.WriteCards("htt_mt_Combined_13TeV", cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).bin_id({1,2,3,4,5,6,7,8,9}));
-          
        writer.WriteCards("htt_bkg", cb.cp().bin_id({1,2}));
 
        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3,7}, false).ForEachObj([&](ch::Object *obj){
