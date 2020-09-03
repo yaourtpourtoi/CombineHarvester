@@ -1016,6 +1016,8 @@ namespace ch {
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({4}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
         cb.cp().process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).bin_id({10}).AddSyst(cb, "ff_tt_mvadm2_closure", "lnN", SystMap<>::init(1.03));
 
+        // for a1-a1 PV method add additional 1% uncertainty to cover SV requirement, this number came from 2016 comparrison so check for 2017 and 2018 also!!
+
         // prefiring
         cb.cp().process(JoinStr({sig_procs, all_mc_bkgs})).channel({"tt","tt_2016","tt_2017","mt","mt_2016","mt_2017","et","et_2016","et_2017"}).AddSyst(cb,
                                              "CMS_PreFire_13TeV", "shape", SystMap<>::init(1.0));
