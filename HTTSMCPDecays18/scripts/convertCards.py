@@ -50,6 +50,21 @@ cp_bins = {
         "mt_mupi_fakes_201$": 8,
         "mt_mua1_fakes_201$": 4,
         "mt_mu0a1_fakes_201$": 4,
+
+        "et_ztt_201$": 1,
+        "et_fakes_201$": 1,
+        "et_murho_sig_201$": 10,
+        "et_mupi_sig_201$": 8,
+        "et_mua1_sig_201$": 4,
+        "et_mu0a1_sig_201$": 4,
+        "et_murho_ztt_201$": 10,
+        "et_mupi_ztt_201$": 8,
+        "et_mua1_ztt_201$": 4,
+        "et_mu0a1_ztt_201$": 4,
+        "et_murho_fakes_201$": 10,
+        "et_mupi_fakes_201$": 8,
+        "et_mua1_fakes_201$": 4,
+        "et_mu0a1_fakes_201$": 4,
 }
 
 ss_bins = {

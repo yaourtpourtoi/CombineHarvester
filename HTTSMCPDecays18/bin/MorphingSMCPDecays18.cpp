@@ -992,7 +992,7 @@ int main(int argc, char** argv) {
      std::vector<unsigned> tt_nxbins = {1,1,16,4,8,4,16,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
 
      tt_nxbins = {1,1,10,4,4,4,10,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
-     mt_nxbins = {1,1,10,1,4,4};
+     mt_nxbins = {1,1,10,1,4,4}; // same binning is used for et channel as well
 
 
 
