@@ -21,7 +21,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(epilog=epilog)
 
     parser.add_argument(
-        "--channel", default="tt", choices=["tt", "mt"],
+        "--channel", default="tt", choices=["tt", "mt","et"],
         help="Which channel to use",
     )
     parser.add_argument(
@@ -107,7 +107,7 @@ def draw1d_cpdecays(
     if embedding and ff:
         if channel == "tt":
             processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes','Wfakes']
-        elif channel == "mt":
+        elif channel == "mt" or channel == "et":
             processes = ['data_obs', 'EmbedZTT', 'ZL', 'TTT', 'VVT', 'jetFakes']
     elif ff:
         processes = ['data_obs', 'ZTT', 'ZL', 'TTT', 'VVT', 'jetFakes', 'EWKZ',]
@@ -134,9 +134,9 @@ def draw1d_cpdecays(
     if channel == "tt":
         bins_to_plot = list(range(1,12))
         bins_to_plot = [1,2,3,7]
-    elif channel == "mt":
+    elif channel == "mt" or channel == "et":
         bins_to_plot = list(range(1,7))
-        bins_to_plot = [1,2,3,4]
+        #bins_to_plot = [1,2,3,4]
     for bin_number in bins_to_plot:
         category = nbins_kw[channel][bin_number][3]
         # Initialise empty and change depending on category bellow
@@ -150,7 +150,7 @@ def draw1d_cpdecays(
             # MVA score plots for background categories
             if channel == "tt":
                 plot_var = "BDT_score"
-            elif channel == "mt":
+            elif channel == "mt" or channel == "et":
                 plot_var = "NN_score"
             partial_blind = False
             blind = False
@@ -160,7 +160,7 @@ def draw1d_cpdecays(
             # signal inclusive category, added blind option
             if channel == "tt":
                 plot_var = "BDT_score"
-            elif channel == "mt":
+            elif channel == "mt" or channel == "et":
                 plot_var = "NN_score"
             partial_blind = False
             blind = True # blind all of data for signal category
