@@ -358,6 +358,7 @@ int main(int argc, char** argv) {
     bool mergeSymm = false; 
     bool control = false; 
     bool prop_plot = false;
+    bool PolVec = false;
     bool savenuisancegroups = false;
     unsigned backgroundOnly = 0; 
 
@@ -383,6 +384,7 @@ int main(int argc, char** argv) {
     ("mergeSymm", po::value<bool>(&mergeSymm)->default_value(false))
     ("control", po::value<bool>(&control)->default_value(false))
     ("prop_plot", po::value<bool>(&prop_plot)->default_value(false))
+    ("PolVec", po::value<bool>(&PolVec)->default_value(false))
     ("savenuisancegroups", po::value<bool>(&savenuisancegroups)->default_value(false))
     ("backgroundOnly", po::value<unsigned>(&backgroundOnly)->default_value(0));
 
@@ -448,6 +450,9 @@ int main(int argc, char** argv) {
     
     map<string,Categories> cats;
 
+   std::string extra_a1_a1_label = "";
+   if(PolVec) extra_a1_a1_label  ="_PolVec";
+   
     if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2016"] = {
         {1, "tt_2016_zttEmbed"},
@@ -455,7 +460,7 @@ int main(int argc, char** argv) {
         {3, "tt_2016_higgs_Rho_Rho"},
         {4, "tt_2016_higgs_0A1_Rho_and_0A1_0A1"},
         {5, "tt_2016_higgs_A1_Rho"},
-        {6, "tt_2016_higgs_A1_A1"},
+        {6, "tt_2016_higgs_A1_A1"+extra_a1_a1_label},
         {7, "tt_2016_higgs_Pi_Rho_Mixed"},
         {8, "tt_2016_higgs_Pi_Pi"},
         {9, "tt_2016_higgs_Pi_A1_Mixed"},
@@ -491,7 +496,7 @@ int main(int argc, char** argv) {
         {3, "tt_2017_higgs_Rho_Rho"},
         {4, "tt_2017_higgs_0A1_Rho_and_0A1_0A1"},
         {5, "tt_2017_higgs_A1_Rho"},
-        {6, "tt_2017_higgs_A1_A1"},
+        {6, "tt_2017_higgs_A1_A1"+extra_a1_a1_label},
         {7, "tt_2017_higgs_Pi_Rho_Mixed"},
         {8, "tt_2017_higgs_Pi_Pi"},
         {9, "tt_2017_higgs_Pi_A1_Mixed"},
@@ -525,7 +530,7 @@ int main(int argc, char** argv) {
         {3, "tt_2018_higgs_Rho_Rho"},
         {4, "tt_2018_higgs_0A1_Rho_and_0A1_0A1"},
         {5, "tt_2018_higgs_A1_Rho"},
-        {6, "tt_2018_higgs_A1_A1"},
+        {6, "tt_2018_higgs_A1_A1"+extra_a1_a1_label},
         {7, "tt_2018_higgs_Pi_Rho_Mixed"},
         {8, "tt_2018_higgs_Pi_Pi"},
         {9, "tt_2018_higgs_Pi_A1_Mixed"}, 
@@ -571,7 +576,7 @@ int main(int argc, char** argv) {
           {3, "tt_"+y+"_zttEmbed_Rho_Rho"},
           {4, "tt_"+y+"_zttEmbed_0A1_Rho_and_0A1_0A1"},
           {5, "tt_"+y+"_zttEmbed_A1_Rho"},
-          {6, "tt_"+y+"_zttEmbed_A1_A1"},
+          {6, "tt_"+y+"_zttEmbed_A1_A1"+extra_a1_a1_label},
           {7, "tt_"+y+"_zttEmbed_Pi_Rho_Mixed"},
           {8, "tt_"+y+"_zttEmbed_Pi_Pi"},
           {9, "tt_"+y+"_zttEmbed_Pi_A1_Mixed"},
@@ -599,7 +604,7 @@ int main(int argc, char** argv) {
           {3, "tt_"+y+"_jetFakes_Rho_Rho"},
           {4, "tt_"+y+"_jetFakes_0A1_Rho_and_0A1_0A1"},
           {5, "tt_"+y+"_jetFakes_A1_Rho"},
-          {6, "tt_"+y+"_jetFakes_A1_A1"},
+          {6, "tt_"+y+"_jetFakes_A1_A1"+extra_a1_a1_label},
           {7, "tt_"+y+"_jetFakes_Pi_Rho_Mixed"},
           {8, "tt_"+y+"_jetFakes_Pi_Pi"},
           {9, "tt_"+y+"_jetFakes_Pi_A1_Mixed"},
@@ -636,6 +641,7 @@ int main(int argc, char** argv) {
     
     using ch::syst::bin_id;
     using ch::JoinStr;
+    using ch::syst::SystMap;
  
     //! [part2]
     for(auto year: years) {
@@ -656,7 +662,14 @@ int main(int argc, char** argv) {
     
     
     ch::AddSMRun2Systematics(cb, 0, ttbar_fit, false);
-    
+   
+    //if doing the PolVec method we also add additional 2% uncertainties for all processes in a1-a1 channel to cover the SV requirement. This is decorrelated for the FF method, embedding, and MC
+    if(PolVec){
+        cb.cp().bin_id({6}).process({"EmbedZTT"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "SV_eff_embed", "lnN", SystMap<>::init(1.02));
+        cb.cp().bin_id({6}).process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "SV_eff_fakes", "lnN", SystMap<>::init(1.02));
+        cb.cp().bin_id({6}).process({"EmbedZTT","jetFakes"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "SV_eff_mc", "lnN", SystMap<>::init(1.02));
+    }
+ 
     if(no_shape_systs==1){
       cb.FilterSysts([&](ch::Systematic *s){
         return s->type().find("shape") != std::string::npos;
@@ -936,14 +949,6 @@ int main(int argc, char** argv) {
       .SetFixNorm(false);
       bbb_ggh.AddBinByBin(cb.cp().signals().process(sig_procs["ggH"]),cb);
 
-      //auto bbb_qqh = ch::BinByBinFactory()
-      //.SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
-      //.SetAddThreshold(0.0)
-      //.SetMergeThreshold(0.0)
-      //.SetFixNorm(false);
-      //bbb_qqh.AddBinByBin(cb.cp().signals().process({"qqH_sm_htt","qqH_ps_htt","qqH_mm_htt"}),cb);
-
-
       auto bbb_qqh_sm = ch::BinByBinFactory()
       .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_qqH_bbb_bin_$#")
       .SetAddThreshold(0.0)
@@ -965,22 +970,6 @@ int main(int argc, char** argv) {
       .SetFixNorm(false);
       bbb_qqh_mm.MergeAndAdd(cb.cp().signals().process({"qqH_mm_htt","WH_mm_htt","ZH_mm_htt"}),cb);
 
-// neglect VH uncerts as they are a small contribution
-
-//      auto bbb_Wh = ch::BinByBinFactory()
-//      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_WH_bbb_bin_$#")
-//      .SetAddThreshold(0.0)
-//      .SetMergeThreshold(0.0)
-//      .SetFixNorm(false);
-//      bbb_qqh.AddBinByBin(cb.cp().signals().process({"WH_sm_htt","WH_ps_htt","WH_mm_htt"}),cb);
-//
-//      auto bbb_Zh = ch::BinByBinFactory()
-//      .SetPattern("CMS_$ANALYSIS_$CHANNEL_$BIN_$ERA_ZH_bbb_bin_$#")
-//      .SetAddThreshold(0.0)
-//      .SetMergeThreshold(0.0)
-//      .SetFixNorm(false);
-//      bbb_qqh.AddBinByBin(cb.cp().signals().process({"ZH_sm_htt","ZH_ps_htt","ZH_mm_htt"}),cb);
-
      //  if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
      //
      //  First we will deal with the catogiries with flat background when all phi_CP bins are merged into 1 (i.e all categories except the mu+pi and pi+pi channels)
@@ -988,12 +977,10 @@ int main(int argc, char** argv) {
      //  Each vector element i corresponds to the number of xbins for bin i+1 
      //  if these numbers aren't set correctly the method won't work so be careful!
      //  Note that the merging is now only performed for the EmbedZTT as this has a flat distribution
-     std::vector<unsigned> mt_nxbins = {1,1,16,1,8,4}; // note setting element 3 to 1 because we dont want to merge bins for mu+pi channel!
-     std::vector<unsigned> tt_nxbins = {1,1,16,4,8,4,16,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
 
-     tt_nxbins = {1,1,10,4,4,4,10,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
-     mt_nxbins = {1,1,10,1,4,4}; // same binning is used for et channel as well
-
+     std::vector<unsigned> tt_nxbins = {1,1,10,4,4,4,10,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
+     std::vector<unsigned> mt_nxbins = {1,1,10,1,4,4}; // same binning is used for et channel as well
+     if(PolVec) tt_nxbins = {1,1,10,4,4,1,10,1,4,4,4};
 
 
      for(auto year: years) {
@@ -1071,10 +1058,7 @@ int main(int argc, char** argv) {
            std::cout << "merging bins for " << ch+"_"+year << " channel for category " << i+1 << ", nxbins set to " << nxbins << std::endl;
            
            auto procs = cb.cp().process(JoinStr({{"jetFakes"},sig_procs["ggH"],sig_procs["qqH"]})).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes and signal
-           if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
-
-           //auto procs = cb.cp().backgrounds().process({"jetFakes"}).channel({ch+"_"+year}).bin_id({(int)i+1}); //for all j->tau fake processes and signal
-           //if((ch == "tt" && i==7) || (ch == "mt" && i==3)) procs = cb.cp().backgrounds().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well
+           if((ch == "tt" && i==7) || (ch == "mt" && i==3) || (ch == "tt" && i==6 && PolVec)) procs = cb.cp().channel({ch+"_"+year}).bin_id({(int)i+1}); //for pi+pi and mu+pi channels include all other processes as well, if doing the PolVec method we want to symmetrise all processes for a1-a1 channel (bin 6)
 
            procs.ForEachProc([&](ch::Process *proc){
              TH1D *nominal = (TH1D*)proc->ClonedShape().get()->Clone();
@@ -1595,7 +1579,8 @@ cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
     for (auto const& bin : bin_set) {
       double phase_shift = false;
       if(bin.find("_mt_") != std::string::npos) phase_shift = true;
-      if(bin.find("_tt_") != std::string::npos && (bin.find("_5_")!=std::string::npos || bin.find("_6_")!=std::string::npos ||  bin.find("_9_")!=std::string::npos || bin.find("_11_")!=std::string::npos) ) phase_shift = true;
+      if(bin.find("_tt_") != std::string::npos && (bin.find("_5_")!=std::string::npos || (!PolVec&&bin.find("_6_")!=std::string::npos) ||  bin.find("_9_")!=std::string::npos || bin.find("_11_")!=std::string::npos) ) phase_shift = true;
+
       int nxbins = (xbins_map.find(bin))->second;
       ch::CombineHarvester cmb_bin = std::move(cb.cp().bin({bin}));
       double muV = 1.;
