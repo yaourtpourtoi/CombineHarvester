@@ -453,7 +453,7 @@ int main(int argc, char** argv) {
 
    std::string extra_a1_a1_label = "";
    if(PolVec) extra_a1_a1_label  ="_PolVec";
-   
+
     if( era.find("2016") != std::string::npos ||  era.find("all") != std::string::npos) {
       cats["tt_2016"] = {
         {1, "tt_2016_zttEmbed"},
@@ -670,7 +670,7 @@ int main(int argc, char** argv) {
         cb.cp().bin_id({6}).process({"jetFakes"}).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "SV_eff_fakes", "lnN", SystMap<>::init(1.02));
         cb.cp().bin_id({6}).process({"EmbedZTT","jetFakes"},false).channel({"tt","tt_2016","tt_2017","tt_2018"}).AddSyst(cb, "SV_eff_mc", "lnN", SystMap<>::init(1.02));
     }
- 
+    
     if(no_shape_systs==1){
       cb.FilterSysts([&](ch::Systematic *s){
         return s->type().find("shape") != std::string::npos;
@@ -971,6 +971,7 @@ int main(int argc, char** argv) {
       .SetFixNorm(false);
       bbb_qqh_mm.MergeAndAdd(cb.cp().signals().process({"qqH_mm_htt","WH_mm_htt","ZH_mm_htt"}),cb);
 
+
      //  if we merge the x-axis bins then we need to rename the bbb uncertainties so that they are correlated properly
      //
      //  First we will deal with the catogiries with flat background when all phi_CP bins are merged into 1 (i.e all categories except the mu+pi and pi+pi channels)
@@ -978,7 +979,6 @@ int main(int argc, char** argv) {
      //  Each vector element i corresponds to the number of xbins for bin i+1 
      //  if these numbers aren't set correctly the method won't work so be careful!
      //  Note that the merging is now only performed for the EmbedZTT as this has a flat distribution
-
      std::vector<unsigned> tt_nxbins = {1,1,10,4,4,4,10,1,4,4,4}; // note setting element 7 to 1 because we dont want to merge bins for pi+pi channel!
      std::vector<unsigned> mt_nxbins = {1,1,10,1,4,4}; // same binning is used for et channel as well
      if(PolVec) tt_nxbins = {1,1,10,4,4,1,10,1,4,4,4};
@@ -1396,6 +1396,9 @@ cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
      writer.WriteCards("htt_bkg_et", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2}));
 
 
+     writer.WriteCards("htt_ztt_et", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1}));
+     writer.WriteCards("htt_fakes_et", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({2}));
+
      writer.WriteCards("htt_ztt", cb.cp().bin_id({1}));
      writer.WriteCards("htt_fakes", cb.cp().bin_id({2}));
 
@@ -1479,7 +1482,13 @@ cb.AddDatacardLineAtEnd(group_map_string.at(groups[0].first).Data());
        writer.WriteCards("htt_et_mua1_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,5}));
        writer.WriteCards("htt_et_mu0a1_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,6}));
        writer.WriteCards("htt_et_Combined_13TeV", cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({1,2,3,4,5,6}));
-
+       for(auto year: years){
+	 writer.WriteCards("htt_et_murho_"+year+"_13TeV", cb.cp().channel({"et_"+year}).bin_id({1,2,3}));
+	 writer.WriteCards("htt_et_mupi_"+year+"_13TeV", cb.cp().channel({"et_"+year}).bin_id({1,2,4}));
+	 writer.WriteCards("htt_et_mua1_"+year+"_13TeV", cb.cp().channel({"et_"+year}).bin_id({1,2,5}));
+	 writer.WriteCards("htt_et_mu0a1_"+year+"_13TeV", cb.cp().channel({"et_"+year}).bin_id({1,2,6}));
+	 writer.WriteCards("htt_et_Combined_"+year+"_13TeV", cb.cp().channel({"et_"+year}).bin_id({1,2,3,4,5,6}));
+       }
        writer.WriteCards("htt_bkg", cb.cp().bin_id({1,2}));
 
        cb.cp().channel({"tt_2016","tt_2017","tt_2018"}).bin_id({3,7}, false).ForEachObj([&](ch::Object *obj){
