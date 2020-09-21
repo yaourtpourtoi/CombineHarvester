@@ -807,6 +807,10 @@ int main(int argc, char** argv) {
       }
   });
   // convert systematics to lnN here
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_efake_et_MVADM0_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_efake_et_MVADM1_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_efake_et_MVADM2_13TeV", 0.);
+  ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_efake_et_MVADM10_13TeV", 0.);
   ConvertShapesToLnN(cb.cp().backgrounds(), "CMS_eff_b_13TeV", 0.);
   cb.cp().RenameSystematic(cb,"CMS_eff_b_13TeV","CMS_btag_comb");
 
