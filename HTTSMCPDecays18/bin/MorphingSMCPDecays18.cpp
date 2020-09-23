@@ -416,7 +416,7 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     VString chns = {"tt","mt","et"}; 
-    //VString chns = {"tt"}; 
+    //VString chns = {"tt","mt"}; 
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -863,17 +863,22 @@ int main(int argc, char** argv) {
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"ZL","Wfakes","VVT"}),jes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),jes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),jes,0.); // worse stats in 2017 for some reason so we have to conver to lnN for other categories - check
-    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"ZL","VVT"}).bin_id({4,5,6}),jes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018","et_2016","et_2017","et_2018"}).process({"ZL","VVT"}).bin_id({4,5,6}),jes,0.);
   }
   ConvertShapesToLnN(cb.cp().backgrounds().bin_id({3},false),"CMS_htt_ZLShape_mt_1prong1pi_13TeV",0.);
   for (auto tes : tes_systs) {
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2017","tt_2018"}).process({"Wfakes","VVT"}),tes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2016","tt_2018"}).process({"TTT"}).bin_id({1,2,3,7},false),tes,0.);
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"tt_2017"}).process({"TTT"}),tes,0.);
-    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018"}).process({"VVT"}).bin_id({4,5,6}),tes,0.);
+    ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018","et_2016","et_2017","et_2018"}).process({"VVT"}).bin_id({4,5,6}),tes,0.);
   }
 
   // remove uncertainties which are dominated by statistical fluctuations so are unphysical
+  cb.cp().channel({"et_2016","et_2017","et_2018"}).syst_name(JoinStr({{"CMS_scale_e"},jes_systs})).process({"ZL"}).bin_id({5}).ForEachSyst([](ch::Systematic *sys) {
+        sys->set_type("lnN");
+        sys->set_value_d(1.);
+        sys->set_value_u(1.);
+  });
   cb.cp().channel({"mt_2016","mt_2017","mt_2018"}).syst_name(JoinStr({{"CMS_scale_mu_13TeV","CMS_htt_ZLShape_mt_1prong1pi_13TeV"},jes_systs})).process({"ZL"}).bin_id({5,6}).ForEachSyst([](ch::Systematic *sys) {
         sys->set_type("lnN");
         sys->set_value_d(1.);
