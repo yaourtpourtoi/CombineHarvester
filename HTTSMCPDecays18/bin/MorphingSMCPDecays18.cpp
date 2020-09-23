@@ -874,7 +874,7 @@ int main(int argc, char** argv) {
   }
 
   // remove uncertainties which are dominated by statistical fluctuations so are unphysical
-  cb.cp().channel({"et_2016","et_2017","et_2018"}).syst_name(JoinStr({{"CMS_scale_e"},jes_systs})).process({"ZL"}).bin_id({5}).ForEachSyst([](ch::Systematic *sys) {
+  cb.cp().channel({"et_2016","et_2017","et_2018"}).syst_name(JoinStr({{"CMS_scale_e_13TeV"},jes_systs})).process({"ZL"}).bin_id({5}).ForEachSyst([](ch::Systematic *sys) {
         sys->set_type("lnN");
         sys->set_value_d(1.);
         sys->set_value_u(1.);
