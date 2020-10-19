@@ -416,7 +416,6 @@ int main(int argc, char** argv) {
     input_dir["ttbar"]  = string(getenv("CMSSW_BASE")) + "/src/CombineHarvester/HTTSMCPDecays18/shapes/"+input_folder_em+"/";    
     
     VString chns = {"tt","mt","et"}; 
-    //VString chns = {"tt","mt"}; 
     if (ttbar_fit) chns.push_back("ttbar");
     
     map<string, VString> bkg_procs;
@@ -1174,7 +1173,8 @@ int main(int argc, char** argv) {
  
     // partially decorrelate the energy scale uncertainties
     cb.cp().RenameSystematic(cb,"CMS_scale_e_13TeV","CMS_scale_e");
-    DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    //DecorrelateMCAndEMB(cb,"CMS_scale_e","CMS_scale_embedded_e",0.5);
+    cb.cp().process({"EmbedZTT"}).RenameSystematic(cb,"CMS_scale_e","CMS_scale_embedded_e");
     cb.cp().RenameSystematic(cb,"CMS_scale_mu_13TeV","CMS_scale_m");
     DecorrelateMCAndEMB(cb,"CMS_scale_m","CMS_scale_embedded_m",0.5);
     DecorrelateMCAndEMB(cb,"CMS_scale_t_1prong_13TeV","CMS_scale_embedded_t_1prong_13TeV",0.5);
