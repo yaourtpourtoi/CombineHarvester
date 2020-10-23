@@ -872,6 +872,9 @@ int main(int argc, char** argv) {
     ConvertShapesToLnN(cb.cp().backgrounds().channel({"mt_2016","mt_2017","mt_2018","et_2016","et_2017","et_2018"}).process({"VVT"}).bin_id({4,5,6}),tes,0.);
   }
 
+  ConvertShapesToLnN(cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({2}),"CMS_htt_ZLShape_et_1prong_13TeV",0.); 
+  ConvertShapesToLnN(cb.cp().channel({"et_2016","et_2017","et_2018"}).bin_id({2}),"CMS_htt_ZLShape_et_1prong1pi_13TeV",0.); 
+
   // remove uncertainties which are dominated by statistical fluctuations so are unphysical
   cb.cp().channel({"et_2016","et_2017","et_2018"}).syst_name(jes_systs).process({"ZL"}).bin_id({5}).ForEachSyst([](ch::Systematic *sys) {
         sys->set_type("lnN");
